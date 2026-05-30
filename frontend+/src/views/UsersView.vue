@@ -98,9 +98,9 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
-import { api } from '@/lib/api';
+import { api, getFriendlyError } from '@/lib/api';
 import { ROLE_LABELS, normalizeRole } from '@/lib/permissions';
-import { confirmDialog } from '@/lib/dialog';
+import { confirmDialog, notify, toast } from '@/lib/dialog';
 
 const users = ref<any[]>([]);
 const customers = ref<any[]>([]);
@@ -148,8 +148,13 @@ async function saveModal() {
 
 async function removeUser(u: any) {
   if (!(await confirmDialog(`确认删除用户 ${u.username || u.email} 吗？`))) return;
-  await api.deleteUser(u.id);
-  await loadAll();
+  try {
+    await api.deleteUser(u.id);
+    await loadAll();
+    toast('用户已删除', 'success');
+  } catch (e) {
+    await notify(getFriendlyError(e));
+  }
 }
 
 async function addQuota(c: any) {

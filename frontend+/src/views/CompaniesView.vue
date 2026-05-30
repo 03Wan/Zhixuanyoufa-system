@@ -48,7 +48,7 @@
 import { onMounted, reactive, ref } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
 import { api, getFriendlyError } from '@/lib/api';
-import { confirmDialog, notify } from '@/lib/dialog';
+import { confirmDialog, notify, toast } from '@/lib/dialog';
 
 const rows = ref<any[]>([]);
 const industryOptions = ['跨境电商', '品牌出海', '代运营机构', '外贸服务', '产业带机构', '教育实训'];
@@ -88,6 +88,7 @@ async function removeCompany(item: any) {
   try {
     await api.deleteCompany(item.id);
     await load();
+    toast('企业已删除', 'success');
   } catch (e) { await notify(getFriendlyError(e)); }
 }
 

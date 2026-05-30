@@ -2,11 +2,50 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001
 export const USE_MOCK = String(import.meta.env.VITE_USE_MOCK || 'true').toLowerCase() !== 'false';
 const TOKEN_KEY = 'zyyf_token';
 const USER_KEY = 'zyyf_user';
+const LOADING_DELAY_MS = 150;
+let pendingCount = 0;
+let loadingVisible = false;
+let loadingDelayTimer = null;
 class ApiError extends Error {
     constructor(message, status) {
         super(message);
         this.status = status;
         this.name = 'ApiError';
+    }
+}
+function emitLoading(active) {
+    if (typeof window === 'undefined')
+        return;
+    window.dispatchEvent(new CustomEvent('zyyf-loading', { detail: { active, pending: pendingCount } }));
+}
+function startGlobalLoading() {
+    if (typeof window === 'undefined')
+        return;
+    pendingCount += 1;
+    if (pendingCount !== 1)
+        return;
+    if (loadingDelayTimer)
+        clearTimeout(loadingDelayTimer);
+    loadingDelayTimer = setTimeout(() => {
+        if (pendingCount > 0 && !loadingVisible) {
+            loadingVisible = true;
+            emitLoading(true);
+        }
+    }, LOADING_DELAY_MS);
+}
+function endGlobalLoading() {
+    if (typeof window === 'undefined')
+        return;
+    pendingCount = Math.max(0, pendingCount - 1);
+    if (pendingCount > 0)
+        return;
+    if (loadingDelayTimer) {
+        clearTimeout(loadingDelayTimer);
+        loadingDelayTimer = null;
+    }
+    if (loadingVisible) {
+        loadingVisible = false;
+        emitLoading(false);
     }
 }
 function nowIso() {
@@ -426,14 +465,20 @@ async function request(path, method, body) {
     return raw;
 }
 async function run(live, mock) {
-    if (USE_MOCK)
-        return await mock();
+    startGlobalLoading();
     try {
-        return await live();
+        if (USE_MOCK)
+            return await mock();
+        try {
+            return await live();
+        }
+        catch (error) {
+            console.warn('[api] live request failed, fallback to mock:', error);
+            return await mock();
+        }
     }
-    catch (error) {
-        console.warn('[api] live request failed, fallback to mock:', error);
-        return await mock();
+    finally {
+        endGlobalLoading();
     }
 }
 function toRiskText(value) {
@@ -1161,37 +1206,43 @@ export const api = {
         });
     },
     async uploadFile(file, taskId) {
-        if (USE_MOCK) {
-            const rec = {
-                id: makeId('file'),
-                userId: getUserProfile()?.id || 'mock-user',
-                taskId: taskId || '',
-                originalName: file.name,
-                fileName: `${Date.now()}-${file.name}`,
-                mimeType: file.type || 'image/*',
-                size: file.size,
-                storageProvider: 'local',
-                storagePath: `/uploads/${Date.now()}-${file.name}`,
-                url: URL.createObjectURL(file),
-                createdAt: nowIso(),
-            };
-            mockFiles.unshift(rec);
-            appendLog('上传素材文件', rec.id, rec.originalName);
-            return rec;
+        startGlobalLoading();
+        try {
+            if (USE_MOCK) {
+                const rec = {
+                    id: makeId('file'),
+                    userId: getUserProfile()?.id || 'mock-user',
+                    taskId: taskId || '',
+                    originalName: file.name,
+                    fileName: `${Date.now()}-${file.name}`,
+                    mimeType: file.type || 'image/*',
+                    size: file.size,
+                    storageProvider: 'local',
+                    storagePath: `/uploads/${Date.now()}-${file.name}`,
+                    url: URL.createObjectURL(file),
+                    createdAt: nowIso(),
+                };
+                mockFiles.unshift(rec);
+                appendLog('上传素材文件', rec.id, rec.originalName);
+                return rec;
+            }
+            const token = getToken();
+            const formData = new FormData();
+            formData.append('file', file);
+            const q = taskId ? `?taskId=${encodeURIComponent(taskId)}` : '';
+            const response = await fetch(`${API_BASE_URL}/files/upload${q}`, {
+                method: 'POST',
+                headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+                body: formData,
+            });
+            const raw = await response.json();
+            if (!response.ok || raw?.code !== 0)
+                throw new ApiError(raw?.message || '上传失败');
+            return raw.data;
         }
-        const token = getToken();
-        const formData = new FormData();
-        formData.append('file', file);
-        const q = taskId ? `?taskId=${encodeURIComponent(taskId)}` : '';
-        const response = await fetch(`${API_BASE_URL}/files/upload${q}`, {
-            method: 'POST',
-            headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-            body: formData,
-        });
-        const raw = await response.json();
-        if (!response.ok || raw?.code !== 0)
-            throw new ApiError(raw?.message || '上传失败');
-        return raw.data;
+        finally {
+            endGlobalLoading();
+        }
     },
     getFiles(taskId) {
         return run(() => request(taskId ? `/files?taskId=${encodeURIComponent(taskId)}` : '/files', 'GET'), () => taskId ? mockFiles.filter((f) => f.taskId === taskId) : mockFiles);

@@ -2,7 +2,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import AppShell from '@/layouts/AppShell.vue';
 import { api, getFriendlyError } from '@/lib/api';
-import { confirmDialog, notify } from '@/lib/dialog';
+import { confirmDialog, notify, toast } from '@/lib/dialog';
 const router = useRouter();
 const loading = ref(true);
 const error = ref('');
@@ -97,8 +97,15 @@ function print(id) { router.push(`/reports/${id}?print=1`); }
 async function removeReport(id) {
     if (!(await confirmDialog('确认删除该报告吗？')))
         return;
-    await api.deleteReport(id);
-    await load();
+    try {
+        await api.deleteReport(id);
+        await load();
+        toast('报告已删除', 'success');
+    }
+    catch (e) {
+        error.value = getFriendlyError(e);
+        await notify(error.value);
+    }
 }
 onMounted(load);
 debugger; /* PartiallyEnd: #3632/scriptSetup.vue */

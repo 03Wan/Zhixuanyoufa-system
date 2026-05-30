@@ -30,11 +30,48 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001
 export const USE_MOCK = String(import.meta.env.VITE_USE_MOCK || 'true').toLowerCase() !== 'false';
 const TOKEN_KEY = 'zyyf_token';
 const USER_KEY = 'zyyf_user';
+const LOADING_DELAY_MS = 150;
+
+let pendingCount = 0;
+let loadingVisible = false;
+let loadingDelayTimer: ReturnType<typeof setTimeout> | null = null;
 
 class ApiError extends Error {
   constructor(message: string, public readonly status?: number) {
     super(message);
     this.name = 'ApiError';
+  }
+}
+
+function emitLoading(active: boolean) {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(new CustomEvent('zyyf-loading', { detail: { active, pending: pendingCount } }));
+}
+
+function startGlobalLoading() {
+  if (typeof window === 'undefined') return;
+  pendingCount += 1;
+  if (pendingCount !== 1) return;
+  if (loadingDelayTimer) clearTimeout(loadingDelayTimer);
+  loadingDelayTimer = setTimeout(() => {
+    if (pendingCount > 0 && !loadingVisible) {
+      loadingVisible = true;
+      emitLoading(true);
+    }
+  }, LOADING_DELAY_MS);
+}
+
+function endGlobalLoading() {
+  if (typeof window === 'undefined') return;
+  pendingCount = Math.max(0, pendingCount - 1);
+  if (pendingCount > 0) return;
+  if (loadingDelayTimer) {
+    clearTimeout(loadingDelayTimer);
+    loadingDelayTimer = null;
+  }
+  if (loadingVisible) {
+    loadingVisible = false;
+    emitLoading(false);
   }
 }
 
@@ -463,12 +500,17 @@ async function request<T>(path: string, method: RequestMethod, body?: unknown): 
 }
 
 async function run<T>(live: () => Promise<T>, mock: () => T | Promise<T>): Promise<T> {
-  if (USE_MOCK) return await mock();
+  startGlobalLoading();
   try {
-    return await live();
-  } catch (error) {
-    console.warn('[api] live request failed, fallback to mock:', error);
-    return await mock();
+    if (USE_MOCK) return await mock();
+    try {
+      return await live();
+    } catch (error) {
+      console.warn('[api] live request failed, fallback to mock:', error);
+      return await mock();
+    }
+  } finally {
+    endGlobalLoading();
   }
 }
 
@@ -1294,36 +1336,41 @@ export const api = {
   },
 
   async uploadFile(file: File, taskId?: string) {
-    if (USE_MOCK) {
-      const rec = {
-        id: makeId('file'),
-        userId: (getUserProfile() as any)?.id || 'mock-user',
-        taskId: taskId || '',
-        originalName: file.name,
-        fileName: `${Date.now()}-${file.name}`,
-        mimeType: file.type || 'image/*',
-        size: file.size,
-        storageProvider: 'local',
-        storagePath: `/uploads/${Date.now()}-${file.name}`,
-        url: URL.createObjectURL(file),
-        createdAt: nowIso(),
-      };
-      mockFiles.unshift(rec);
-      appendLog('上传素材文件', rec.id, rec.originalName);
-      return rec;
+    startGlobalLoading();
+    try {
+      if (USE_MOCK) {
+        const rec = {
+          id: makeId('file'),
+          userId: (getUserProfile() as any)?.id || 'mock-user',
+          taskId: taskId || '',
+          originalName: file.name,
+          fileName: `${Date.now()}-${file.name}`,
+          mimeType: file.type || 'image/*',
+          size: file.size,
+          storageProvider: 'local',
+          storagePath: `/uploads/${Date.now()}-${file.name}`,
+          url: URL.createObjectURL(file),
+          createdAt: nowIso(),
+        };
+        mockFiles.unshift(rec);
+        appendLog('上传素材文件', rec.id, rec.originalName);
+        return rec;
+      }
+      const token = getToken();
+      const formData = new FormData();
+      formData.append('file', file);
+      const q = taskId ? `?taskId=${encodeURIComponent(taskId)}` : '';
+      const response = await fetch(`${API_BASE_URL}/files/upload${q}`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        body: formData,
+      });
+      const raw = await response.json();
+      if (!response.ok || raw?.code !== 0) throw new ApiError(raw?.message || '上传失败');
+      return raw.data;
+    } finally {
+      endGlobalLoading();
     }
-    const token = getToken();
-    const formData = new FormData();
-    formData.append('file', file);
-    const q = taskId ? `?taskId=${encodeURIComponent(taskId)}` : '';
-    const response = await fetch(`${API_BASE_URL}/files/upload${q}`, {
-      method: 'POST',
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-      body: formData,
-    });
-    const raw = await response.json();
-    if (!response.ok || raw?.code !== 0) throw new ApiError(raw?.message || '上传失败');
-    return raw.data;
   },
 
   getFiles(taskId?: string) {

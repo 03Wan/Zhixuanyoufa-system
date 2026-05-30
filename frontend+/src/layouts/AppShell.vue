@@ -75,6 +75,24 @@
       </section>
     </div>
 
+    <div v-if="toasts.length" class="toast-stack" aria-live="polite" aria-atomic="true">
+      <div
+        v-for="item in toasts"
+        :key="item.id"
+        class="toast-item"
+        :class="[`toast-${item.kind}`]"
+      >
+        {{ item.message }}
+      </div>
+    </div>
+
+    <div v-if="globalLoading" class="global-loading-mask" aria-live="assertive" aria-busy="true">
+      <div class="global-loading-card">
+        <span class="global-loading-spinner" />
+        <span>加载中</span>
+      </div>
+    </div>
+
     <div class="app-shell">
       <main class="page-stack content-body" :class="{ 'embed-content-body': isEmbedded }">
         <template v-if="!isEmbedded">
@@ -139,6 +157,10 @@ const dialog = ref({
   message: "",
   resolve: null as null | ((value: boolean) => void),
 });
+const globalLoading = ref(false);
+const toasts = ref<Array<{ id: number; message: string; kind: "success" | "error" | "info" }>>([]);
+let toastSeq = 0;
+const toastTimers = new Map<number, ReturnType<typeof setTimeout>>();
 
 const baseTabId = "__base__";
 const activeTabId = ref<string>(baseTabId);
@@ -332,6 +354,32 @@ function resolveDialog(value: boolean) {
   done?.(value);
 }
 
+function removeToast(id: number) {
+  toasts.value = toasts.value.filter((item) => item.id !== id);
+  const timer = toastTimers.get(id);
+  if (timer) {
+    clearTimeout(timer);
+    toastTimers.delete(id);
+  }
+}
+
+function handleToastEvent(e: Event) {
+  const detail = (e as CustomEvent).detail || {};
+  const message = String(detail.message || "").trim();
+  if (!message) return;
+  const kind = ["success", "error", "info"].includes(String(detail.kind)) ? detail.kind : "success";
+  const duration = Math.max(1200, Number(detail.duration || 2200));
+  const id = ++toastSeq;
+  toasts.value.push({ id, message, kind });
+  const timer = setTimeout(() => removeToast(id), duration);
+  toastTimers.set(id, timer);
+}
+
+function handleLoadingEvent(e: Event) {
+  const detail = (e as CustomEvent).detail || {};
+  globalLoading.value = !!detail.active;
+}
+
 let themeObserver: MutationObserver | null = null;
 
 onMounted(() => {
@@ -341,6 +389,8 @@ onMounted(() => {
   window.addEventListener("storage", handleStorageTheme);
   window.addEventListener("message", handleMessageTheme);
   window.addEventListener("zyyf-dialog", handleDialogEvent);
+  window.addEventListener("zyyf-toast", handleToastEvent);
+  window.addEventListener("zyyf-loading", handleLoadingEvent);
 
   if (!isEmbedded.value) {
     themeObserver = new MutationObserver(() => {
@@ -365,6 +415,10 @@ onBeforeUnmount(() => {
   window.removeEventListener("storage", handleStorageTheme);
   window.removeEventListener("message", handleMessageTheme);
   window.removeEventListener("zyyf-dialog", handleDialogEvent);
+  window.removeEventListener("zyyf-toast", handleToastEvent);
+  window.removeEventListener("zyyf-loading", handleLoadingEvent);
+  for (const timer of toastTimers.values()) clearTimeout(timer);
+  toastTimers.clear();
   themeObserver?.disconnect();
 });
 
@@ -511,6 +565,79 @@ function toggleGroup(key: string) {
 }
 .app-dialog-panel p { margin: 0 0 14px; color: var(--muted); line-height: 1.7; }
 .logout-btn { width: 100%; }
+.toast-stack {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12000;
+  display: grid;
+  gap: 8px;
+  pointer-events: none;
+}
+.toast-item {
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card-strong);
+  color: var(--text);
+  min-width: 180px;
+  max-width: min(70vw, 560px);
+  padding: 10px 14px;
+  box-shadow: var(--glass-shadow-soft);
+  text-align: center;
+  font-weight: 700;
+  animation: toastFadeIn 0.18s ease-out;
+}
+.toast-success {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.12);
+  color: #047857;
+}
+.toast-error {
+  border-color: rgba(239, 68, 68, 0.44);
+  background: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+}
+.toast-info {
+  border-color: color-mix(in srgb, var(--brand-1) 45%, var(--border) 55%);
+}
+.global-loading-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 11000;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--modal-mask) 82%, transparent);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+}
+.global-loading-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  background: var(--card-strong);
+  color: var(--text);
+  padding: 10px 14px;
+  box-shadow: var(--glass-shadow-soft);
+  font-weight: 700;
+}
+.global-loading-spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 3px solid rgba(58, 121, 255, 0.24);
+  border-top-color: var(--brand-1);
+  animation: globalSpin 0.9s linear infinite;
+}
+@keyframes toastFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes globalSpin {
+  to { transform: rotate(360deg); }
+}
 .version-badge {
   text-align: center;
   font-size: 12px;

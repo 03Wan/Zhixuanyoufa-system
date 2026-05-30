@@ -2,7 +2,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import AppShell from '@/layouts/AppShell.vue';
 import { api, getFriendlyError } from '@/lib/api';
-import { confirmDialog } from '@/lib/dialog';
+import { confirmDialog, toast } from '@/lib/dialog';
 const route = useRoute();
 const router = useRouter();
 const loading = reactive({ tasks: false, detail: false, detect: false, report: false, review: false });
@@ -303,6 +303,7 @@ async function deleteTask(taskId) {
     try {
         await api.deleteTask(taskId);
         tip.value = '任务已删除';
+        toast('任务已删除', 'success');
         if (selectedTaskId.value === taskId) {
             selectedTaskId.value = '';
             showTaskList.value = true;
@@ -328,6 +329,7 @@ async function deleteReport(reportId) {
         if (taskMeta.value?.report)
             taskMeta.value.report = null;
         tip.value = '报告已删除';
+        toast('报告已删除', 'success');
         await loadTasks();
     }
     catch (e) {

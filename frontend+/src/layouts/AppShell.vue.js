@@ -18,6 +18,10 @@ const dialog = ref({
     message: "",
     resolve: null,
 });
+const globalLoading = ref(false);
+const toasts = ref([]);
+let toastSeq = 0;
+const toastTimers = new Map();
 const baseTabId = "__base__";
 const activeTabId = ref(baseTabId);
 const embeddedTabs = ref([]);
@@ -192,6 +196,30 @@ function resolveDialog(value) {
     dialog.value.resolve = null;
     done?.(value);
 }
+function removeToast(id) {
+    toasts.value = toasts.value.filter((item) => item.id !== id);
+    const timer = toastTimers.get(id);
+    if (timer) {
+        clearTimeout(timer);
+        toastTimers.delete(id);
+    }
+}
+function handleToastEvent(e) {
+    const detail = e.detail || {};
+    const message = String(detail.message || "").trim();
+    if (!message)
+        return;
+    const kind = ["success", "error", "info"].includes(String(detail.kind)) ? detail.kind : "success";
+    const duration = Math.max(1200, Number(detail.duration || 2200));
+    const id = ++toastSeq;
+    toasts.value.push({ id, message, kind });
+    const timer = setTimeout(() => removeToast(id), duration);
+    toastTimers.set(id, timer);
+}
+function handleLoadingEvent(e) {
+    const detail = e.detail || {};
+    globalLoading.value = !!detail.active;
+}
 let themeObserver = null;
 onMounted(() => {
     const theme = localStorage.getItem("theme") || "light";
@@ -200,6 +228,8 @@ onMounted(() => {
     window.addEventListener("storage", handleStorageTheme);
     window.addEventListener("message", handleMessageTheme);
     window.addEventListener("zyyf-dialog", handleDialogEvent);
+    window.addEventListener("zyyf-toast", handleToastEvent);
+    window.addEventListener("zyyf-loading", handleLoadingEvent);
     if (!isEmbedded.value) {
         themeObserver = new MutationObserver(() => {
             const current = document.documentElement.classList.contains("dark") ? "dark" : "light";
@@ -218,6 +248,11 @@ onBeforeUnmount(() => {
     window.removeEventListener("storage", handleStorageTheme);
     window.removeEventListener("message", handleMessageTheme);
     window.removeEventListener("zyyf-dialog", handleDialogEvent);
+    window.removeEventListener("zyyf-toast", handleToastEvent);
+    window.removeEventListener("zyyf-loading", handleLoadingEvent);
+    for (const timer of toastTimers.values())
+        clearTimeout(timer);
+    toastTimers.clear();
     themeObserver?.disconnect();
 });
 function menuIcon(key) {
@@ -508,6 +543,35 @@ if (__VLS_ctx.dialog.open) {
     });
     (__VLS_ctx.dialog.kind === 'confirm' ? '确认' : '知道了');
 }
+if (__VLS_ctx.toasts.length) {
+    __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
+        ...{ class: "toast-stack" },
+        'aria-live': "polite",
+        'aria-atomic': "true",
+    });
+    for (const [item] of __VLS_getVForSourceType((__VLS_ctx.toasts))) {
+        __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
+            key: (item.id),
+            ...{ class: "toast-item" },
+            ...{ class: ([`toast-${item.kind}`]) },
+        });
+        (item.message);
+    }
+}
+if (__VLS_ctx.globalLoading) {
+    __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
+        ...{ class: "global-loading-mask" },
+        'aria-live': "assertive",
+        'aria-busy': "true",
+    });
+    __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
+        ...{ class: "global-loading-card" },
+    });
+    __VLS_asFunctionalElement(__VLS_intrinsicElements.span)({
+        ...{ class: "global-loading-spinner" },
+    });
+    __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({});
+}
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "app-shell" },
 });
@@ -617,6 +681,11 @@ else {
 /** @type {__VLS_StyleScopedClasses['btn-secondary']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn-primary']} */ ;
+/** @type {__VLS_StyleScopedClasses['toast-stack']} */ ;
+/** @type {__VLS_StyleScopedClasses['toast-item']} */ ;
+/** @type {__VLS_StyleScopedClasses['global-loading-mask']} */ ;
+/** @type {__VLS_StyleScopedClasses['global-loading-card']} */ ;
+/** @type {__VLS_StyleScopedClasses['global-loading-spinner']} */ ;
 /** @type {__VLS_StyleScopedClasses['app-shell']} */ ;
 /** @type {__VLS_StyleScopedClasses['page-stack']} */ ;
 /** @type {__VLS_StyleScopedClasses['content-body']} */ ;
@@ -648,6 +717,8 @@ const __VLS_self = (await import('vue')).defineComponent({
             hoverTip: hoverTip,
             expandedGroups: expandedGroups,
             dialog: dialog,
+            globalLoading: globalLoading,
+            toasts: toasts,
             baseTabId: baseTabId,
             activeTabId: activeTabId,
             embeddedTabs: embeddedTabs,

@@ -1,0 +1,428 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+  ENTERPRISE_ADMIN
+  OPERATOR
+  DESIGNER
+  REVIEWER
+  MANAGER
+  SYSTEM_ADMIN
+  CUSTOMER_VIEWER
+}
+
+enum TaskStatus {
+  DRAFT
+  PENDING_DETECTION
+  DETECTING
+  COMPLETED
+  REPORTED
+  REVIEW_REQUIRED
+  HOLD
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum DecisionType {
+  APPROVE
+  OPTIMIZE_AND_REVIEW
+  REJECT
+  HOLD
+}
+
+enum RuleType {
+  PLATFORM
+  MARKET_CULTURE
+  SENSITIVE_WORD
+  CATEGORY
+}
+
+enum ReviewStatus {
+  PENDING
+  IN_PROGRESS
+  APPROVED
+  RETURNED
+  HOLD
+}
+
+model User {
+  id           String       @id @default(cuid())
+  username     String       @unique
+  email        String       @unique
+  passwordHash String
+  companyName  String?
+  role         UserRole     @default(OPERATOR)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  tasks MaterialTask[]
+  logs  OperationLog[]
+  reviews ReviewTask[] @relation("reviewer")
+  createdReviews ReviewTask[] @relation("creator")
+  subscriptions Subscription[]
+  usageRecords   UsageRecord[]
+  fileAssets     FileAsset[]
+  teamMemberships TeamMember[]
+  customers       Customer[]      @relation("customerOwner")
+  batchTasks      BatchTask[]
+  apiCallLogs     ApiCallLog[]
+}
+
+model MaterialTask {
+  id          String       @id @default(cuid())
+  userId      String
+  sku         String?
+  productName String
+  category    String
+  platform    String
+  market      String
+  purpose     String
+  status      TaskStatus   @default(DRAFT)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  materialContent MaterialContent?
+  detectionResult DetectionResult?
+  report          Report?
+  reviewTask      ReviewTask?
+  files           FileAsset[]
+  usageRecords    UsageRecord[]
+  companyId       String?
+  company         Company?        @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  materialVersions MaterialVersion[]
+  batchItems      BatchTaskItem[]
+  customerId      String?
+  customer        Customer?       @relation(fields: [customerId], references: [id], onDelete: SetNull)
+}
+
+model MaterialContent {
+  id            String       @id @default(cuid())
+  taskId        String       @unique
+  title         String?
+  sellingPoints Json?
+  detailText    String?      @db.Text
+  adText        String?      @db.Text
+  imageUrls     Json?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  task MaterialTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model DetectionResult {
+  id                String       @id @default(cuid())
+  taskId            String       @unique
+  totalScore        Int
+  completenessScore Int
+  complianceScore   Int
+  localizationScore Int
+  riskLevel         RiskLevel
+  decision          DecisionType
+  issues            Json?
+  suggestions       Json?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  task MaterialTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model Rule {
+  id         String    @id @default(cuid())
+  name       String
+  type       RuleType
+  platform   String?
+  market     String?
+  category   String?
+  riskLevel  RiskLevel
+  keywords   Json
+  suggestion String    @db.Text
+  enabled    Boolean   @default(true)
+  version    Int       @default(1)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  source     String?   @default("SYSTEM")
+
+  versions RuleVersion[]
+}
+
+model Report {
+  id        String       @id @default(cuid())
+  taskId    String       @unique
+  reportNo  String       @unique
+  title     String
+  summary   String       @db.Text
+  content   Json
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  task MaterialTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  templateId String?
+  template ReportTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+}
+
+model OperationLog {
+  id         String   @id @default(cuid())
+  userId     String
+  action     String
+  targetType String
+  targetId   String
+  detail     Json?
+  result     String?
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ReviewTask {
+  id         String       @id @default(cuid())
+  taskId      String      @unique
+  status      ReviewStatus @default(PENDING)
+  systemDecision DecisionType?
+  finalDecision  DecisionType?
+  reason      String?
+  comment     String?      @db.Text
+  history     Json?
+  createdBy   String
+  reviewerId  String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  task     MaterialTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  creator  User         @relation("creator", fields: [createdBy], references: [id], onDelete: Cascade)
+  reviewer User?        @relation("reviewer", fields: [reviewerId], references: [id], onDelete: SetNull)
+}
+
+model Plan {
+  id                           String   @id @default(cuid())
+  name                         String   @unique
+  customerType                 String
+  priceText                    String
+  billingCycle                 String
+  quota                        Int?
+  supportedMarkets             Int?
+  canExportReport              Boolean  @default(false)
+  canBatchDetect               Boolean  @default(false)
+  canUseApi                    Boolean  @default(false)
+  canPrivateDeploy             Boolean  @default(false)
+  canUseCustomRules            Boolean  @default(false)
+  canUseCustomReportTemplate   Boolean  @default(false)
+  features                     Json?
+  sortOrder                    Int      @default(0)
+  isActive                     Boolean  @default(true)
+  createdAt                    DateTime @default(now())
+  updatedAt                    DateTime @updatedAt
+
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id             String   @id @default(cuid())
+  userId         String?
+  companyName    String
+  planId         String
+  status         String
+  startAt        DateTime
+  endAt          DateTime?
+  quotaTotal     Int      @default(0)
+  quotaUsed      Int      @default(0)
+  quotaRemaining Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user         User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  plan         Plan          @relation(fields: [planId], references: [id], onDelete: Restrict)
+  usageRecords UsageRecord[]
+
+  @@index([companyName])
+}
+
+model UsageRecord {
+  id            String   @id @default(cuid())
+  userId        String
+  taskId        String?
+  subscriptionId String?
+  usageType     String
+  amount        Int      @default(1)
+  description   String?
+  createdAt     DateTime @default(now())
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task         MaterialTask? @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  subscription Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+}
+
+model FileAsset {
+  id              String   @id @default(cuid())
+  userId          String
+  taskId          String?
+  originalName    String
+  fileName        String
+  mimeType        String
+  size            Int
+  storageProvider String
+  storagePath     String
+  url             String
+  createdAt       DateTime @default(now())
+
+  user User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task MaterialTask? @relation(fields: [taskId], references: [id], onDelete: SetNull)
+}
+
+model Company {
+  id            String   @id @default(cuid())
+  name          String   @unique
+  industryType  String?
+  contactPerson String?
+  contactPhone  String?
+  targetMarkets Json?
+  planType      String?
+  serviceStatus String?  @default("试点中")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  members   TeamMember[]
+  tasks     MaterialTask[]
+  customers Customer[]
+  batchTasks BatchTask[]
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  companyId String
+  userId    String
+  role      UserRole @default(OPERATOR)
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, userId])
+}
+
+model Customer {
+  id            String   @id @default(cuid())
+  companyId     String?
+  ownerUserId   String?
+  name          String
+  customerType  String?
+  contactPerson String?
+  contactPhone  String?
+  industry      String?
+  targetPlatform String?
+  targetMarket  String?
+  planType      String?
+  serviceStatus String?  @default("试点中")
+  remark        String?  @db.Text
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  company Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  owner   User?    @relation("customerOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+  tasks   MaterialTask[]
+}
+
+model RuleVersion {
+  id          String   @id @default(cuid())
+  ruleId      String
+  versionNo   String
+  snapshot    Json
+  createdBy   String?
+  createdAt   DateTime @default(now())
+
+  rule Rule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+}
+
+model MaterialVersion {
+  id          String   @id @default(cuid())
+  taskId       String
+  versionNo    Int
+  title        String?
+  sellingPoints Json?
+  detailText   String?  @db.Text
+  adText       String?  @db.Text
+  imageUrls    Json?
+  scoreSnapshot Json?
+  riskSnapshot  Json?
+  createdBy    String?
+  createdAt    DateTime @default(now())
+
+  task MaterialTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, versionNo])
+}
+
+model ReportTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  scope       String   @default("SYSTEM")
+  companyName String?
+  versionNo   Int      @default(1)
+  schema      Json?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  reports Report[]
+}
+
+model BatchTask {
+  id            String   @id @default(cuid())
+  companyId     String?
+  userId        String
+  name          String
+  status        String   @default("PENDING")
+  totalCount    Int      @default(0)
+  successCount  Int      @default(0)
+  failedCount   Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  company Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items   BatchTaskItem[]
+}
+
+model BatchTaskItem {
+  id          String   @id @default(cuid())
+  batchTaskId String
+  rowNo       Int
+  taskId      String?
+  payload     Json
+  status      String   @default("PENDING")
+  errorMsg    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  batchTask BatchTask    @relation(fields: [batchTaskId], references: [id], onDelete: Cascade)
+  task      MaterialTask? @relation(fields: [taskId], references: [id], onDelete: SetNull)
+}
+
+model ApiCallLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  companyName String?
+  endpoint    String
+  method      String
+  statusCode  Int?
+  quotaCost   Int      @default(1)
+  createdAt   DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}

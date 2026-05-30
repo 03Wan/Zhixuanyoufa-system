@@ -7,14 +7,12 @@ on:
       - main
     paths:
       - 'frontend+/**'
-      - 'frontend[+]/**'
       - '.github/workflows/vercel-frontend.yml'
   pull_request:
     branches:
       - main
     paths:
       - 'frontend+/**'
-      - 'frontend[+]/**'
       - '.github/workflows/vercel-frontend.yml'
 
 jobs:

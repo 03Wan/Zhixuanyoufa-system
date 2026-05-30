@@ -1,6 +1,7 @@
 ﻿name: Deploy Backend to Vercel
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -44,7 +45,7 @@ jobs:
           vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build and Deploy Production
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: |
           vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
           vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}

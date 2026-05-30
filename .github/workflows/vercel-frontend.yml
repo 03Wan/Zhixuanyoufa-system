@@ -1,17 +1,20 @@
 ﻿name: Deploy Frontend to Vercel
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
     paths:
       - 'frontend+/**'
+      - 'frontend[+]/**'
       - '.github/workflows/vercel-frontend.yml'
   pull_request:
     branches:
       - main
     paths:
       - 'frontend+/**'
+      - 'frontend[+]/**'
       - '.github/workflows/vercel-frontend.yml'
 
 jobs:
@@ -44,7 +47,7 @@ jobs:
           vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build and Deploy Production
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: |
           vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
           vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}

@@ -1,3 +1,4 @@
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
 import { api, getFriendlyError } from '@/lib/api';
@@ -139,9 +140,17 @@ __VLS_2.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
     ...{ class: "page-stack fade-up" },
 });
-__VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-    ...{ class: "glass card" },
-});
+/** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+// @ts-ignore
+const __VLS_4 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+    as: "section",
+    ...{ class: "card" },
+}));
+const __VLS_5 = __VLS_4({
+    as: "section",
+    ...{ class: "card" },
+}, ...__VLS_functionalComponentArgsRest(__VLS_4));
+__VLS_6.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "row-between" },
 });
@@ -154,130 +163,210 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.button, __VLS_intrinsicElement
     disabled: (__VLS_ctx.loading),
 });
 (__VLS_ctx.loading ? '刷新中' : '刷新看板');
+var __VLS_6;
 if (__VLS_ctx.loading) {
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "glass card state loading center-loading" },
-    });
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_7 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card state loading center-loading" },
+    }));
+    const __VLS_8 = __VLS_7({
+        as: "section",
+        ...{ class: "card state loading center-loading" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_7));
+    __VLS_9.slots.default;
+    var __VLS_9;
 }
 else if (__VLS_ctx.error) {
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "glass card state error" },
-    });
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_10 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card state error" },
+    }));
+    const __VLS_11 = __VLS_10({
+        as: "section",
+        ...{ class: "card state error" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_10));
+    __VLS_12.slots.default;
     (__VLS_ctx.error);
+    var __VLS_12;
 }
 else {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "grid-4" },
     });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElements.article)({
-        ...{ class: "glass card kpi" },
-    });
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_13 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "article",
+        ...{ class: "card kpi" },
+    }));
+    const __VLS_14 = __VLS_13({
+        as: "article",
+        ...{ class: "card kpi" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_13));
+    __VLS_15.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     (__VLS_ctx.dashboard.metrics?.todayTaskCount || 0);
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElements.article)({
-        ...{ class: "glass card kpi" },
-    });
+    var __VLS_15;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_16 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "article",
+        ...{ class: "card kpi" },
+    }));
+    const __VLS_17 = __VLS_16({
+        as: "article",
+        ...{ class: "card kpi" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_16));
+    __VLS_18.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     (__VLS_ctx.dashboard.metrics?.pendingReviewCount || 0);
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElements.article)({
-        ...{ class: "glass card kpi" },
-    });
+    var __VLS_18;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_19 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "article",
+        ...{ class: "card kpi" },
+    }));
+    const __VLS_20 = __VLS_19({
+        as: "article",
+        ...{ class: "card kpi" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_19));
+    __VLS_21.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     (__VLS_ctx.dashboard.metrics?.highRiskCount || 0);
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElements.article)({
-        ...{ class: "glass card kpi" },
-    });
+    var __VLS_21;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_22 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "article",
+        ...{ class: "card kpi" },
+    }));
+    const __VLS_23 = __VLS_22({
+        as: "article",
+        ...{ class: "card kpi" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_22));
+    __VLS_24.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     (__VLS_ctx.dashboard.metrics?.reportCount || 0);
+    var __VLS_24;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "charts-grid" },
     });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "glass card chart-card" },
-    });
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_25 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card chart-card" },
+    }));
+    const __VLS_26 = __VLS_25({
+        as: "section",
+        ...{ class: "card chart-card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_25));
+    __VLS_27.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ref: "trendRef",
         ...{ class: "chart" },
     });
     /** @type {typeof __VLS_ctx.trendRef} */ ;
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "glass card chart-card" },
-    });
+    var __VLS_27;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_28 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card chart-card" },
+    }));
+    const __VLS_29 = __VLS_28({
+        as: "section",
+        ...{ class: "card chart-card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_28));
+    __VLS_30.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ref: "riskRef",
         ...{ class: "chart" },
     });
     /** @type {typeof __VLS_ctx.riskRef} */ ;
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "glass card chart-card" },
-    });
+    var __VLS_30;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_31 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card chart-card" },
+    }));
+    const __VLS_32 = __VLS_31({
+        as: "section",
+        ...{ class: "card chart-card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_31));
+    __VLS_33.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ref: "platformRef",
         ...{ class: "chart" },
     });
     /** @type {typeof __VLS_ctx.platformRef} */ ;
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "glass card chart-card" },
-    });
+    var __VLS_33;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_34 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card chart-card" },
+    }));
+    const __VLS_35 = __VLS_34({
+        as: "section",
+        ...{ class: "card chart-card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_34));
+    __VLS_36.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ref: "topRiskRef",
         ...{ class: "chart" },
     });
     /** @type {typeof __VLS_ctx.topRiskRef} */ ;
+    var __VLS_36;
 }
 var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['page-stack']} */ ;
 /** @type {__VLS_StyleScopedClasses['fade-up']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['row-between']} */ ;
 /** @type {__VLS_StyleScopedClasses['section-title']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn-secondary']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['state']} */ ;
 /** @type {__VLS_StyleScopedClasses['loading']} */ ;
 /** @type {__VLS_StyleScopedClasses['center-loading']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['state']} */ ;
 /** @type {__VLS_StyleScopedClasses['error']} */ ;
 /** @type {__VLS_StyleScopedClasses['grid-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['kpi']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['kpi']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['kpi']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['kpi']} */ ;
 /** @type {__VLS_StyleScopedClasses['charts-grid']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['chart-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['chart']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['chart-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['chart']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['chart-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['chart']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['chart-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['chart']} */ ;
@@ -285,6 +374,7 @@ var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
+            AppGlassSurface: AppGlassSurface,
             AppShell: AppShell,
             loading: loading,
             error: error,

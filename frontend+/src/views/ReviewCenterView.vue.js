@@ -1,3 +1,4 @@
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import AppShell from '@/layouts/AppShell.vue';
@@ -84,9 +85,17 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.button, __VLS_intrinsicElement
     disabled: (__VLS_ctx.loading),
 });
 (__VLS_ctx.loading ? '刷新中' : '刷新复核任务');
-__VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-    ...{ class: "glass card" },
-});
+/** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+// @ts-ignore
+const __VLS_4 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+    as: "section",
+    ...{ class: "card" },
+}));
+const __VLS_5 = __VLS_4({
+    as: "section",
+    ...{ class: "card" },
+}, ...__VLS_functionalComponentArgsRest(__VLS_4));
+__VLS_6.slots.default;
 if (__VLS_ctx.loading) {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "state loading" },
@@ -161,6 +170,7 @@ else {
         });
     }
 }
+var __VLS_6;
 var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['page-stack']} */ ;
 /** @type {__VLS_StyleScopedClasses['fade-up']} */ ;
@@ -168,7 +178,6 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['section-title']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn-secondary']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['state']} */ ;
 /** @type {__VLS_StyleScopedClasses['loading']} */ ;
@@ -182,6 +191,7 @@ var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
+            AppGlassSurface: AppGlassSurface,
             AppShell: AppShell,
             loading: loading,
             error: error,

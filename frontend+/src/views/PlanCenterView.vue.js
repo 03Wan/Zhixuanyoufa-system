@@ -1,3 +1,4 @@
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, ref } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
 import { api, getFriendlyError } from '@/lib/api';
@@ -69,32 +70,68 @@ __VLS_2.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
     ...{ class: "page-stack fade-up" },
 });
-__VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-    ...{ class: "glass card" },
-});
+/** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+// @ts-ignore
+const __VLS_4 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+    as: "section",
+    ...{ class: "card" },
+}));
+const __VLS_5 = __VLS_4({
+    as: "section",
+    ...{ class: "card" },
+}, ...__VLS_functionalComponentArgsRest(__VLS_4));
+__VLS_6.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.h2, __VLS_intrinsicElements.h2)({
     ...{ class: "section-title" },
 });
+var __VLS_6;
 if (__VLS_ctx.loading) {
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "glass card state loading center-loading" },
-    });
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_7 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card state loading center-loading" },
+    }));
+    const __VLS_8 = __VLS_7({
+        as: "section",
+        ...{ class: "card state loading center-loading" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_7));
+    __VLS_9.slots.default;
+    var __VLS_9;
 }
 else if (__VLS_ctx.error) {
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "glass card state error" },
-    });
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_10 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card state error" },
+    }));
+    const __VLS_11 = __VLS_10({
+        as: "section",
+        ...{ class: "card state error" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_10));
+    __VLS_12.slots.default;
     (__VLS_ctx.error);
+    var __VLS_12;
 }
 else {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
         ...{ class: "plan-grid" },
     });
     for (const [plan] of __VLS_getVForSourceType((__VLS_ctx.plans))) {
-        __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElements.article)({
-            ...{ class: "glass card plan-card" },
+        /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+        // @ts-ignore
+        const __VLS_13 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+            as: "article",
+            ...{ class: "card plan-card" },
             key: (plan.id),
-        });
+        }));
+        const __VLS_14 = __VLS_13({
+            as: "article",
+            ...{ class: "card plan-card" },
+            key: (plan.id),
+        }, ...__VLS_functionalComponentArgsRest(__VLS_13));
+        __VLS_15.slots.default;
         __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
             ...{ class: "plan-head" },
         });
@@ -179,6 +216,7 @@ else {
                 } },
             ...{ class: "btn btn-secondary" },
         });
+        var __VLS_15;
     }
 }
 if (__VLS_ctx.modal.open) {
@@ -190,9 +228,17 @@ if (__VLS_ctx.modal.open) {
             } },
         ...{ class: "modal-mask" },
     });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "glass card modal-panel" },
-    });
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_16 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card modal-panel" },
+    }));
+    const __VLS_17 = __VLS_16({
+        as: "section",
+        ...{ class: "card modal-panel" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_16));
+    __VLS_18.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({
         ...{ class: "section-title" },
     });
@@ -210,24 +256,21 @@ if (__VLS_ctx.modal.open) {
             } },
         ...{ class: "btn btn-secondary" },
     });
+    var __VLS_18;
 }
 var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['page-stack']} */ ;
 /** @type {__VLS_StyleScopedClasses['fade-up']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['section-title']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['state']} */ ;
 /** @type {__VLS_StyleScopedClasses['loading']} */ ;
 /** @type {__VLS_StyleScopedClasses['center-loading']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['state']} */ ;
 /** @type {__VLS_StyleScopedClasses['error']} */ ;
 /** @type {__VLS_StyleScopedClasses['plan-grid']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['plan-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['plan-head']} */ ;
@@ -243,7 +286,6 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['btn']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn-secondary']} */ ;
 /** @type {__VLS_StyleScopedClasses['modal-mask']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['modal-panel']} */ ;
 /** @type {__VLS_StyleScopedClasses['section-title']} */ ;
@@ -254,6 +296,7 @@ var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
+            AppGlassSurface: AppGlassSurface,
             AppShell: AppShell,
             plans: plans,
             modal: modal,

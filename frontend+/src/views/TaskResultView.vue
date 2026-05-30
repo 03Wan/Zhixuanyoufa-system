@@ -1,7 +1,7 @@
 ﻿<template>
   <AppShell title="检测结果">
     <section class="page-stack fade-up">
-      <section class="glass card result-list-card">
+      <AppGlassSurface as="section" class="card result-list-card">
         <div class="row-between">
           <h2 class="section-title">检测结果中心</h2>
           <button class="btn btn-secondary" :disabled="loading.tasks" @click="loadTasks">刷新任务</button>
@@ -54,17 +54,17 @@
         </div>
         <div v-if="showTaskList && !loading.tasks && filteredTasks.length === 0" class="state">暂无可展示任务</div>
         <p v-if="error" class="error-text">{{ error }}</p>
-      </section>
+      </AppGlassSurface>
 
-      <section v-if="selectedTaskId && noResult" class="glass card">
+      <AppGlassSurface as="section" v-if="selectedTaskId && noResult" class="card">
         <p class="warn-text">该任务尚未检测，请先执行检测。</p>
         <button class="btn btn-primary" :disabled="loading.detect" @click="reDetect">
           {{ loading.detect ? '检测中...' : '开始检测' }}
         </button>
-      </section>
+      </AppGlassSurface>
 
       <template v-if="selectedTaskId && taskMeta && result && !showTaskList">
-        <section class="glass card">
+        <AppGlassSurface as="section" class="card">
           <h3>任务信息</h3>
           <div class="meta-grid">
             <div><span class="k">任务编号</span><strong>{{ taskMeta.taskNo || shortNo(taskMeta.id) }}</strong></div>
@@ -74,9 +74,9 @@
             <div><span class="k">市场</span><strong>{{ taskMeta.market || '-' }}</strong></div>
             <div><span class="k">目的</span><strong>{{ taskMeta.purpose || '-' }}</strong></div>
           </div>
-        </section>
+        </AppGlassSurface>
 
-        <section class="glass card">
+        <AppGlassSurface as="section" class="card">
           <h3>审核结论总览</h3>
           <div class="summary-strip">
             <div class="summary-item">
@@ -97,9 +97,9 @@
             </div>
           </div>
           <p class="summary-explain" v-if="result.explanation">{{ result.explanation }}</p>
-        </section>
+        </AppGlassSurface>
 
-        <section class="glass card">
+        <AppGlassSurface as="section" class="card">
           <div class="summary-grid">
             <article class="score-card">
               <p>综合分</p>
@@ -118,9 +118,9 @@
               <strong>{{ formatTime(result.detectedAt) }}</strong>
             </article>
           </div>
-        </section>
+        </AppGlassSurface>
 
-        <section class="glass card">
+        <AppGlassSurface as="section" class="card">
           <h3>维度分</h3>
           <div class="dimension-grid">
             <article class="dimension-card" v-for="item in dimensionItems" :key="item.key">
@@ -128,9 +128,9 @@
               <strong>{{ item.value }}</strong>
             </article>
           </div>
-        </section>
+        </AppGlassSurface>
 
-        <details class="glass card detail-block">
+        <AppGlassSurface as="details" class="card detail-block">
           <summary>问题定位（点击收起/展开）</summary>
           <div class="detail-body">
             <div v-if="riskItems.length === 0" class="state">未命中风险项</div>
@@ -157,9 +157,9 @@
               </table>
             </div>
           </div>
-        </details>
+        </AppGlassSurface>
 
-        <details class="glass card detail-block">
+        <AppGlassSurface as="details" class="card detail-block">
           <summary>解析结果（文本/图片）（点击收起/展开）</summary>
           <div class="detail-body">
             <div class="grid-2">
@@ -179,9 +179,9 @@
               </article>
             </div>
           </div>
-        </details>
+        </AppGlassSurface>
 
-        <details class="glass card detail-block">
+        <AppGlassSurface as="details" class="card detail-block">
           <summary>优化建议（点击收起/展开）</summary>
           <div class="detail-body">
             <div v-if="suggestionItems.length === 0" class="state">暂无优化建议</div>
@@ -193,9 +193,9 @@
               </article>
             </div>
           </div>
-        </details>
+        </AppGlassSurface>
 
-        <details class="glass card detail-block">
+        <AppGlassSurface as="details" class="card detail-block">
           <summary>结构化改写结果（点击收起/展开）</summary>
           <div class="detail-body">
             <div class="suggestion-list">
@@ -225,9 +225,9 @@
               </article>
             </div>
           </div>
-        </details>
+        </AppGlassSurface>
 
-        <section class="glass card">
+        <AppGlassSurface as="section" class="card">
           <div class="actions-row">
             <button class="btn btn-primary" :disabled="loading.report" @click="generateReport">
               {{ loading.report ? '生成中...' : '生成报告' }}
@@ -243,13 +243,15 @@
             <button class="btn btn-secondary" @click="downloadSuggestion">下载建议</button>
           </div>
           <p v-if="tip" class="tip-text">{{ tip }}</p>
-        </section>
+        </AppGlassSurface>
       </template>
     </section>
   </AppShell>
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import AppShell from '@/layouts/AppShell.vue';

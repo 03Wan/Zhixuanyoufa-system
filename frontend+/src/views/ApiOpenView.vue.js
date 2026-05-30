@@ -1,3 +1,4 @@
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, ref } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
 import { api } from '@/lib/api';
@@ -45,9 +46,17 @@ __VLS_2.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
     ...{ class: "page-stack fade-up" },
 });
-__VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-    ...{ class: "glass card" },
-});
+/** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+// @ts-ignore
+const __VLS_4 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+    as: "section",
+    ...{ class: "card" },
+}));
+const __VLS_5 = __VLS_4({
+    as: "section",
+    ...{ class: "card" },
+}, ...__VLS_functionalComponentArgsRest(__VLS_4));
+__VLS_6.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.h2, __VLS_intrinsicElements.h2)({
     ...{ class: "section-title" },
 });
@@ -92,10 +101,10 @@ else {
     });
     (__VLS_ctx.saving ? '提交中' : '提交API试点申请');
 }
+var __VLS_6;
 var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['page-stack']} */ ;
 /** @type {__VLS_StyleScopedClasses['fade-up']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['section-title']} */ ;
 /** @type {__VLS_StyleScopedClasses['state']} */ ;
@@ -110,6 +119,7 @@ var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
+            AppGlassSurface: AppGlassSurface,
             AppShell: AppShell,
             data: data,
             loading: loading,

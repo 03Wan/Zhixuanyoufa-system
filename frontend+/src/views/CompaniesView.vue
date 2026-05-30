@@ -1,7 +1,7 @@
 ﻿<template>
   <AppShell title="企业组织管理">
     <section class="page-stack fade-up">
-      <section class="glass card">
+      <AppGlassSurface as="section" class="card">
         <h2 class="section-title">企业组织管理</h2>
         <p class="text-muted">支持企业档案、成员与任务/报告关联查看，后续可扩展企业级权限编排。</p>
         <div class="grid-3">
@@ -25,9 +25,9 @@
           <label v-for="item in marketOptions" :key="item"><input type="checkbox" :value="item" v-model="form.targetMarkets" /> {{ item }}</label>
         </div>
         <div class="actions" style="margin-top:8px;"><button class="btn btn-primary" :disabled="saving" @click="create">{{ saving ? '保存中' : '新增企业' }}</button></div>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card">
+      <AppGlassSurface as="section" class="card">
         <div class="row-between"><h3>企业列表</h3><button class="btn btn-secondary" :disabled="loading" @click="load">{{ loading ? '刷新中' : '刷新' }}</button></div>
         <div v-if="loading" class="state loading center-loading">企业数据加载中</div>
         <table v-else class="table">
@@ -39,12 +39,14 @@
             </tr>
           </tbody>
         </table>
-      </section>
+      </AppGlassSurface>
     </section>
   </AppShell>
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, reactive, ref } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
 import { api, getFriendlyError } from '@/lib/api';

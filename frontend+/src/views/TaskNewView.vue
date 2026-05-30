@@ -1,7 +1,7 @@
 ﻿<template>
   <AppShell title="任务中心">
     <section class="page-stack fade-up">
-      <section class="glass card block">
+      <AppGlassSurface as="section" class="card block">
         <h2 class="section-title">创建检测任务</h2>
         <p class="tip-text">当前套餐：{{ quotaInfo.planName || '-' }}，剩余额度：{{ quotaInfo.quotaRemaining ?? 0 }}</p>
         <div class="grid-3">
@@ -21,9 +21,9 @@
             <select v-model="form.purpose"><option value="">请选择</option><option v-for="p in purposes" :key="p" :value="p">{{ p }}</option></select>
           </div>
         </div>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card block">
+      <AppGlassSurface as="section" class="card block">
         <h3>素材内容</h3>
         <div class="field"><label>标题 *</label><textarea rows="2" v-model.trim="form.title" /></div>
         <div class="field"><label>卖点 *</label><textarea rows="4" v-model.trim="form.sellingPoints" /></div>
@@ -57,41 +57,43 @@
             </div>
           </div>
         </div>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card">
+      <AppGlassSurface as="section" class="card">
         <div class="actions-row">
           <button class="btn btn-secondary" :disabled="loading" @click="saveDraft">保存草稿</button>
           <button class="btn btn-primary" :disabled="loading" @click="startDetect">开始检测</button>
           <button class="btn btn-secondary" :disabled="loading" @click="submitReview">提交人工复核</button>
         </div>
         <p v-if="tip" class="tip-text">{{ tip }}</p>
-      </section>
+      </AppGlassSurface>
     </section>
 
     <div v-if="detecting" class="detect-modal-mask">
-      <section class="detect-modal glass fade-up" role="dialog" aria-modal="true" aria-label="检测中">
+      <AppGlassSurface as="section" class="detect-modal fade-up" :radius="20" role="dialog" aria-modal="true" aria-label="检测中">
         <div class="state loading detect-loading">
           <p class="detect-title">正在检测中</p>
           <p class="detect-step">{{ detectStep }}</p>
         </div>
-      </section>
+      </AppGlassSurface>
     </div>
 
     <div v-if="errorModal.open" class="detect-modal-mask" @click.self="closeErrorModal">
-      <section class="detect-modal glass fade-up" role="dialog" aria-modal="true" aria-label="提示">
+      <AppGlassSurface as="section" class="detect-modal fade-up" :radius="20" role="dialog" aria-modal="true" aria-label="提示">
         <h3 class="modal-title">提示</h3>
         <p class="modal-msg">{{ errorModal.message }}</p>
         <div class="actions-row" style="justify-content:flex-end;">
           <button class="btn btn-primary" @click="closeErrorModal">我知道了</button>
         </div>
-      </section>
+      </AppGlassSurface>
     </div>
 
   </AppShell>
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import AppShell from '@/layouts/AppShell.vue';

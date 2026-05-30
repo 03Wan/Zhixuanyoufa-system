@@ -1,7 +1,7 @@
 ﻿<template>
   <AppShell title="报告中心">
     <section class="page-stack fade-up">
-      <section class="glass card block">
+      <AppGlassSurface as="section" class="card block">
         <h2 class="section-title">报告筛选</h2>
         <div class="filter-grid">
           <input class="input" v-model.trim="filters.keyword" placeholder="商品名称 / 任务编号" />
@@ -12,9 +12,9 @@
           <input class="input" type="date" v-model="filters.startDate" />
           <input class="input" type="date" v-model="filters.endDate" />
         </div>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card">
+      <AppGlassSurface as="section" class="card">
         <div class="row-between">
           <h2 class="section-title">报告列表</h2>
           <button class="btn btn-secondary" :disabled="loading" @click="load">{{ loading ? '刷新中' : '刷新报告' }}</button>
@@ -65,12 +65,14 @@
             <option value="json">JSON</option>
           </select>
         </div>
-      </section>
+      </AppGlassSurface>
     </section>
   </AppShell>
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import AppShell from '@/layouts/AppShell.vue';

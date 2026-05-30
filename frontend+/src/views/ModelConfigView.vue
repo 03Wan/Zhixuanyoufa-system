@@ -1,7 +1,7 @@
 ﻿<template>
   <AppShell title="模型配置">
     <section class="page-stack fade-up">
-      <section class="glass card block">
+      <AppGlassSurface as="section" class="card block">
         <div class="row-between">
           <div>
             <h2 class="section-title">大模型服务配置</h2>
@@ -27,12 +27,14 @@
         <div class="field"><label>API Key</label><input class="input" v-model.trim="form.apiKey" placeholder="sk-..." /></div>
         <div class="field"><label>模型名</label><input class="input" v-model.trim="form.modelName" placeholder="gpt5.5" /></div>
         <div class="actions"><button class="btn btn-primary" @click="save">保存配置</button></div>
-      </section>
+      </AppGlassSurface>
     </section>
   </AppShell>
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { reactive, ref } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
 import { notify } from '@/lib/dialog';

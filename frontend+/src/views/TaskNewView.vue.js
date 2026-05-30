@@ -1,3 +1,4 @@
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import AppShell from '@/layouts/AppShell.vue';
@@ -250,9 +251,17 @@ __VLS_2.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
     ...{ class: "page-stack fade-up" },
 });
-__VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-    ...{ class: "glass card block" },
-});
+/** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+// @ts-ignore
+const __VLS_4 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+    as: "section",
+    ...{ class: "card block" },
+}));
+const __VLS_5 = __VLS_4({
+    as: "section",
+    ...{ class: "card block" },
+}, ...__VLS_functionalComponentArgsRest(__VLS_4));
+__VLS_6.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.h2, __VLS_intrinsicElements.h2)({
     ...{ class: "section-title" },
 });
@@ -327,9 +336,18 @@ for (const [p] of __VLS_getVForSourceType((__VLS_ctx.purposes))) {
     });
     (p);
 }
-__VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-    ...{ class: "glass card block" },
-});
+var __VLS_6;
+/** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+// @ts-ignore
+const __VLS_7 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+    as: "section",
+    ...{ class: "card block" },
+}));
+const __VLS_8 = __VLS_7({
+    as: "section",
+    ...{ class: "card block" },
+}, ...__VLS_functionalComponentArgsRest(__VLS_7));
+__VLS_9.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "field" },
@@ -446,9 +464,18 @@ if (__VLS_ctx.localSceneImages.length) {
         });
     }
 }
-__VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-    ...{ class: "glass card" },
-});
+var __VLS_9;
+/** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+// @ts-ignore
+const __VLS_10 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+    as: "section",
+    ...{ class: "card" },
+}));
+const __VLS_11 = __VLS_10({
+    as: "section",
+    ...{ class: "card" },
+}, ...__VLS_functionalComponentArgsRest(__VLS_10));
+__VLS_12.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "actions-row" },
 });
@@ -473,16 +500,30 @@ if (__VLS_ctx.tip) {
     });
     (__VLS_ctx.tip);
 }
+var __VLS_12;
 if (__VLS_ctx.detecting) {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "detect-modal-mask" },
     });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "detect-modal glass fade-up" },
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_13 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "detect-modal fade-up" },
+        radius: (20),
         role: "dialog",
         'aria-modal': "true",
         'aria-label': "检测中",
-    });
+    }));
+    const __VLS_14 = __VLS_13({
+        as: "section",
+        ...{ class: "detect-modal fade-up" },
+        radius: (20),
+        role: "dialog",
+        'aria-modal': "true",
+        'aria-label': "检测中",
+    }, ...__VLS_functionalComponentArgsRest(__VLS_13));
+    __VLS_15.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "state loading detect-loading" },
     });
@@ -493,18 +534,32 @@ if (__VLS_ctx.detecting) {
         ...{ class: "detect-step" },
     });
     (__VLS_ctx.detectStep);
+    var __VLS_15;
 }
 if (__VLS_ctx.errorModal.open) {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ onClick: (__VLS_ctx.closeErrorModal) },
         ...{ class: "detect-modal-mask" },
     });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "detect-modal glass fade-up" },
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_16 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "detect-modal fade-up" },
+        radius: (20),
         role: "dialog",
         'aria-modal': "true",
         'aria-label': "提示",
-    });
+    }));
+    const __VLS_17 = __VLS_16({
+        as: "section",
+        ...{ class: "detect-modal fade-up" },
+        radius: (20),
+        role: "dialog",
+        'aria-modal': "true",
+        'aria-label': "提示",
+    }, ...__VLS_functionalComponentArgsRest(__VLS_16));
+    __VLS_18.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({
         ...{ class: "modal-title" },
     });
@@ -520,11 +575,11 @@ if (__VLS_ctx.errorModal.open) {
         ...{ onClick: (__VLS_ctx.closeErrorModal) },
         ...{ class: "btn btn-primary" },
     });
+    var __VLS_18;
 }
 var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['page-stack']} */ ;
 /** @type {__VLS_StyleScopedClasses['fade-up']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['block']} */ ;
 /** @type {__VLS_StyleScopedClasses['section-title']} */ ;
@@ -533,7 +588,6 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['input']} */ ;
 /** @type {__VLS_StyleScopedClasses['input']} */ ;
 /** @type {__VLS_StyleScopedClasses['input']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['block']} */ ;
 /** @type {__VLS_StyleScopedClasses['field']} */ ;
@@ -554,7 +608,6 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['input']} */ ;
 /** @type {__VLS_StyleScopedClasses['img-preview-list']} */ ;
 /** @type {__VLS_StyleScopedClasses['img-preview']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['actions-row']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn']} */ ;
@@ -566,7 +619,6 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['tip-text']} */ ;
 /** @type {__VLS_StyleScopedClasses['detect-modal-mask']} */ ;
 /** @type {__VLS_StyleScopedClasses['detect-modal']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['fade-up']} */ ;
 /** @type {__VLS_StyleScopedClasses['state']} */ ;
 /** @type {__VLS_StyleScopedClasses['loading']} */ ;
@@ -575,7 +627,6 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['detect-step']} */ ;
 /** @type {__VLS_StyleScopedClasses['detect-modal-mask']} */ ;
 /** @type {__VLS_StyleScopedClasses['detect-modal']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['fade-up']} */ ;
 /** @type {__VLS_StyleScopedClasses['modal-title']} */ ;
 /** @type {__VLS_StyleScopedClasses['modal-msg']} */ ;
@@ -586,6 +637,7 @@ var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
+            AppGlassSurface: AppGlassSurface,
             AppShell: AppShell,
             loading: loading,
             detecting: detecting,

@@ -1,6 +1,6 @@
 <template>
   <main class="page-stack fade-up">
-    <header class="glass card row-between">
+    <AppGlassSurface as="header" class="card row-between">
       <div>
         <h2 class="section-title">任务详情</h2>
         <p class="text-muted">任务编号：{{ detail.taskNo || detail.id || "-" }}</p>
@@ -8,12 +8,12 @@
       <div class="actions-row">
         <button class="btn btn-secondary" @click="goBack">返回任务中心</button>
       </div>
-    </header>
+    </AppGlassSurface>
 
-    <section v-if="loading.detail" class="glass card state loading">任务详情加载中</section>
-    <section v-else-if="error" class="glass card" style="color:#ef4444;">{{ error }}</section>
+    <AppGlassSurface as="section" v-if="loading.detail" class="card state loading">任务详情加载中</AppGlassSurface>
+    <AppGlassSurface as="section" v-else-if="error" class="card" style="color:#ef4444;">{{ error }}</AppGlassSurface>
     <template v-else>
-      <section class="glass card">
+      <AppGlassSurface as="section" class="card">
         <h3 style="margin-top:0;">商品基础信息</h3>
         <div class="grid-2">
           <div><label>商品名称</label><input class="input" v-model="detail.productName" :disabled="!isEditing" /></div>
@@ -23,9 +23,9 @@
           <div><label>发布目的</label><input class="input" v-model="detail.purpose" :disabled="!isEditing" /></div>
           <div><label>当前状态</label><input class="input" :value="statusLabel(detail.status)" disabled /></div>
         </div>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card">
+      <AppGlassSurface as="section" class="card">
         <h3 style="margin-top:0;">文本素材</h3>
         <div class="page-stack">
           <div><label>商品标题</label><textarea rows="2" v-model="material.title" :disabled="!isEditing"></textarea></div>
@@ -33,9 +33,9 @@
           <div><label>详情页文案</label><textarea rows="5" v-model="material.detailText" :disabled="!isEditing"></textarea></div>
           <div><label>广告语</label><textarea rows="3" v-model="material.adText" :disabled="!isEditing"></textarea></div>
         </div>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card">
+      <AppGlassSurface as="section" class="card">
         <div class="row-between">
           <h3 style="margin:0;">图片素材</h3>
           <div class="actions-row">
@@ -57,9 +57,9 @@
             </div>
           </article>
         </div>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card row-between">
+      <AppGlassSurface as="section" class="card row-between">
         <div class="actions-row">
           <button class="btn btn-secondary" @click="toggleEdit">{{ isEditing ? "取消编辑" : "编辑任务" }}</button>
           <button v-if="isEditing" class="btn btn-primary" :disabled="loading.save" @click="saveAll">
@@ -75,9 +75,9 @@
             {{ loading.report ? "生成中..." : "生成报告" }}
           </button>
         </div>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card">
+      <AppGlassSurface as="section" class="card">
         <div class="row-between">
           <h3 style="margin:0;">素材版本记录</h3>
           <button class="btn btn-secondary" @click="saveVersion">保存新版本</button>
@@ -97,12 +97,14 @@
             </tbody>
           </table>
         </div>
-      </section>
+      </AppGlassSurface>
     </template>
   </main>
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { api, getFriendlyError } from "@/lib/api";

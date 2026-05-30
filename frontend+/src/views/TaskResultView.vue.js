@@ -1,3 +1,4 @@
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import AppShell from '@/layouts/AppShell.vue';
@@ -418,9 +419,17 @@ __VLS_2.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
     ...{ class: "page-stack fade-up" },
 });
-__VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-    ...{ class: "glass card result-list-card" },
-});
+/** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+// @ts-ignore
+const __VLS_4 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+    as: "section",
+    ...{ class: "card result-list-card" },
+}));
+const __VLS_5 = __VLS_4({
+    as: "section",
+    ...{ class: "card result-list-card" },
+}, ...__VLS_functionalComponentArgsRest(__VLS_4));
+__VLS_6.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "row-between" },
 });
@@ -538,10 +547,19 @@ if (__VLS_ctx.error) {
     });
     (__VLS_ctx.error);
 }
+var __VLS_6;
 if (__VLS_ctx.selectedTaskId && __VLS_ctx.noResult) {
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "glass card" },
-    });
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_7 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card" },
+    }));
+    const __VLS_8 = __VLS_7({
+        as: "section",
+        ...{ class: "card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_7));
+    __VLS_9.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({
         ...{ class: "warn-text" },
     });
@@ -551,11 +569,20 @@ if (__VLS_ctx.selectedTaskId && __VLS_ctx.noResult) {
         disabled: (__VLS_ctx.loading.detect),
     });
     (__VLS_ctx.loading.detect ? '检测中...' : '开始检测');
+    var __VLS_9;
 }
 if (__VLS_ctx.selectedTaskId && __VLS_ctx.taskMeta && __VLS_ctx.result && !__VLS_ctx.showTaskList) {
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "glass card" },
-    });
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_10 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card" },
+    }));
+    const __VLS_11 = __VLS_10({
+        as: "section",
+        ...{ class: "card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_10));
+    __VLS_12.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "meta-grid" },
@@ -596,9 +623,18 @@ if (__VLS_ctx.selectedTaskId && __VLS_ctx.taskMeta && __VLS_ctx.result && !__VLS
     });
     __VLS_asFunctionalElement(__VLS_intrinsicElements.strong, __VLS_intrinsicElements.strong)({});
     (__VLS_ctx.taskMeta.purpose || '-');
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "glass card" },
-    });
+    var __VLS_12;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_13 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card" },
+    }));
+    const __VLS_14 = __VLS_13({
+        as: "section",
+        ...{ class: "card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_13));
+    __VLS_15.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "summary-strip" },
@@ -637,9 +673,18 @@ if (__VLS_ctx.selectedTaskId && __VLS_ctx.taskMeta && __VLS_ctx.result && !__VLS
         });
         (__VLS_ctx.result.explanation);
     }
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "glass card" },
-    });
+    var __VLS_15;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_16 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card" },
+    }));
+    const __VLS_17 = __VLS_16({
+        as: "section",
+        ...{ class: "card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_16));
+    __VLS_18.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "summary-grid" },
     });
@@ -671,9 +716,18 @@ if (__VLS_ctx.selectedTaskId && __VLS_ctx.taskMeta && __VLS_ctx.result && !__VLS
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.strong, __VLS_intrinsicElements.strong)({});
     (__VLS_ctx.formatTime(__VLS_ctx.result.detectedAt));
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "glass card" },
-    });
+    var __VLS_18;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_19 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card" },
+    }));
+    const __VLS_20 = __VLS_19({
+        as: "section",
+        ...{ class: "card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_19));
+    __VLS_21.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "dimension-grid" },
@@ -688,9 +742,18 @@ if (__VLS_ctx.selectedTaskId && __VLS_ctx.taskMeta && __VLS_ctx.result && !__VLS
         __VLS_asFunctionalElement(__VLS_intrinsicElements.strong, __VLS_intrinsicElements.strong)({});
         (item.value);
     }
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.details, __VLS_intrinsicElements.details)({
-        ...{ class: "glass card detail-block" },
-    });
+    var __VLS_21;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_22 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "details",
+        ...{ class: "card detail-block" },
+    }));
+    const __VLS_23 = __VLS_22({
+        as: "details",
+        ...{ class: "card detail-block" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_22));
+    __VLS_24.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.summary, __VLS_intrinsicElements.summary)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "detail-body" },
@@ -731,9 +794,18 @@ if (__VLS_ctx.selectedTaskId && __VLS_ctx.taskMeta && __VLS_ctx.result && !__VLS
             (r.suggestion);
         }
     }
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.details, __VLS_intrinsicElements.details)({
-        ...{ class: "glass card detail-block" },
-    });
+    var __VLS_24;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_25 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "details",
+        ...{ class: "card detail-block" },
+    }));
+    const __VLS_26 = __VLS_25({
+        as: "details",
+        ...{ class: "card detail-block" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_25));
+    __VLS_27.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.summary, __VLS_intrinsicElements.summary)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "detail-body" },
@@ -773,9 +845,18 @@ if (__VLS_ctx.selectedTaskId && __VLS_ctx.taskMeta && __VLS_ctx.result && !__VLS
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.strong, __VLS_intrinsicElements.strong)({});
     ((__VLS_ctx.result.parseResult?.image?.risks || []).join('、') || '-');
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.details, __VLS_intrinsicElements.details)({
-        ...{ class: "glass card detail-block" },
-    });
+    var __VLS_27;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_28 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "details",
+        ...{ class: "card detail-block" },
+    }));
+    const __VLS_29 = __VLS_28({
+        as: "details",
+        ...{ class: "card detail-block" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_28));
+    __VLS_30.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.summary, __VLS_intrinsicElements.summary)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "detail-body" },
@@ -805,9 +886,18 @@ if (__VLS_ctx.selectedTaskId && __VLS_ctx.taskMeta && __VLS_ctx.result && !__VLS
             (s.reason);
         }
     }
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.details, __VLS_intrinsicElements.details)({
-        ...{ class: "glass card detail-block" },
-    });
+    var __VLS_30;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_31 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "details",
+        ...{ class: "card detail-block" },
+    }));
+    const __VLS_32 = __VLS_31({
+        as: "details",
+        ...{ class: "card detail-block" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_31));
+    __VLS_33.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.summary, __VLS_intrinsicElements.summary)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "detail-body" },
@@ -862,9 +952,18 @@ if (__VLS_ctx.selectedTaskId && __VLS_ctx.taskMeta && __VLS_ctx.result && !__VLS
         (item.style || '-');
         (item.text || '-');
     }
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "glass card" },
-    });
+    var __VLS_33;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_34 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card" },
+    }));
+    const __VLS_35 = __VLS_34({
+        as: "section",
+        ...{ class: "card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_34));
+    __VLS_36.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "actions-row" },
     });
@@ -916,11 +1015,11 @@ if (__VLS_ctx.selectedTaskId && __VLS_ctx.taskMeta && __VLS_ctx.result && !__VLS
         });
         (__VLS_ctx.tip);
     }
+    var __VLS_36;
 }
 var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['page-stack']} */ ;
 /** @type {__VLS_StyleScopedClasses['fade-up']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['result-list-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['row-between']} */ ;
@@ -949,12 +1048,10 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['btn-secondary']} */ ;
 /** @type {__VLS_StyleScopedClasses['state']} */ ;
 /** @type {__VLS_StyleScopedClasses['error-text']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['warn-text']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn-primary']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['meta-grid']} */ ;
 /** @type {__VLS_StyleScopedClasses['k']} */ ;
@@ -963,7 +1060,6 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['k']} */ ;
 /** @type {__VLS_StyleScopedClasses['k']} */ ;
 /** @type {__VLS_StyleScopedClasses['k']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['summary-strip']} */ ;
 /** @type {__VLS_StyleScopedClasses['summary-item']} */ ;
@@ -971,39 +1067,33 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['summary-item']} */ ;
 /** @type {__VLS_StyleScopedClasses['summary-item']} */ ;
 /** @type {__VLS_StyleScopedClasses['summary-explain']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['summary-grid']} */ ;
 /** @type {__VLS_StyleScopedClasses['score-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['meta-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['meta-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['meta-card']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['dimension-grid']} */ ;
 /** @type {__VLS_StyleScopedClasses['dimension-card']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['detail-block']} */ ;
 /** @type {__VLS_StyleScopedClasses['detail-body']} */ ;
 /** @type {__VLS_StyleScopedClasses['state']} */ ;
 /** @type {__VLS_StyleScopedClasses['table-wrap']} */ ;
 /** @type {__VLS_StyleScopedClasses['table']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['detail-block']} */ ;
 /** @type {__VLS_StyleScopedClasses['detail-body']} */ ;
 /** @type {__VLS_StyleScopedClasses['grid-2']} */ ;
 /** @type {__VLS_StyleScopedClasses['parse-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['parse-card']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['detail-block']} */ ;
 /** @type {__VLS_StyleScopedClasses['detail-body']} */ ;
 /** @type {__VLS_StyleScopedClasses['state']} */ ;
 /** @type {__VLS_StyleScopedClasses['suggestion-list']} */ ;
 /** @type {__VLS_StyleScopedClasses['sug-card']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['detail-block']} */ ;
 /** @type {__VLS_StyleScopedClasses['detail-body']} */ ;
@@ -1014,7 +1104,6 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['sug-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['sug-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['list-inline']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['actions-row']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn']} */ ;
@@ -1034,6 +1123,7 @@ var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
+            AppGlassSurface: AppGlassSurface,
             AppShell: AppShell,
             loading: loading,
             detectStep: detectStep,

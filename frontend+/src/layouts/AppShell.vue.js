@@ -1,3 +1,4 @@
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { House, BarChart3, ListTodo, ShieldCheck, ClipboardCheck, FileText, BookKey, Users, Logs, SlidersHorizontal, PanelLeftClose, PanelLeftOpen, LogOut, ChevronDown, ChevronRight } from "lucide-vue-next";
@@ -509,9 +510,17 @@ if (__VLS_ctx.dialog.open) {
             } },
         ...{ class: "modal-mask app-dialog-mask" },
     });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "glass card modal-panel app-dialog-panel" },
-    });
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_19 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card modal-panel app-dialog-panel" },
+    }));
+    const __VLS_20 = __VLS_19({
+        as: "section",
+        ...{ class: "card modal-panel app-dialog-panel" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_19));
+    __VLS_21.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({
         ...{ class: "section-title" },
     });
@@ -542,6 +551,7 @@ if (__VLS_ctx.dialog.open) {
         ...{ class: "btn btn-primary" },
     });
     (__VLS_ctx.dialog.kind === 'confirm' ? '确认' : '知道了');
+    var __VLS_21;
 }
 if (__VLS_ctx.toasts.length) {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
@@ -623,7 +633,7 @@ if (!__VLS_ctx.isEmbedded) {
         __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
             ...{ class: "workspace-pane" },
         });
-        var __VLS_19 = {};
+        var __VLS_22 = {};
     }
     for (const [tab] of __VLS_getVForSourceType((__VLS_ctx.embeddedTabs))) {
         __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
@@ -643,7 +653,7 @@ else {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
         ...{ class: "workspace-pane embedded-plain" },
     });
-    var __VLS_21 = {};
+    var __VLS_24 = {};
 }
 /** @type {__VLS_StyleScopedClasses['app-layout']} */ ;
 /** @type {__VLS_StyleScopedClasses['glass']} */ ;
@@ -670,7 +680,6 @@ else {
 /** @type {__VLS_StyleScopedClasses['version-badge']} */ ;
 /** @type {__VLS_StyleScopedClasses['modal-mask']} */ ;
 /** @type {__VLS_StyleScopedClasses['app-dialog-mask']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['modal-panel']} */ ;
 /** @type {__VLS_StyleScopedClasses['app-dialog-panel']} */ ;
@@ -701,11 +710,12 @@ else {
 /** @type {__VLS_StyleScopedClasses['workspace-pane']} */ ;
 /** @type {__VLS_StyleScopedClasses['embedded-plain']} */ ;
 // @ts-ignore
-var __VLS_20 = __VLS_19, __VLS_22 = __VLS_21;
+var __VLS_23 = __VLS_22, __VLS_25 = __VLS_24;
 var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
+            AppGlassSurface: AppGlassSurface,
             PanelLeftClose: PanelLeftClose,
             PanelLeftOpen: PanelLeftOpen,
             LogOut: LogOut,

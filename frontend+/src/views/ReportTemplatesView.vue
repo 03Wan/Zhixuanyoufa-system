@@ -1,7 +1,7 @@
 <template>
   <AppShell title="报告模板">
     <section class="page-stack fade-up">
-      <section class="glass card">
+      <AppGlassSurface as="section" class="card">
         <div class="row-between">
           <div>
             <h2 class="section-title">正式报告模板</h2>
@@ -29,11 +29,11 @@
             </tr>
           </tbody>
         </table>
-      </section>
+      </AppGlassSurface>
 
       <Teleport to="body">
         <div v-if="editor.open" class="modal-mask" @click.self="closeEditor">
-          <section class="glass card modal-panel template-modal">
+          <AppGlassSurface as="section" class="card modal-panel template-modal">
             <h3 class="section-title">{{ editor.id ? '编辑模板' : '新增模板' }}</h3>
             <div class="form-grid">
               <input class="input" v-model="editor.name" placeholder="模板名称" />
@@ -81,7 +81,7 @@
               <button class="btn btn-secondary" @click="closeEditor">取消</button>
               <button class="btn btn-primary" :disabled="saving" @click="saveTemplate">{{ saving ? '保存中' : '保存' }}</button>
             </div>
-          </section>
+          </AppGlassSurface>
         </div>
       </Teleport>
     </section>
@@ -89,6 +89,8 @@
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, reactive, ref } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
 import { api, getFriendlyError } from '@/lib/api';

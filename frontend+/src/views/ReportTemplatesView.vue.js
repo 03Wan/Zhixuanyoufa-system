@@ -1,3 +1,4 @@
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, reactive, ref } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
 import { api, getFriendlyError } from '@/lib/api';
@@ -169,9 +170,17 @@ __VLS_2.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
     ...{ class: "page-stack fade-up" },
 });
-__VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-    ...{ class: "glass card" },
-});
+/** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+// @ts-ignore
+const __VLS_4 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+    as: "section",
+    ...{ class: "card" },
+}));
+const __VLS_5 = __VLS_4({
+    as: "section",
+    ...{ class: "card" },
+}, ...__VLS_functionalComponentArgsRest(__VLS_4));
+__VLS_6.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "row-between" },
 });
@@ -248,24 +257,33 @@ else {
         });
     }
 }
-const __VLS_4 = {}.Teleport;
+var __VLS_6;
+const __VLS_7 = {}.Teleport;
 /** @type {[typeof __VLS_components.Teleport, typeof __VLS_components.Teleport, ]} */ ;
 // @ts-ignore
-const __VLS_5 = __VLS_asFunctionalComponent(__VLS_4, new __VLS_4({
+const __VLS_8 = __VLS_asFunctionalComponent(__VLS_7, new __VLS_7({
     to: "body",
 }));
-const __VLS_6 = __VLS_5({
+const __VLS_9 = __VLS_8({
     to: "body",
-}, ...__VLS_functionalComponentArgsRest(__VLS_5));
-__VLS_7.slots.default;
+}, ...__VLS_functionalComponentArgsRest(__VLS_8));
+__VLS_10.slots.default;
 if (__VLS_ctx.editor.open) {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ onClick: (__VLS_ctx.closeEditor) },
         ...{ class: "modal-mask" },
     });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "glass card modal-panel template-modal" },
-    });
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_11 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card modal-panel template-modal" },
+    }));
+    const __VLS_12 = __VLS_11({
+        as: "section",
+        ...{ class: "card modal-panel template-modal" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_11));
+    __VLS_13.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({
         ...{ class: "section-title" },
     });
@@ -378,12 +396,12 @@ if (__VLS_ctx.editor.open) {
         disabled: (__VLS_ctx.saving),
     });
     (__VLS_ctx.saving ? '保存中' : '保存');
+    var __VLS_13;
 }
-var __VLS_7;
+var __VLS_10;
 var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['page-stack']} */ ;
 /** @type {__VLS_StyleScopedClasses['fade-up']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['row-between']} */ ;
 /** @type {__VLS_StyleScopedClasses['section-title']} */ ;
@@ -405,7 +423,6 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['btn-secondary']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn-xs']} */ ;
 /** @type {__VLS_StyleScopedClasses['modal-mask']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['modal-panel']} */ ;
 /** @type {__VLS_StyleScopedClasses['template-modal']} */ ;
@@ -436,6 +453,7 @@ var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
+            AppGlassSurface: AppGlassSurface,
             AppShell: AppShell,
             presetSections: presetSections,
             rows: rows,

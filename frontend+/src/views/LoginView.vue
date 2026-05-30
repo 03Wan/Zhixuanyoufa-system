@@ -2,7 +2,7 @@
   <main class="auth-page fade-up">
     <div class="auth-bg"></div>
     <section class="auth-shell">
-      <div class="login-card glass">
+      <AppGlassSurface as="div" class="login-card" :radius="24">
         <div class="row-between">
           <div class="brand-mini">
             <div class="logo">智</div>
@@ -42,12 +42,13 @@
         </div>
 
         <p class="safe-note">数据安全 · 操作留痕 · 报告可追溯</p>
-      </div>
+      </AppGlassSurface>
     </section>
   </main>
 </template>
 
 <script setup lang="ts">
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import ThemeToggle from "@/components/ThemeToggle.vue";
@@ -127,9 +128,9 @@ async function submitReset() {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 12% 12%, rgba(14, 165, 233, .18), transparent 30%),
-    radial-gradient(circle at 88% 84%, rgba(37, 99, 235, .16), transparent 34%),
-    linear-gradient(145deg, #eff6ff, #dbeafe 55%, #c7d2fe);
+    radial-gradient(circle at 0% 10%, rgba(106, 206, 255, 0.22), transparent 36%),
+    radial-gradient(circle at 100% 0%, rgba(145, 133, 255, 0.2), transparent 40%),
+    linear-gradient(160deg, var(--bg-0), var(--bg-1) 58%, var(--bg-2));
 }
 .auth-shell {
   position: relative;
@@ -144,12 +145,9 @@ async function submitReset() {
 .login-card {
   width: 100%;
   border-radius: 24px;
-  border: 1px solid var(--border);
-  background: var(--card-strong);
   padding: clamp(18px, 1.5vw, 24px);
   display: grid;
   gap: 12px;
-  box-shadow: 0 18px 42px rgba(15, 23, 42, .12);
 }
 .brand-mini { display: inline-flex; align-items: center; gap: 8px; }
 .brand-mini strong { font-size: 18px; }
@@ -161,41 +159,18 @@ async function submitReset() {
   font-weight: 800;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, #2bb8ff, #2f63f3);
+  background: linear-gradient(135deg, var(--brand-0), var(--brand-1));
 }
-.login-card h3 { margin: 0; font-size: clamp(40px, 3vw, 56px); line-height: 1.05; }
+.login-card h3 { margin: 0; font-size: clamp(30px, 2.6vw, 40px); line-height: 1.1; }
 .login-card header p { margin: 4px 0 0; color: var(--muted); }
 .form-grid { display: grid; gap: 10px; }
-.err { margin: 0; color: #ef4444; font-size: 13px; }
+.err { margin: 0; color: var(--danger); font-size: 13px; }
 .hint { margin: 0; color: var(--brand-1); font-size: 13px; }
 .submit-btn { min-height: 48px; }
 .links { display: flex; justify-content: space-between; align-items: center; }
 .links a, .link-btn { color: var(--brand-1); font-weight: 700; border: 0; background: transparent; cursor: pointer; padding: 0; text-decoration: none; }
-.forgot-box { border: 1px solid var(--border); border-radius: 12px; background: var(--card); padding: 10px; display: grid; gap: 10px; }
+.forgot-box { border: 1px solid var(--border); border-radius: 12px; background: var(--card-strong); padding: 10px; display: grid; gap: 10px; }
 .safe-note { margin: 2px 0 0; color: var(--muted); text-align: center; font-size: 13px; }
-
-html.dark .auth-page .auth-bg {
-  background:
-    radial-gradient(circle at 12% 12%, rgba(37, 99, 235, .16), transparent 30%),
-    radial-gradient(circle at 88% 84%, rgba(30, 58, 138, .18), transparent 34%),
-    linear-gradient(145deg, #020817, #071327 55%, #0b1f3f) !important;
-}
-html.dark .auth-page .login-card {
-  background: rgba(15, 32, 58, .88);
-  border-color: rgba(120, 143, 180, .35);
-  box-shadow: 0 22px 46px rgba(2, 8, 23, .5);
-}
-html.dark .auth-page .brand-mini strong,
-html.dark .auth-page .login-card h3 { color: #e8eefb; }
-html.dark .auth-page .login-card header p,
-html.dark .auth-page .safe-note,
-html.dark .auth-page .hint { color: #9db0cf; }
-html.dark .auth-page .links a,
-html.dark .auth-page .link-btn { color: #60a5fa; }
-html.dark .auth-page .forgot-box {
-  background: rgba(12, 26, 48, .8);
-  border-color: rgba(120, 143, 180, .35);
-}
 
 @media (max-width: 760px) {
   .auth-shell { width: min(96vw, 560px); }

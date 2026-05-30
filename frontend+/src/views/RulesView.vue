@@ -1,7 +1,7 @@
 ﻿<template>
   <AppShell title="规则管理">
     <section class="page-stack fade-up">
-      <section class="glass card block">
+      <AppGlassSurface as="section" class="card block">
         <div class="row-between">
           <h2 class="section-title">规则列表</h2>
           <div class="actions">
@@ -37,11 +37,11 @@
           </table>
         </div>
         <p v-else class="empty">暂无规则数据</p>
-      </section>
+      </AppGlassSurface>
     </section>
 
     <div v-if="modal.type" class="modal-mask" @click.self="closeModal">
-      <section class="glass card modal-panel" v-if="modal.type === 'create' || modal.type === 'edit'">
+      <AppGlassSurface as="section" class="card modal-panel" v-if="modal.type === 'create' || modal.type === 'edit'">
         <h3 class="modal-title">{{ modal.type === 'create' ? '新增规则' : '编辑规则' }}</h3>
         <div class="form-grid">
           <div><label>名称</label><input class="input" v-model.trim="editing.form.name" placeholder="例如：绝对化用语风险" /></div>
@@ -57,9 +57,9 @@
           <button class="btn btn-primary" @click="saveEditing">保存</button>
           <button class="btn btn-secondary" @click="closeModal">取消</button>
         </div>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card modal-panel" v-else-if="modal.type === 'detail' && selectedRule">
+      <AppGlassSurface as="section" class="card modal-panel" v-else-if="modal.type === 'detail' && selectedRule">
         <h3 class="modal-title">规则详情</h3>
         <div class="rule-detail">
           <p><strong>名称：</strong>{{ selectedRule.name }}</p>
@@ -70,9 +70,9 @@
           <p><strong>修正建议：</strong>{{ asText(selectedRule.suggestion || selectedRule.description) }}</p>
         </div>
         <div class="actions"><button class="btn btn-secondary" @click="closeModal">关闭</button></div>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card modal-panel" v-else-if="modal.type === 'version' && selectedRule">
+      <AppGlassSurface as="section" class="card modal-panel" v-else-if="modal.type === 'version' && selectedRule">
         <h3 class="modal-title">版本记录：{{ selectedRule.name }}</h3>
         <div class="table-wrap" v-if="versions.length">
           <table class="table">
@@ -82,12 +82,14 @@
         </div>
         <p v-else class="empty">暂无版本记录</p>
         <div class="actions"><button class="btn btn-secondary" @click="closeModal">关闭</button></div>
-      </section>
+      </AppGlassSurface>
     </div>
   </AppShell>
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, ref } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
 import { api, getFriendlyError } from '@/lib/api';

@@ -1,31 +1,31 @@
 ﻿<template>
   <AppShell title="数据看板">
     <section class="page-stack fade-up">
-      <section class="glass card">
+      <AppGlassSurface as="section" class="card">
         <div class="row-between">
           <h2 class="section-title">数据分析看板</h2>
           <button class="btn btn-secondary" :disabled="loading" @click="loadData">
             {{ loading ? '刷新中' : '刷新看板' }}
           </button>
         </div>
-      </section>
+      </AppGlassSurface>
 
-      <section v-if="loading" class="glass card state loading center-loading">数据加载中</section>
-      <section v-else-if="error" class="glass card state error">{{ error }}</section>
+      <AppGlassSurface as="section" v-if="loading" class="card state loading center-loading">数据加载中</AppGlassSurface>
+      <AppGlassSurface as="section" v-else-if="error" class="card state error">{{ error }}</AppGlassSurface>
 
       <template v-else>
         <div class="grid-4">
-          <article class="glass card kpi"><p>今日检测任务</p><h3>{{ dashboard.metrics?.todayTaskCount || 0 }}</h3></article>
-          <article class="glass card kpi"><p>待人工复核</p><h3>{{ dashboard.metrics?.pendingReviewCount || 0 }}</h3></article>
-          <article class="glass card kpi"><p>高风险素材</p><h3>{{ dashboard.metrics?.highRiskCount || 0 }}</h3></article>
-          <article class="glass card kpi"><p>已生成报告</p><h3>{{ dashboard.metrics?.reportCount || 0 }}</h3></article>
+          <AppGlassSurface as="article" class="card kpi"><p>今日检测任务</p><h3>{{ dashboard.metrics?.todayTaskCount || 0 }}</h3></AppGlassSurface>
+          <AppGlassSurface as="article" class="card kpi"><p>待人工复核</p><h3>{{ dashboard.metrics?.pendingReviewCount || 0 }}</h3></AppGlassSurface>
+          <AppGlassSurface as="article" class="card kpi"><p>高风险素材</p><h3>{{ dashboard.metrics?.highRiskCount || 0 }}</h3></AppGlassSurface>
+          <AppGlassSurface as="article" class="card kpi"><p>已生成报告</p><h3>{{ dashboard.metrics?.reportCount || 0 }}</h3></AppGlassSurface>
         </div>
 
         <div class="charts-grid">
-          <section class="glass card chart-card"><h3>近 7 天检测趋势</h3><div ref="trendRef" class="chart"></div></section>
-          <section class="glass card chart-card"><h3>风险等级分布</h3><div ref="riskRef" class="chart"></div></section>
-          <section class="glass card chart-card"><h3>平台风险数量</h3><div ref="platformRef" class="chart"></div></section>
-          <section class="glass card chart-card"><h3>高频风险类型 Top5</h3><div ref="topRiskRef" class="chart"></div></section>
+          <AppGlassSurface as="section" class="card chart-card"><h3>近 7 天检测趋势</h3><div ref="trendRef" class="chart"></div></AppGlassSurface>
+          <AppGlassSurface as="section" class="card chart-card"><h3>风险等级分布</h3><div ref="riskRef" class="chart"></div></AppGlassSurface>
+          <AppGlassSurface as="section" class="card chart-card"><h3>平台风险数量</h3><div ref="platformRef" class="chart"></div></AppGlassSurface>
+          <AppGlassSurface as="section" class="card chart-card"><h3>高频风险类型 Top5</h3><div ref="topRiskRef" class="chart"></div></AppGlassSurface>
         </div>
 
       </template>
@@ -34,6 +34,8 @@
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { ECharts, ComposeOption } from 'echarts/core';
 import type { LineSeriesOption, BarSeriesOption, PieSeriesOption } from 'echarts/charts';

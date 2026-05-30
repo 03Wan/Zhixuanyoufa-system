@@ -1,3 +1,4 @@
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Archive, Globe, LogIn, MessageCircleQuestion, ScanSearch, Sparkles, Store, FileSearch, ShieldAlert, WandSparkles, FileCheck2, Upload, Bot, UserCheck, FolderArchive, CircleHelp, } from 'lucide-vue-next';
@@ -126,16 +127,6 @@ let __VLS_directives;
 /** @type {__VLS_StyleScopedClasses['brand-mini']} */ ;
 /** @type {__VLS_StyleScopedClasses['auth-modal']} */ ;
 /** @type {__VLS_StyleScopedClasses['switch-line']} */ ;
-/** @type {__VLS_StyleScopedClasses['public-bg']} */ ;
-/** @type {__VLS_StyleScopedClasses['dark']} */ ;
-/** @type {__VLS_StyleScopedClasses['nav']} */ ;
-/** @type {__VLS_StyleScopedClasses['dark']} */ ;
-/** @type {__VLS_StyleScopedClasses['hero']} */ ;
-/** @type {__VLS_StyleScopedClasses['dark']} */ ;
-/** @type {__VLS_StyleScopedClasses['main-panel']} */ ;
-/** @type {__VLS_StyleScopedClasses['dark']} */ ;
-/** @type {__VLS_StyleScopedClasses['auth-modal']} */ ;
-/** @type {__VLS_StyleScopedClasses['dark']} */ ;
 /** @type {__VLS_StyleScopedClasses['title-icon']} */ ;
 /** @type {__VLS_StyleScopedClasses['dark']} */ ;
 /** @type {__VLS_StyleScopedClasses['card-icon']} */ ;
@@ -209,7 +200,7 @@ const __VLS_5 = __VLS_4({
 }, ...__VLS_functionalComponentArgsRest(__VLS_4));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-    ...{ class: "hero" },
+    ...{ class: "hero glass" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({
     ...{ class: "eyebrow" },
@@ -229,26 +220,36 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.h2, __VLS_intrinsicElements.h2
 __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({
     ...{ class: "sub" },
 });
-__VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-    ...{ class: "main-panel glass" },
-});
+/** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+// @ts-ignore
+const __VLS_11 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+    as: "section",
+    ...{ class: "main-panel" },
+    radius: (28),
+}));
+const __VLS_12 = __VLS_11({
+    as: "section",
+    ...{ class: "main-panel" },
+    radius: (28),
+}, ...__VLS_functionalComponentArgsRest(__VLS_11));
+__VLS_13.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
     ...{ class: "panel-section" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({
     ...{ class: "section-title" },
 });
-const __VLS_11 = {}.ScanSearch;
+const __VLS_14 = {}.ScanSearch;
 /** @type {[typeof __VLS_components.ScanSearch, ]} */ ;
 // @ts-ignore
-const __VLS_12 = __VLS_asFunctionalComponent(__VLS_11, new __VLS_11({
+const __VLS_15 = __VLS_asFunctionalComponent(__VLS_14, new __VLS_14({
     ...{ class: "card-icon" },
     'aria-hidden': "true",
 }));
-const __VLS_13 = __VLS_12({
+const __VLS_16 = __VLS_15({
     ...{ class: "card-icon" },
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_12));
+}, ...__VLS_functionalComponentArgsRest(__VLS_15));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "grid-2" },
 });
@@ -258,19 +259,19 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElemen
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "item-head" },
 });
-const __VLS_15 = {}.FileSearch;
+const __VLS_18 = {}.FileSearch;
 /** @type {[typeof __VLS_components.FileSearch, ]} */ ;
 // @ts-ignore
-const __VLS_16 = __VLS_asFunctionalComponent(__VLS_15, new __VLS_15({
+const __VLS_19 = __VLS_asFunctionalComponent(__VLS_18, new __VLS_18({
     size: (16),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
 }));
-const __VLS_17 = __VLS_16({
+const __VLS_20 = __VLS_19({
     size: (16),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_16));
+}, ...__VLS_functionalComponentArgsRest(__VLS_19));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.h4, __VLS_intrinsicElements.h4)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElements.article)({
@@ -279,19 +280,19 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElemen
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "item-head" },
 });
-const __VLS_19 = {}.ShieldAlert;
+const __VLS_22 = {}.ShieldAlert;
 /** @type {[typeof __VLS_components.ShieldAlert, ]} */ ;
 // @ts-ignore
-const __VLS_20 = __VLS_asFunctionalComponent(__VLS_19, new __VLS_19({
+const __VLS_23 = __VLS_asFunctionalComponent(__VLS_22, new __VLS_22({
     size: (16),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
 }));
-const __VLS_21 = __VLS_20({
+const __VLS_24 = __VLS_23({
     size: (16),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_20));
+}, ...__VLS_functionalComponentArgsRest(__VLS_23));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.h4, __VLS_intrinsicElements.h4)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElements.article)({
@@ -300,19 +301,19 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElemen
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "item-head" },
 });
-const __VLS_23 = {}.WandSparkles;
+const __VLS_26 = {}.WandSparkles;
 /** @type {[typeof __VLS_components.WandSparkles, ]} */ ;
 // @ts-ignore
-const __VLS_24 = __VLS_asFunctionalComponent(__VLS_23, new __VLS_23({
+const __VLS_27 = __VLS_asFunctionalComponent(__VLS_26, new __VLS_26({
     size: (16),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
 }));
-const __VLS_25 = __VLS_24({
+const __VLS_28 = __VLS_27({
     size: (16),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_24));
+}, ...__VLS_functionalComponentArgsRest(__VLS_27));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.h4, __VLS_intrinsicElements.h4)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElements.article)({
@@ -321,19 +322,19 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElemen
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "item-head" },
 });
-const __VLS_27 = {}.FileCheck2;
+const __VLS_30 = {}.FileCheck2;
 /** @type {[typeof __VLS_components.FileCheck2, ]} */ ;
 // @ts-ignore
-const __VLS_28 = __VLS_asFunctionalComponent(__VLS_27, new __VLS_27({
+const __VLS_31 = __VLS_asFunctionalComponent(__VLS_30, new __VLS_30({
     size: (16),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
 }));
-const __VLS_29 = __VLS_28({
+const __VLS_32 = __VLS_31({
     size: (16),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_28));
+}, ...__VLS_functionalComponentArgsRest(__VLS_31));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.h4, __VLS_intrinsicElements.h4)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
@@ -342,17 +343,17 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElemen
 __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({
     ...{ class: "section-title" },
 });
-const __VLS_31 = {}.Archive;
+const __VLS_34 = {}.Archive;
 /** @type {[typeof __VLS_components.Archive, ]} */ ;
 // @ts-ignore
-const __VLS_32 = __VLS_asFunctionalComponent(__VLS_31, new __VLS_31({
+const __VLS_35 = __VLS_asFunctionalComponent(__VLS_34, new __VLS_34({
     ...{ class: "card-icon" },
     'aria-hidden': "true",
 }));
-const __VLS_33 = __VLS_32({
+const __VLS_36 = __VLS_35({
     ...{ class: "card-icon" },
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_32));
+}, ...__VLS_functionalComponentArgsRest(__VLS_35));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "steps" },
 });
@@ -362,19 +363,19 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.d
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "step-head" },
 });
-const __VLS_35 = {}.Upload;
+const __VLS_38 = {}.Upload;
 /** @type {[typeof __VLS_components.Upload, ]} */ ;
 // @ts-ignore
-const __VLS_36 = __VLS_asFunctionalComponent(__VLS_35, new __VLS_35({
+const __VLS_39 = __VLS_asFunctionalComponent(__VLS_38, new __VLS_38({
     size: (16),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
 }));
-const __VLS_37 = __VLS_36({
+const __VLS_40 = __VLS_39({
     size: (16),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_36));
+}, ...__VLS_functionalComponentArgsRest(__VLS_39));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.strong, __VLS_intrinsicElements.strong)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
@@ -384,19 +385,19 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.d
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "step-head" },
 });
-const __VLS_39 = {}.Bot;
+const __VLS_42 = {}.Bot;
 /** @type {[typeof __VLS_components.Bot, ]} */ ;
 // @ts-ignore
-const __VLS_40 = __VLS_asFunctionalComponent(__VLS_39, new __VLS_39({
+const __VLS_43 = __VLS_asFunctionalComponent(__VLS_42, new __VLS_42({
     size: (16),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
 }));
-const __VLS_41 = __VLS_40({
+const __VLS_44 = __VLS_43({
     size: (16),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_40));
+}, ...__VLS_functionalComponentArgsRest(__VLS_43));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.strong, __VLS_intrinsicElements.strong)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
@@ -406,19 +407,19 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.d
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "step-head" },
 });
-const __VLS_43 = {}.UserCheck;
+const __VLS_46 = {}.UserCheck;
 /** @type {[typeof __VLS_components.UserCheck, ]} */ ;
 // @ts-ignore
-const __VLS_44 = __VLS_asFunctionalComponent(__VLS_43, new __VLS_43({
+const __VLS_47 = __VLS_asFunctionalComponent(__VLS_46, new __VLS_46({
     size: (16),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
 }));
-const __VLS_45 = __VLS_44({
+const __VLS_48 = __VLS_47({
     size: (16),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_44));
+}, ...__VLS_functionalComponentArgsRest(__VLS_47));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.strong, __VLS_intrinsicElements.strong)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
@@ -428,19 +429,19 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.d
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "step-head" },
 });
-const __VLS_47 = {}.FolderArchive;
+const __VLS_50 = {}.FolderArchive;
 /** @type {[typeof __VLS_components.FolderArchive, ]} */ ;
 // @ts-ignore
-const __VLS_48 = __VLS_asFunctionalComponent(__VLS_47, new __VLS_47({
+const __VLS_51 = __VLS_asFunctionalComponent(__VLS_50, new __VLS_50({
     size: (16),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
 }));
-const __VLS_49 = __VLS_48({
+const __VLS_52 = __VLS_51({
     size: (16),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_48));
+}, ...__VLS_functionalComponentArgsRest(__VLS_51));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.strong, __VLS_intrinsicElements.strong)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
@@ -451,17 +452,17 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.d
 __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({
     ...{ class: "section-title" },
 });
-const __VLS_51 = {}.Store;
+const __VLS_54 = {}.Store;
 /** @type {[typeof __VLS_components.Store, ]} */ ;
 // @ts-ignore
-const __VLS_52 = __VLS_asFunctionalComponent(__VLS_51, new __VLS_51({
+const __VLS_55 = __VLS_asFunctionalComponent(__VLS_54, new __VLS_54({
     ...{ class: "card-icon" },
     'aria-hidden': "true",
 }));
-const __VLS_53 = __VLS_52({
+const __VLS_56 = __VLS_55({
     ...{ class: "card-icon" },
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_52));
+}, ...__VLS_functionalComponentArgsRest(__VLS_55));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({
     ...{ class: "platform-copy" },
 });
@@ -471,126 +472,126 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.d
 __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({
     ...{ class: "chip" },
 });
-const __VLS_55 = {}.Globe;
+const __VLS_58 = {}.Globe;
 /** @type {[typeof __VLS_components.Globe, ]} */ ;
 // @ts-ignore
-const __VLS_56 = __VLS_asFunctionalComponent(__VLS_55, new __VLS_55({
+const __VLS_59 = __VLS_asFunctionalComponent(__VLS_58, new __VLS_58({
     size: (14),
     'aria-hidden': "true",
 }));
-const __VLS_57 = __VLS_56({
+const __VLS_60 = __VLS_59({
     size: (14),
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_56));
+}, ...__VLS_functionalComponentArgsRest(__VLS_59));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({
     ...{ class: "chip" },
 });
-const __VLS_59 = {}.Globe;
+const __VLS_62 = {}.Globe;
 /** @type {[typeof __VLS_components.Globe, ]} */ ;
 // @ts-ignore
-const __VLS_60 = __VLS_asFunctionalComponent(__VLS_59, new __VLS_59({
+const __VLS_63 = __VLS_asFunctionalComponent(__VLS_62, new __VLS_62({
     size: (14),
     'aria-hidden': "true",
 }));
-const __VLS_61 = __VLS_60({
+const __VLS_64 = __VLS_63({
     size: (14),
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_60));
+}, ...__VLS_functionalComponentArgsRest(__VLS_63));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({
     ...{ class: "chip" },
 });
-const __VLS_63 = {}.Globe;
+const __VLS_66 = {}.Globe;
 /** @type {[typeof __VLS_components.Globe, ]} */ ;
 // @ts-ignore
-const __VLS_64 = __VLS_asFunctionalComponent(__VLS_63, new __VLS_63({
+const __VLS_67 = __VLS_asFunctionalComponent(__VLS_66, new __VLS_66({
     size: (14),
     'aria-hidden': "true",
 }));
-const __VLS_65 = __VLS_64({
+const __VLS_68 = __VLS_67({
     size: (14),
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_64));
+}, ...__VLS_functionalComponentArgsRest(__VLS_67));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({
     ...{ class: "chip" },
 });
-const __VLS_67 = {}.Globe;
+const __VLS_70 = {}.Globe;
 /** @type {[typeof __VLS_components.Globe, ]} */ ;
 // @ts-ignore
-const __VLS_68 = __VLS_asFunctionalComponent(__VLS_67, new __VLS_67({
+const __VLS_71 = __VLS_asFunctionalComponent(__VLS_70, new __VLS_70({
     size: (14),
     'aria-hidden': "true",
 }));
-const __VLS_69 = __VLS_68({
+const __VLS_72 = __VLS_71({
     size: (14),
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_68));
+}, ...__VLS_functionalComponentArgsRest(__VLS_71));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
     ...{ class: "panel-section" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({
     ...{ class: "section-title" },
 });
-const __VLS_71 = {}.MessageCircleQuestion;
+const __VLS_74 = {}.MessageCircleQuestion;
 /** @type {[typeof __VLS_components.MessageCircleQuestion, ]} */ ;
 // @ts-ignore
-const __VLS_72 = __VLS_asFunctionalComponent(__VLS_71, new __VLS_71({
+const __VLS_75 = __VLS_asFunctionalComponent(__VLS_74, new __VLS_74({
     ...{ class: "card-icon" },
     'aria-hidden': "true",
 }));
-const __VLS_73 = __VLS_72({
+const __VLS_76 = __VLS_75({
     ...{ class: "card-icon" },
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_72));
+}, ...__VLS_functionalComponentArgsRest(__VLS_75));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "faq-list faq" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.details, __VLS_intrinsicElements.details)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.summary, __VLS_intrinsicElements.summary)({});
-const __VLS_75 = {}.CircleHelp;
+const __VLS_78 = {}.CircleHelp;
 /** @type {[typeof __VLS_components.CircleHelp, ]} */ ;
 // @ts-ignore
-const __VLS_76 = __VLS_asFunctionalComponent(__VLS_75, new __VLS_75({
+const __VLS_79 = __VLS_asFunctionalComponent(__VLS_78, new __VLS_78({
     size: (14),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
 }));
-const __VLS_77 = __VLS_76({
+const __VLS_80 = __VLS_79({
     size: (14),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_76));
+}, ...__VLS_functionalComponentArgsRest(__VLS_79));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.details, __VLS_intrinsicElements.details)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.summary, __VLS_intrinsicElements.summary)({});
-const __VLS_79 = {}.CircleHelp;
+const __VLS_82 = {}.CircleHelp;
 /** @type {[typeof __VLS_components.CircleHelp, ]} */ ;
 // @ts-ignore
-const __VLS_80 = __VLS_asFunctionalComponent(__VLS_79, new __VLS_79({
+const __VLS_83 = __VLS_asFunctionalComponent(__VLS_82, new __VLS_82({
     size: (14),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
 }));
-const __VLS_81 = __VLS_80({
+const __VLS_84 = __VLS_83({
     size: (14),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_80));
+}, ...__VLS_functionalComponentArgsRest(__VLS_83));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.details, __VLS_intrinsicElements.details)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.summary, __VLS_intrinsicElements.summary)({});
-const __VLS_83 = {}.CircleHelp;
+const __VLS_86 = {}.CircleHelp;
 /** @type {[typeof __VLS_components.CircleHelp, ]} */ ;
 // @ts-ignore
-const __VLS_84 = __VLS_asFunctionalComponent(__VLS_83, new __VLS_83({
+const __VLS_87 = __VLS_asFunctionalComponent(__VLS_86, new __VLS_86({
     size: (14),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
 }));
-const __VLS_85 = __VLS_84({
+const __VLS_88 = __VLS_87({
     size: (14),
     ...{ class: "mini-icon" },
     'aria-hidden': "true",
-}, ...__VLS_functionalComponentArgsRest(__VLS_84));
+}, ...__VLS_functionalComponentArgsRest(__VLS_87));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.footer, __VLS_intrinsicElements.footer)({
     ...{ class: "panel-footer" },
@@ -601,16 +602,29 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)(
 __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({
     ...{ class: "footer-contact" },
 });
+var __VLS_13;
 if (__VLS_ctx.authModalOpen) {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ onClick: (__VLS_ctx.closeAuth) },
         ...{ class: "auth-modal-mask" },
     });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "auth-modal glass fade-up" },
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_90 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "auth-modal fade-up" },
+        radius: (24),
         role: "dialog",
         'aria-modal': "true",
-    });
+    }));
+    const __VLS_91 = __VLS_90({
+        as: "section",
+        ...{ class: "auth-modal fade-up" },
+        radius: (24),
+        role: "dialog",
+        'aria-modal': "true",
+    }, ...__VLS_functionalComponentArgsRest(__VLS_90));
+    __VLS_92.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "auth-head" },
     });
@@ -747,6 +761,7 @@ if (__VLS_ctx.authModalOpen) {
             type: "button",
         });
     }
+    var __VLS_92;
 }
 if (__VLS_ctx.comingSoon.open) {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
@@ -757,11 +772,23 @@ if (__VLS_ctx.comingSoon.open) {
             } },
         ...{ class: "auth-modal-mask" },
     });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "auth-modal glass fade-up" },
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_93 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "auth-modal fade-up" },
+        radius: (24),
         role: "dialog",
         'aria-modal': "true",
-    });
+    }));
+    const __VLS_94 = __VLS_93({
+        as: "section",
+        ...{ class: "auth-modal fade-up" },
+        radius: (24),
+        role: "dialog",
+        'aria-modal': "true",
+    }, ...__VLS_functionalComponentArgsRest(__VLS_93));
+    __VLS_95.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({
         ...{ style: {} },
     });
@@ -777,6 +804,7 @@ if (__VLS_ctx.comingSoon.open) {
             } },
         ...{ class: "btn btn-primary submit-btn" },
     });
+    var __VLS_95;
 }
 /** @type {__VLS_StyleScopedClasses['public-home']} */ ;
 /** @type {__VLS_StyleScopedClasses['public-bg']} */ ;
@@ -790,11 +818,11 @@ if (__VLS_ctx.comingSoon.open) {
 /** @type {__VLS_StyleScopedClasses['btn-primary']} */ ;
 /** @type {__VLS_StyleScopedClasses['icon-btn']} */ ;
 /** @type {__VLS_StyleScopedClasses['hero']} */ ;
+/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['eyebrow']} */ ;
 /** @type {__VLS_StyleScopedClasses['title-icon']} */ ;
 /** @type {__VLS_StyleScopedClasses['sub']} */ ;
 /** @type {__VLS_StyleScopedClasses['main-panel']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['panel-section']} */ ;
 /** @type {__VLS_StyleScopedClasses['section-title']} */ ;
 /** @type {__VLS_StyleScopedClasses['card-icon']} */ ;
@@ -850,7 +878,6 @@ if (__VLS_ctx.comingSoon.open) {
 /** @type {__VLS_StyleScopedClasses['footer-contact']} */ ;
 /** @type {__VLS_StyleScopedClasses['auth-modal-mask']} */ ;
 /** @type {__VLS_StyleScopedClasses['auth-modal']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['fade-up']} */ ;
 /** @type {__VLS_StyleScopedClasses['auth-head']} */ ;
 /** @type {__VLS_StyleScopedClasses['brand-mini']} */ ;
@@ -885,7 +912,6 @@ if (__VLS_ctx.comingSoon.open) {
 /** @type {__VLS_StyleScopedClasses['link-btn']} */ ;
 /** @type {__VLS_StyleScopedClasses['auth-modal-mask']} */ ;
 /** @type {__VLS_StyleScopedClasses['auth-modal']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['fade-up']} */ ;
 /** @type {__VLS_StyleScopedClasses['auth-sub']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn']} */ ;
@@ -895,6 +921,7 @@ var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
+            AppGlassSurface: AppGlassSurface,
             Archive: Archive,
             Globe: Globe,
             LogIn: LogIn,

@@ -6,7 +6,7 @@
         <button class="btn btn-secondary" @click="back">返回复核台</button>
       </div>
 
-      <section class="glass card block">
+      <AppGlassSurface as="section" class="card block">
         <h3>商品基础信息</h3>
         <div class="grid-2">
           <p><b>商品名称：</b>{{ detail.productName || '-' }}</p>
@@ -14,23 +14,23 @@
           <p><b>风险等级：</b>{{ detail.riskLevel || '-' }}</p>
           <p><b>当前状态：</b>{{ detail.status || '-' }}</p>
         </div>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card block">
+      <AppGlassSurface as="section" class="card block">
         <h3>原始素材内容</h3>
         <p><b>商品标题：</b>{{ detail.task?.materialContent?.title || '-' }}</p>
         <p><b>核心卖点：</b>{{ formatAsLine(detail.task?.materialContent?.sellingPoints) }}</p>
         <p><b>详情页文案：</b>{{ detail.task?.materialContent?.detailText || '-' }}</p>
         <p><b>广告语：</b>{{ detail.task?.materialContent?.adText || '-' }}</p>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card block">
+      <AppGlassSurface as="section" class="card block">
         <h3>系统评估结果</h3>
         <p class="score">{{ detail.result?.score ?? detail.result?.totalScore ?? '-' }} 分</p>
         <p>系统建议：{{ detail.systemDecision || detail.result?.decision || '-' }}</p>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card block">
+      <AppGlassSurface as="section" class="card block">
         <h3>历史处理记录</h3>
         <div v-if="!detail.history?.length" class="state">暂无处理记录。</div>
         <table v-else>
@@ -47,9 +47,9 @@
             </tr>
           </tbody>
         </table>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card block">
+      <AppGlassSurface as="section" class="card block">
         <h3>复核处理</h3>
         <div v-if="!canReview" class="state">当前账号仅可查看复核状态，无处理权限。</div>
         <div class="grid-2">
@@ -73,14 +73,16 @@
         <div class="actions">
           <button class="btn btn-primary" :disabled="submitting || !canReview" @click="submit">{{ submitting ? '提交中...' : '提交复核结果' }}</button>
         </div>
-      </section>
+      </AppGlassSurface>
     </section>
 
-    <section v-else class="glass card state">复核任务不存在或已删除。</section>
+    <AppGlassSurface as="section" v-else class="card state">复核任务不存在或已删除。</AppGlassSurface>
   </AppShell>
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import AppShell from '@/layouts/AppShell.vue';

@@ -1,7 +1,7 @@
 <template>
   <AppShell title="首页">
     <section class="page-stack fade-up">
-      <section class="glass card home-card">
+      <AppGlassSurface as="section" class="card home-card">
         <div class="row-between">
           <h2 class="section-title">首页工作台</h2>
           <button class="btn btn-secondary" :disabled="loading" @click="loadAll">刷新首页数据</button>
@@ -10,29 +10,29 @@
         <div v-else-if="error" class="state error">{{ error }}</div>
         <template v-else>
           <div class="kpi-grid">
-            <article class="kpi-card"><p>今日检测任务数</p><h3>{{ dashboard.metrics.todayTaskCount }}</h3></article>
-            <article class="kpi-card"><p>待复核任务数</p><h3>{{ dashboard.metrics.pendingReviewCount }}</h3></article>
-            <article class="kpi-card"><p>高风险素材数</p><h3>{{ dashboard.metrics.highRiskCount }}</h3></article>
-            <article class="kpi-card"><p>已生成报告数</p><h3>{{ dashboard.metrics.reportCount }}</h3></article>
+            <AppGlassSurface as="article" class="card kpi-card"><p>今日检测任务数</p><h3>{{ dashboard.metrics.todayTaskCount }}</h3></AppGlassSurface>
+            <AppGlassSurface as="article" class="card kpi-card"><p>待复核任务数</p><h3>{{ dashboard.metrics.pendingReviewCount }}</h3></AppGlassSurface>
+            <AppGlassSurface as="article" class="card kpi-card"><p>高风险素材数</p><h3>{{ dashboard.metrics.highRiskCount }}</h3></AppGlassSurface>
+            <AppGlassSurface as="article" class="card kpi-card"><p>已生成报告数</p><h3>{{ dashboard.metrics.reportCount }}</h3></AppGlassSurface>
           </div>
 
-          <section class="panel">
+          <AppGlassSurface as="section" class="card panel">
             <div class="row-between">
               <h3>套餐与额度</h3>
               <button class="btn btn-secondary" @click="goMyPlan">我的套餐</button>
             </div>
             <div class="kpi-grid">
-              <article class="kpi-card"><p>当前套餐</p><h3>{{ usageInfo.subscription?.plan?.name || '-' }}</h3></article>
-              <article class="kpi-card"><p>本月已检测</p><h3>{{ usageInfo.monthlyUsed ?? 0 }}</h3></article>
-              <article class="kpi-card"><p>剩余检测次数</p><h3>{{ usageInfo.quotaRemaining ?? 0 }}</h3></article>
-              <article class="kpi-card"><p>报告导出权限</p><h3>{{ usageInfo.privileges?.canExportReport ? '支持' : '受限' }}</h3></article>
-              <article class="kpi-card"><p>批量检测</p><h3>{{ usageInfo.privileges?.canBatchDetect ? '支持' : '受限' }}</h3></article>
-              <article class="kpi-card"><p>API接口状态</p><h3>{{ usageInfo.privileges?.canUseApi ? '试点可申请' : '未开通' }}</h3></article>
+              <AppGlassSurface as="article" class="card kpi-card"><p>当前套餐</p><h3>{{ usageInfo.subscription?.plan?.name || '-' }}</h3></AppGlassSurface>
+              <AppGlassSurface as="article" class="card kpi-card"><p>本月已检测</p><h3>{{ usageInfo.monthlyUsed ?? 0 }}</h3></AppGlassSurface>
+              <AppGlassSurface as="article" class="card kpi-card"><p>剩余检测次数</p><h3>{{ usageInfo.quotaRemaining ?? 0 }}</h3></AppGlassSurface>
+              <AppGlassSurface as="article" class="card kpi-card"><p>报告导出权限</p><h3>{{ usageInfo.privileges?.canExportReport ? '支持' : '受限' }}</h3></AppGlassSurface>
+              <AppGlassSurface as="article" class="card kpi-card"><p>批量检测</p><h3>{{ usageInfo.privileges?.canBatchDetect ? '支持' : '受限' }}</h3></AppGlassSurface>
+              <AppGlassSurface as="article" class="card kpi-card"><p>API接口状态</p><h3>{{ usageInfo.privileges?.canUseApi ? '试点可申请' : '未开通' }}</h3></AppGlassSurface>
             </div>
             <p class="text-muted" style="margin-top:8px;">企业版/定制版能力（批量检测、API接口、私有化部署）当前为商业化阶段规划，可提交试点申请。</p>
-          </section>
+          </AppGlassSurface>
 
-          <section class="panel">
+          <AppGlassSurface as="section" class="card panel">
             <div class="row-between">
               <h3>风险提醒</h3>
               <span class="text-muted">最近高风险任务</span>
@@ -52,10 +52,10 @@
                 </tbody>
               </table>
             </div>
-          </section>
+          </AppGlassSurface>
 
           <div class="grid-2">
-            <section class="panel">
+            <AppGlassSurface as="section" class="card panel">
               <div class="row-between">
                 <h3>最近任务列表</h3>
                 <button class="btn btn-secondary" @click="goTasks">进入任务中心</button>
@@ -78,9 +78,9 @@
                   </tbody>
                 </table>
               </div>
-            </section>
+            </AppGlassSurface>
 
-            <section class="panel">
+            <AppGlassSurface as="section" class="card panel">
               <div class="row-between">
                 <h3>最近报告列表</h3>
                 <button class="btn btn-secondary" @click="goReports">进入报告中心</button>
@@ -102,7 +102,7 @@
                   </tbody>
                 </table>
               </div>
-            </section>
+            </AppGlassSurface>
           </div>
 
           <section class="quick-grid">
@@ -112,12 +112,13 @@
             <button class="quick-card" @click="goRules"><h4>维护规则库</h4><p>维护规则、风险等级和状态</p></button>
           </section>
         </template>
-      </section>
+      </AppGlassSurface>
     </section>
   </AppShell>
 </template>
 
 <script setup lang="ts">
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import AppShell from "@/layouts/AppShell.vue";
@@ -213,10 +214,10 @@ onMounted(loadAll);
 <style scoped>
 .home-card { min-height: calc(100vh - 16px); display: flex; flex-direction: column; }
 .kpi-grid { display: grid; gap: 10px; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 8px; }
-.kpi-card { border: 1px solid var(--border); border-radius: 12px; background: var(--card-strong); padding: 10px; }
+.kpi-card { padding: 10px; border-radius: 12px; }
 .kpi-card p { margin: 0; color: var(--muted); }
 .kpi-card h3 { margin: 6px 0 0; font-size: clamp(28px, 2.2vw, 40px); }
-.panel { border: 1px solid var(--border); border-radius: 14px; background: var(--card-strong); padding: 10px; margin-top: 10px; }
+.panel { padding: 10px; margin-top: 10px; border-radius: 14px; }
 .grid-2 { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; margin-top: 10px; }
 .table-wrap { overflow: hidden; }
 .table { width: 100%; border-collapse: collapse; }
@@ -228,11 +229,11 @@ onMounted(loadAll);
 .tag-warning { background: rgba(245, 158, 11, .12); color: #b45309; border-color: rgba(245, 158, 11, .28); }
 .tag-danger { background: rgba(239, 68, 68, .12); color: #b91c1c; border-color: rgba(239, 68, 68, .28); }
 .quick-grid { display: grid; gap: 10px; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 10px; }
-.quick-card { border: 1px solid var(--border); border-radius: 14px; background: linear-gradient(135deg, rgba(37,99,235,.06), rgba(6,182,212,.08)); padding: 10px; text-align: left; cursor: pointer; transition: .2s ease; }
+.quick-card { border: 1px solid var(--border); border-radius: 14px; background: var(--card-strong); padding: 10px; text-align: left; cursor: pointer; transition: .2s ease; }
 .quick-card h4 { margin: 0 0 6px; font-size: clamp(15px, 1vw, 17px); }
 .quick-card p { margin: 0; color: var(--muted); }
 .state { border: 1px dashed var(--border); border-radius: 10px; padding: 10px; color: var(--muted); background: var(--card-strong); margin-top: 8px; }
-.state.error { color: #ef4444; }
+.state.error { color: var(--danger); }
 @media (max-width: 1200px) { .kpi-grid, .grid-2, .quick-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 760px) { .kpi-grid, .grid-2, .quick-grid { grid-template-columns: 1fr; } }
 </style>

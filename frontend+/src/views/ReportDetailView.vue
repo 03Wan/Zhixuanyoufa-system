@@ -1,13 +1,13 @@
 ﻿<template>
   <main class="report-page fade-up" id="report-print-area">
-    <section class="glass card no-print">
+    <AppGlassSurface as="section" class="card no-print">
       <button class="btn btn-secondary" @click="goBack">返回</button>
-    </section>
-    <section v-if="loading" class="glass card state loading">报告加载中</section>
-    <section v-else-if="error" class="glass card state error">{{ error }}</section>
+    </AppGlassSurface>
+    <AppGlassSurface as="section" v-if="loading" class="card state loading">报告加载中</AppGlassSurface>
+    <AppGlassSurface as="section" v-else-if="error" class="card state error">{{ error }}</AppGlassSurface>
 
     <template v-else-if="report">
-      <header class="glass card report-cover">
+      <AppGlassSurface as="header" class="card report-cover">
         <div>
           <h1>智选优发审核报告</h1>
           <p>系统名称：智选优发——商品素材评估与发布决策辅助系统</p>
@@ -17,9 +17,9 @@
           <p><strong>报告标题：</strong>{{ report.title || '-' }}</p>
           <p><strong>生成时间：</strong>{{ formatTime(report.createdAt) }}</p>
         </div>
-      </header>
+      </AppGlassSurface>
 
-      <section class="glass card report-section">
+      <AppGlassSurface as="section" class="card report-section">
         <h2>审核结论总览</h2>
         <div class="summary-strip">
           <div class="summary-item">
@@ -39,9 +39,9 @@
             <strong>{{ actionHint }}</strong>
           </div>
         </div>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card report-section">
+      <AppGlassSurface as="section" class="card report-section">
         <h2>任务基本信息</h2>
         <div class="kv-grid">
           <p><strong>商品名称：</strong>{{ report.task?.productName || '-' }}</p>
@@ -53,14 +53,14 @@
           <p><strong>素材数量：</strong>{{ report.materialCount ?? report.fileAssets?.length ?? 0 }}</p>
           <p><strong>人工复核：</strong>{{ report.hasManualReview ? '已复核' : '未复核' }}</p>
         </div>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card report-section">
+      <AppGlassSurface as="section" class="card report-section">
         <h2>商业化阶段说明</h2>
         <p>当前为演示版报告交付能力。企业版/定制版可升级客户报告归档、专属模板、API接口返回和私有化部署能力。</p>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card report-section">
+      <AppGlassSurface as="section" class="card report-section">
         <h2>综合检测结论</h2>
         <div class="result-grid">
           <article class="result-card">
@@ -80,9 +80,9 @@
             <p>{{ report.summary || result.explanation || '-' }}</p>
           </article>
         </div>
-      </section>
+      </AppGlassSurface>
 
-      <details class="glass card report-section detail-block" open>
+      <AppGlassSurface as="details" class="card report-section detail-block" open>
         <summary>维度评分明细（点击收起/展开）</summary>
         <div class="detail-body">
           <div class="dimension-grid">
@@ -93,9 +93,9 @@
             </article>
           </div>
         </div>
-      </details>
+      </AppGlassSurface>
 
-      <details class="glass card report-section detail-block">
+      <AppGlassSurface as="details" class="card report-section detail-block">
         <summary>命中问题明细（点击收起/展开）</summary>
         <div class="detail-body">
           <div v-if="issueRows.length === 0" class="state">未命中明显风险项</div>
@@ -124,9 +124,9 @@
             </table>
           </div>
         </div>
-      </details>
+      </AppGlassSurface>
 
-      <details class="glass card report-section detail-block">
+      <AppGlassSurface as="details" class="card report-section detail-block">
         <summary>优化建议与改写方案（点击收起/展开）</summary>
         <div class="detail-body">
           <div v-if="suggestionRows.length === 0" class="state">暂无优化建议</div>
@@ -166,9 +166,9 @@
             </div>
           </div>
         </div>
-      </details>
+      </AppGlassSurface>
 
-      <details class="glass card report-section detail-block">
+      <AppGlassSurface as="details" class="card report-section detail-block">
         <summary>解析证据（文本/图片）（点击收起/展开）</summary>
         <div class="detail-body">
           <div class="parse-grid">
@@ -188,9 +188,9 @@
             </article>
           </div>
         </div>
-      </details>
+      </AppGlassSurface>
 
-      <details class="glass card report-section detail-block">
+      <AppGlassSurface as="details" class="card report-section detail-block">
         <summary>处理记录时间线（点击收起/展开）</summary>
         <div class="detail-body">
           <div v-if="timelineRows.length === 0" class="state">暂无处理记录</div>
@@ -205,9 +205,9 @@
             </li>
           </ul>
         </div>
-      </details>
+      </AppGlassSurface>
 
-      <section class="glass card report-actions no-print">
+      <AppGlassSurface as="section" class="card report-actions no-print">
         <p class="download-tip">导出权限按演示版套餐控制：体验包仅在线查看，基础版及以上支持导出。</p>
         <select v-model="downloadFormat" class="download-select">
           <option value="pdf">PDF</option>
@@ -217,12 +217,14 @@
         <button class="btn btn-primary" :disabled="downloading" @click="download">{{ downloading ? '下载中...' : '下载报告' }}</button>
         <button class="btn btn-secondary" @click="print">打印</button>
         <p v-if="downloadTip" class="download-tip">{{ downloadTip }}</p>
-      </section>
+      </AppGlassSurface>
     </template>
   </main>
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { api, getFriendlyError } from '@/lib/api';

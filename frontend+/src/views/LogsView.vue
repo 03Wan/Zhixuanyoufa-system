@@ -9,7 +9,7 @@
         </div>
       </div>
 
-      <section class="glass card block">
+      <AppGlassSurface as="section" class="card block">
         <h3 style="margin: 0;">筛选条件</h3>
         <div class="filter-grid">
           <select v-model="filters.operator">
@@ -28,9 +28,9 @@
           <input class="input" type="date" v-model="filters.startDate" />
           <input class="input" type="date" v-model="filters.endDate" />
         </div>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card">
+      <AppGlassSurface as="section" class="card">
         <div v-if="loading" class="state loading">日志加载中</div>
         <div v-else-if="pagedRows.length === 0" class="state">暂无符合条件的日志</div>
         <div v-else class="table-wrap">
@@ -55,12 +55,14 @@
           <span>第 {{ page }} / {{ totalPages }} 页</span>
           <button class="btn btn-secondary" :disabled="page === totalPages" @click="page++">下一页</button>
         </div>
-      </section>
+      </AppGlassSurface>
     </section>
   </AppShell>
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
 import { api } from '@/lib/api';

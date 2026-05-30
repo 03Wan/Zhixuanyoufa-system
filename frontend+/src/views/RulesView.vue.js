@@ -1,3 +1,4 @@
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, ref } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
 import { api, getFriendlyError } from '@/lib/api';
@@ -77,9 +78,17 @@ __VLS_2.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
     ...{ class: "page-stack fade-up" },
 });
-__VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-    ...{ class: "glass card block" },
-});
+/** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+// @ts-ignore
+const __VLS_4 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+    as: "section",
+    ...{ class: "card block" },
+}));
+const __VLS_5 = __VLS_4({
+    as: "section",
+    ...{ class: "card block" },
+}, ...__VLS_functionalComponentArgsRest(__VLS_4));
+__VLS_6.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "row-between" },
 });
@@ -212,15 +221,24 @@ else {
         ...{ class: "empty" },
     });
 }
+var __VLS_6;
 if (__VLS_ctx.modal.type) {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ onClick: (__VLS_ctx.closeModal) },
         ...{ class: "modal-mask" },
     });
     if (__VLS_ctx.modal.type === 'create' || __VLS_ctx.modal.type === 'edit') {
-        __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-            ...{ class: "glass card modal-panel" },
-        });
+        /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+        // @ts-ignore
+        const __VLS_7 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+            as: "section",
+            ...{ class: "card modal-panel" },
+        }));
+        const __VLS_8 = __VLS_7({
+            as: "section",
+            ...{ class: "card modal-panel" },
+        }, ...__VLS_functionalComponentArgsRest(__VLS_7));
+        __VLS_9.slots.default;
         __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({
             ...{ class: "modal-title" },
         });
@@ -307,11 +325,20 @@ if (__VLS_ctx.modal.type) {
             ...{ onClick: (__VLS_ctx.closeModal) },
             ...{ class: "btn btn-secondary" },
         });
+        var __VLS_9;
     }
     else if (__VLS_ctx.modal.type === 'detail' && __VLS_ctx.selectedRule) {
-        __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-            ...{ class: "glass card modal-panel" },
-        });
+        /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+        // @ts-ignore
+        const __VLS_10 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+            as: "section",
+            ...{ class: "card modal-panel" },
+        }));
+        const __VLS_11 = __VLS_10({
+            as: "section",
+            ...{ class: "card modal-panel" },
+        }, ...__VLS_functionalComponentArgsRest(__VLS_10));
+        __VLS_12.slots.default;
         __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({
             ...{ class: "modal-title" },
         });
@@ -344,11 +371,20 @@ if (__VLS_ctx.modal.type) {
             ...{ onClick: (__VLS_ctx.closeModal) },
             ...{ class: "btn btn-secondary" },
         });
+        var __VLS_12;
     }
     else if (__VLS_ctx.modal.type === 'version' && __VLS_ctx.selectedRule) {
-        __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-            ...{ class: "glass card modal-panel" },
-        });
+        /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+        // @ts-ignore
+        const __VLS_13 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+            as: "section",
+            ...{ class: "card modal-panel" },
+        }));
+        const __VLS_14 = __VLS_13({
+            as: "section",
+            ...{ class: "card modal-panel" },
+        }, ...__VLS_functionalComponentArgsRest(__VLS_13));
+        __VLS_15.slots.default;
         __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({
             ...{ class: "modal-title" },
         });
@@ -408,12 +444,12 @@ if (__VLS_ctx.modal.type) {
             ...{ onClick: (__VLS_ctx.closeModal) },
             ...{ class: "btn btn-secondary" },
         });
+        var __VLS_15;
     }
 }
 var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['page-stack']} */ ;
 /** @type {__VLS_StyleScopedClasses['fade-up']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['block']} */ ;
 /** @type {__VLS_StyleScopedClasses['row-between']} */ ;
@@ -444,7 +480,6 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['btn-secondary']} */ ;
 /** @type {__VLS_StyleScopedClasses['empty']} */ ;
 /** @type {__VLS_StyleScopedClasses['modal-mask']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['modal-panel']} */ ;
 /** @type {__VLS_StyleScopedClasses['modal-title']} */ ;
@@ -462,7 +497,6 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['btn-primary']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn-secondary']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['modal-panel']} */ ;
 /** @type {__VLS_StyleScopedClasses['modal-title']} */ ;
@@ -470,7 +504,6 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['actions']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn-secondary']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['modal-panel']} */ ;
 /** @type {__VLS_StyleScopedClasses['modal-title']} */ ;
@@ -486,6 +519,7 @@ var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
+            AppGlassSurface: AppGlassSurface,
             AppShell: AppShell,
             rules: rules,
             selectedRule: selectedRule,

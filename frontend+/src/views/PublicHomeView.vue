@@ -19,13 +19,13 @@
         </div>
       </header>
 
-      <section class="hero">
+      <section class="hero glass">
         <p class="eyebrow"><Sparkles class="title-icon" aria-hidden="true" />跨境电商发布前智能评估</p>
         <h2>发布前一站式完成检测、评估与决策</h2>
         <p class="sub">覆盖标题、卖点、详情页、广告语和图片素材，输出风险等级、优化建议与发布决策。</p>
       </section>
 
-      <section class="main-panel glass">
+      <AppGlassSurface as="section" class="main-panel" :radius="28">
         <section class="panel-section">
           <h3 class="section-title"><ScanSearch class="card-icon" aria-hidden="true" />核心能力</h3>
           <div class="grid-2">
@@ -111,11 +111,11 @@
           <p class="footer-main">版权归智选优发团队所有@2026</p>
           <p class="footer-contact">联系我们：wangbo030127@gmail.com</p>
         </footer>
-      </section>
+      </AppGlassSurface>
     </section>
 
     <div v-if="authModalOpen" class="auth-modal-mask" @click.self="closeAuth">
-      <section class="auth-modal glass fade-up" role="dialog" aria-modal="true">
+      <AppGlassSurface as="section" class="auth-modal fade-up" :radius="24" role="dialog" aria-modal="true">
         <div class="auth-head">
           <div class="brand-mini"><div class="logo">智</div><strong>智选优发</strong></div>
           <button type="button" class="btn btn-secondary" @click="closeAuth">关闭</button>
@@ -151,19 +151,20 @@
           </form>
           <p class="switch-line"><span>已有账号？</span><button class="link-btn" type="button" @click="switchMode('login')">返回登录</button></p>
         </template>
-      </section>
+      </AppGlassSurface>
     </div>
     <div v-if="comingSoon.open" class="auth-modal-mask" @click.self="comingSoon.open=false">
-      <section class="auth-modal glass fade-up" role="dialog" aria-modal="true">
+      <AppGlassSurface as="section" class="auth-modal fade-up" :radius="24" role="dialog" aria-modal="true">
         <h3 style="font-size:32px;line-height:1.2;">提示</h3>
         <p class="auth-sub">{{ comingSoon.message }}</p>
         <button class="btn btn-primary submit-btn" @click="comingSoon.open=false">我知道了</button>
-      </section>
+      </AppGlassSurface>
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
@@ -295,20 +296,27 @@ async function submitRegister() {
 
 <style scoped>
 .public-home { min-height: 100vh; position: relative; padding: 12px; overflow-x: hidden; }
-.public-bg { position: absolute; inset: 0; background: radial-gradient(circle at 12% 10%, rgba(14,165,233,.18), transparent 28%), radial-gradient(circle at 88% 85%, rgba(59,130,246,.15), transparent 34%), linear-gradient(145deg, #eff6ff, #dbeafe 58%, #c7d2fe); }
+.public-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 0% 10%, rgba(106, 206, 255, 0.22), transparent 36%),
+    radial-gradient(circle at 100% 0%, rgba(145, 133, 255, 0.2), transparent 40%),
+    linear-gradient(160deg, var(--bg-0), var(--bg-1) 58%, var(--bg-2));
+}
 .landing { position: relative; z-index: 1; width: 100%; max-width: 1680px; margin: 0 auto; display: grid; gap: 14px; box-sizing: border-box; }
-.nav { padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; border: 1px solid var(--border); border-radius: 18px; background: var(--card-strong); }
+.nav { padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; border-radius: 18px; }
 .brand, .nav-actions, .icon-btn, .section-title, .chip { display: inline-flex; align-items: center; gap: 8px; }
-.logo { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-weight: 800; color: #fff; background: linear-gradient(135deg, #2bb8ff, #2f63f3); }
+.logo { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-weight: 800; color: #fff; background: linear-gradient(135deg, var(--brand-0), var(--brand-1)); }
 .brand h1 { margin: 0; font-size: 24px; line-height: 1.1; }
 .brand p, .sub { color: color-mix(in srgb, var(--text) 76%, #5b77a7 24%); font-size: 15px; }
-.hero { border: 1px solid var(--border); border-radius: 18px; background: var(--card-strong); padding: 16px; }
+.hero { border-radius: 18px; padding: 16px; }
 .eyebrow { margin: 0 0 8px; color: var(--brand-1); font-weight: 700; display: inline-flex; align-items: center; gap: 8px; }
 .title-icon { width: 21px; height: 21px; color: var(--brand-1); }
-.hero h2 { margin: 0; font-size: clamp(30px, 3vw, 44px); line-height: 1.1; letter-spacing: 0; color: color-mix(in srgb, var(--text) 92%, #0f2b5d 8%); }
+.hero h2 { margin: 0; font-size: clamp(26px, 2.5vw, 34px); line-height: 1.12; letter-spacing: 0; color: color-mix(in srgb, var(--text) 92%, #0f2b5d 8%); }
 .sub { margin: 10px 0 0; max-width: 980px; font-size: 18px; line-height: 1.45; }
 
-.main-panel { border: 1px solid var(--border); border-radius: 18px; background: var(--card-strong); padding: 18px; }
+.main-panel { border-radius: 18px; padding: 18px; }
 .panel-section { padding-top: 18px; margin-top: 18px; border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent); }
 .panel-section:first-child { margin-top: 0; padding-top: 0; border-top: none; }
 .grid-2, .steps, .chip-wrap, .two-col, .faq-list { display: grid; gap: 12px; }
@@ -316,15 +324,15 @@ async function submitRegister() {
 .two-col { grid-template-columns: 1fr 1fr; }
 .plain-item { padding: 10px 0; }
 .item-head { display: inline-flex; align-items: center; gap: 8px; }
-.plain-item h4 { margin: 0 0 8px; font-size: 28px; line-height: 1.16; color: color-mix(in srgb, var(--text) 92%, #123774 8%); }
+.plain-item h4 { margin: 0 0 8px; font-size: 22px; line-height: 1.16; color: color-mix(in srgb, var(--text) 92%, #123774 8%); }
 .plain-item p { margin: 0; color: color-mix(in srgb, var(--text) 78%, #5d79a9 22%); font-size: 16px; }
-.section-title { margin: 0 0 12px; font-size: clamp(30px, 2.6vw, 40px); line-height: 1.12; color: color-mix(in srgb, var(--text) 92%, #133971 8%); }
+.section-title { margin: 0 0 12px; font-size: clamp(22px, 1.8vw, 30px); line-height: 1.15; color: color-mix(in srgb, var(--text) 92%, #133971 8%); }
 .card-icon { width: 19px; height: 19px; color: var(--brand-1); }
 .mini-icon { color: var(--brand-1); flex: 0 0 auto; }
 .step { border: 1px dashed var(--border); border-radius: 12px; padding: 14px; display: grid; gap: 8px; }
 .step-head { display: inline-flex; align-items: center; gap: 8px; }
 .step span { color: var(--brand-1); font-weight: 800; font-size: 38px; line-height: 1; }
-.step strong { font-size: 28px; line-height: 1.1; letter-spacing: 0; color: color-mix(in srgb, var(--text) 92%, #123c7e 8%); }
+.step strong { font-size: 22px; line-height: 1.1; letter-spacing: 0; color: color-mix(in srgb, var(--text) 92%, #123c7e 8%); }
 .step p { margin: 4px 0 0; color: color-mix(in srgb, var(--text) 76%, #6180ad 24%); font-size: 15px; line-height: 1.42; }
 .chip { border: 1px dashed var(--border); border-radius: 999px; padding: 10px 14px; justify-content: center; font-size: 16px; font-weight: 700; }
 .platform-copy { margin: 0 0 10px; color: color-mix(in srgb, var(--text) 76%, #5e7ba8 24%); font-size: 16px; line-height: 1.55; }
@@ -338,11 +346,11 @@ async function submitRegister() {
 .panel-footer p { margin: 0; color: color-mix(in srgb, var(--text) 60%, #7f98be 40%); }
 
 .auth-modal-mask { position: fixed; inset: 0; z-index: 40; background: rgba(15,23,42,.44); display: grid; place-items: center; padding: 20px; }
-.auth-modal { width: min(760px, calc(100vw - 40px)); border-radius: 24px; border: 1px solid var(--border); background: var(--card-strong); box-shadow: 0 24px 60px rgba(15,23,42,.24); padding: 20px; display: grid; gap: 12px; }
+.auth-modal { width: min(760px, calc(100vw - 40px)); border-radius: 24px; padding: 20px; display: grid; gap: 12px; }
 .auth-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .brand-mini { display: inline-flex; align-items: center; gap: 10px; }
 .brand-mini strong { font-size: 32px; line-height: 1; }
-.auth-modal h3 { margin: 0; font-size: clamp(36px, 4vw, 56px); line-height: 1.05; }
+.auth-modal h3 { margin: 0; font-size: clamp(28px, 2.8vw, 40px); line-height: 1.1; }
 .auth-sub, .switch-line { margin: 0; color: color-mix(in srgb, var(--text) 70%, #5e7da9 30%); font-size: 17px; }
 .form-grid { display: grid; gap: 10px; }
 .submit-btn { min-height: 48px; }
@@ -350,8 +358,6 @@ async function submitRegister() {
 .link-btn { color: var(--brand-1); font-weight: 700; background: transparent; border: 0; cursor: pointer; padding: 0; }
 .err { margin: 0; color: #d12e2e; font-weight: 700; }
 
-html.dark .public-bg { background: radial-gradient(circle at 12% 10%, rgba(37,99,235,.16), transparent 30%), radial-gradient(circle at 88% 85%, rgba(30,58,138,.18), transparent 34%), linear-gradient(145deg, #020817, #071327 56%, #0b1f3f); }
-html.dark .nav, html.dark .hero, html.dark .main-panel, html.dark .auth-modal { background: rgba(15, 32, 58, .84); border-color: rgba(120, 143, 180, .35); }
 html.dark .title-icon, html.dark .card-icon, html.dark .mini-icon { color: #60a5fa; }
 html.dark .auth-modal-mask { background: rgba(2, 8, 23, .6); }
 

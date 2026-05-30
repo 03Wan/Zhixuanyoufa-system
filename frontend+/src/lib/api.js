@@ -51,6 +51,17 @@ function endGlobalLoading() {
 function nowIso() {
     return new Date().toISOString();
 }
+let mockRuntimeClockMs = Date.now() - 1000 * 60 * 30;
+let mockSerial = 1000;
+function nextMockIso(stepMs) {
+    const delta = stepMs ?? (45000 + Math.floor(Math.random() * 210000));
+    mockRuntimeClockMs += Math.max(1000, delta);
+    return new Date(mockRuntimeClockMs).toISOString();
+}
+function nextMockNo(prefix) {
+    mockSerial += 1;
+    return `${prefix}-${Date.now()}-${String(mockSerial).padStart(4, '0')}`;
+}
 function makeId(prefix) {
     return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 }
@@ -172,128 +183,489 @@ function seedDetection(score, riskLevel, decision) {
         explanation,
     };
 }
+const MOCK_SEED_CONFIG = {
+    seed: 20260530,
+    days: 90,
+    taskCount: 54,
+    reportCount: 32,
+    reviewCount: 12,
+    logCount: 180,
+    batchCount: 6,
+    materialVersionCount: 40,
+    peakWindows: [
+        { startDay: 22, length: 7, factor: 1.7 },
+        { startDay: 58, length: 7, factor: 1.7 },
+    ],
+};
+function createSeededRandom(seed) {
+    let state = seed % 2147483647;
+    if (state <= 0)
+        state += 2147483646;
+    return () => {
+        state = (state * 16807) % 2147483647;
+        return (state - 1) / 2147483646;
+    };
+}
+function shuffleWithRandom(list, random) {
+    const arr = [...list];
+    for (let i = arr.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+function buildPoolFromCounts(counts) {
+    const pool = [];
+    Object.keys(counts).forEach((key) => {
+        const n = counts[key];
+        for (let i = 0; i < n; i += 1)
+            pool.push(key);
+    });
+    return pool;
+}
+function weightedPickIndex(weights, random) {
+    const total = weights.reduce((sum, x) => sum + x, 0);
+    let r = random() * total;
+    for (let i = 0; i < weights.length; i += 1) {
+        r -= weights[i];
+        if (r <= 0)
+            return i;
+    }
+    return weights.length - 1;
+}
+function buildMockTimeline(config, random) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const start = new Date(today);
+    start.setDate(today.getDate() - (config.days - 1));
+    const points = [];
+    for (let i = 0; i < config.days; i += 1) {
+        const d = new Date(start);
+        d.setDate(start.getDate() + i);
+        const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+        let weight = isWeekend ? 0.76 : 1.08;
+        weight += random() * 0.42;
+        for (const peak of config.peakWindows) {
+            if (i >= peak.startDay && i < peak.startDay + peak.length) {
+                weight *= peak.factor;
+            }
+        }
+        points.push({ dayIndex: i, date: d, weight });
+    }
+    return points;
+}
+function buildMockTasks(config, timeline, random) {
+    const statusCounts = {
+        DRAFT: 6,
+        PENDING_DETECTION: 7,
+        DETECTING: 3,
+        COMPLETED: 24,
+        REPORTED: 8,
+        REVIEW_REQUIRED: 6,
+    };
+    const platformCounts = {
+        Amazon: 19,
+        'TikTok Shop': 11,
+        Shopee: 11,
+        Lazada: 5,
+        eBay: 4,
+        Temu: 4,
+    };
+    const marketCounts = {
+        欧美: 22,
+        东南亚: 16,
+        中东: 11,
+        拉美: 5,
+    };
+    const riskCounts = {
+        低风险: 17,
+        中风险: 14,
+        高风险: 8,
+        严重风险: 2,
+    };
+    const statusPool = shuffleWithRandom(buildPoolFromCounts(statusCounts), random);
+    const platformPool = shuffleWithRandom(buildPoolFromCounts(platformCounts), random);
+    const marketPool = shuffleWithRandom(buildPoolFromCounts(marketCounts), random);
+    const categories = ['家居用品', '3C电子', '美妆个护', '运动户外', '母婴用品', '宠物用品', '食品饮料', '服饰配件'];
+    const purposes = ['上架前审核', '广告投放前审核', '活动素材审核', '新品发布前审核'];
+    const productBase = ['便携榨汁杯', '蓝牙降噪耳机', '防晒喷雾', '瑜伽弹力带', '婴儿湿巾', '宠物牵引绳', '速食燕麦杯', '防水登山包', '磁吸充电宝', '保温运动水壶'];
+    const riskMap = {
+        低风险: { min: 86, max: 96, decision: '可发布' },
+        中风险: { min: 72, max: 84, decision: '优化后发布' },
+        高风险: { min: 56, max: 69, decision: '人工复核' },
+        严重风险: { min: 40, max: 49, decision: '暂缓发布' },
+    };
+    const riskPool = shuffleWithRandom(buildPoolFromCounts(riskCounts), random);
+    const weights = timeline.map((x) => x.weight);
+    const allocatedDayIndex = [];
+    for (let i = 0; i < config.taskCount; i += 1) {
+        allocatedDayIndex.push(weightedPickIndex(weights, random));
+    }
+    const recentOffsets = [0, 1, 2, 3, 4, 5, 6, 2];
+    recentOffsets.forEach((offset, idx) => {
+        if (idx < allocatedDayIndex.length) {
+            allocatedDayIndex[idx] = timeline.length - 1 - offset;
+        }
+    });
+    const tasks = [];
+    let riskCursor = 0;
+    for (let i = 0; i < config.taskCount; i += 1) {
+        const status = statusPool[i];
+        const platform = platformPool[i];
+        const market = marketPool[i];
+        const productName = `${productBase[i % productBase.length]} 第${Math.floor(i / productBase.length) + 1}批`;
+        const category = categories[i % categories.length];
+        const day = timeline[allocatedDayIndex[i]];
+        const created = new Date(day.date);
+        created.setHours(8 + Math.floor(random() * 10), Math.floor(random() * 60), Math.floor(random() * 60), 0);
+        const updated = new Date(created);
+        updated.setHours(updated.getHours() + 4 + Math.floor(random() * 48));
+        const materialKeyword = ['高转速', '食品级', '轻量化', '多场景', '快充', '低延迟', '防泼水', '高回弹'][i % 8];
+        const task = {
+            id: `task-seed-90d-${String(i + 1).padStart(3, '0')}`,
+            taskNo: `TSK-DEMO-${String(1001 + i).padStart(4, '0')}`,
+            sku: `SKU-DEMO-${String(1001 + i).padStart(4, '0')}`,
+            productName,
+            category,
+            platform,
+            market,
+            purpose: purposes[i % purposes.length],
+            status,
+            createdAt: created.toISOString(),
+            updatedAt: updated.toISOString(),
+            materialContent: {
+                title: `${productName} ${materialKeyword}升级款`,
+                sellingPoints: [`${materialKeyword}核心卖点`, '本土化表达优化', '多平台合规表达'],
+                detailText: `面向${market}市场，突出${materialKeyword}与使用场景，适配${platform}素材规范。`,
+                adText: `围绕${productName}的核心卖点进行合规传播，避免夸张承诺。`,
+                imageUrls: [`mock://img/${1001 + i}-main.jpg`, `mock://img/${1001 + i}-scene.jpg`],
+            },
+        };
+        if (['COMPLETED', 'REPORTED', 'REVIEW_REQUIRED', 'DETECTING'].includes(status)) {
+            const riskLevel = riskPool[riskCursor] || '中风险';
+            riskCursor += 1;
+            const riskRule = riskMap[riskLevel];
+            const score = riskRule.min + Math.floor(random() * (riskRule.max - riskRule.min + 1));
+            const detection = seedDetection(score, riskLevel, riskRule.decision);
+            detection.detectedAt = new Date(updated.getTime() - Math.floor(random() * 3) * 3600 * 1000).toISOString();
+            detection.matchedRules = [
+                {
+                    name: `${platform} 合规模板规则`,
+                    position: 'title',
+                    riskLevel,
+                    description: '检测到营销表达与平台规范存在偏差。',
+                    suggestion: '使用可验证、可量化的中性表达。',
+                },
+                {
+                    name: `${market} 本土化语义适配`,
+                    position: 'adText',
+                    riskLevel: riskLevel === '低风险' ? '中风险' : riskLevel,
+                    description: '关键词与目标市场消费语境匹配度存在提升空间。',
+                    suggestion: '根据目标市场语感重写短句，提升自然度。',
+                },
+            ];
+            detection.issues = [
+                {
+                    position: 'title',
+                    type: '平台合规',
+                    riskLevel,
+                    hitContent: riskLevel === '低风险' ? '高效体验' : '最佳效果',
+                    description: '文案存在敏感营销表达风险。',
+                    suggestion: '替换为事实描述与参数证据。',
+                },
+            ];
+            detection.suggestions = [
+                {
+                    before: '全网最佳效果，立即见效',
+                    after: '经内部测试表现稳定，适配常见使用场景',
+                    reason: '降低违规风险，提升可信度',
+                },
+            ];
+            task.detectionResult = detection;
+        }
+        tasks.push(task);
+    }
+    tasks.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
+    return tasks;
+}
+function buildMockReports(tasks, config, random) {
+    const candidates = tasks.filter((t) => ['COMPLETED', 'REPORTED'].includes(t.status) && t.detectionResult);
+    const picked = candidates.slice(0, config.reportCount);
+    return picked.map((task, idx) => {
+        const createdAt = new Date(task.updatedAt || task.createdAt);
+        createdAt.setHours(createdAt.getHours() + Math.floor(random() * 8));
+        const report = {
+            id: `report-seed-90d-${String(idx + 1).padStart(3, '0')}`,
+            taskId: task.id,
+            reportNo: `RPT-DEMO-${String(3001 + idx).padStart(4, '0')}`,
+            title: `${task.productName} 审核报告`,
+            summary: `综合评分 ${task.detectionResult.totalScore}，建议 ${task.detectionResult.decision}`,
+            createdAt: createdAt.toISOString(),
+            updatedAt: createdAt.toISOString(),
+            task,
+            result: {
+                ...task.detectionResult,
+                reportMeta: {
+                    scoreDimensions: task.detectionResult.dimensionScores,
+                    matchedRuleCount: (task.detectionResult.matchedRules || []).length,
+                    recommendationCount: (task.detectionResult.suggestions || []).length,
+                },
+            },
+            logs: [
+                { time: createdAt.toISOString(), action: '生成报告', operator: '系统' },
+                { time: new Date(createdAt.getTime() - 40 * 60 * 1000).toISOString(), action: '汇总检测结果', operator: '系统' },
+            ],
+        };
+        task.report = report;
+        return report;
+    });
+}
+function buildMockReviews(tasks, config, random) {
+    const highRiskTasks = tasks.filter((t) => ['高风险', '严重风险'].includes(t.detectionResult?.riskLevel || ''));
+    const mediumTasks = tasks.filter((t) => (t.detectionResult?.riskLevel || '') === '中风险');
+    const reviewCandidates = [...highRiskTasks, ...mediumTasks].slice(0, config.reviewCount);
+    const pendingCount = 5;
+    const reviewers = ['复核人员A', '复核人员B', '管理人员A', '企业管理员A'];
+    const processedDecisions = ['通过发布', '退回优化', '暂缓发布'];
+    const processedReasons = ['风险词已替换并补充证据', '需要补充参数说明与场景图', '合规风险仍高，建议暂缓投放'];
+    return reviewCandidates.map((task, idx) => {
+        const submittedAt = new Date(task.updatedAt || task.createdAt);
+        submittedAt.setHours(submittedAt.getHours() + 1 + Math.floor(random() * 8));
+        const assignee = reviewers[idx % reviewers.length];
+        const isPending = idx < pendingCount;
+        const decision = isPending ? null : processedDecisions[idx % processedDecisions.length];
+        const reason = isPending ? null : processedReasons[idx % processedReasons.length];
+        const processedAt = isPending ? null : new Date(submittedAt.getTime() + (8 + Math.floor(random() * 48)) * 3600 * 1000).toISOString();
+        const history = [{ time: submittedAt.toISOString(), action: '提交人工复核', note: '系统命中高风险规则，进入人工复核流转。' }];
+        if (!isPending) {
+            history.unshift({
+                time: processedAt || submittedAt.toISOString(),
+                action: '人工复核处理',
+                decision,
+                reason,
+                operator: assignee,
+            });
+        }
+        return {
+            id: `review-seed-90d-${String(idx + 1).padStart(3, '0')}`,
+            reviewId: `review-seed-90d-${String(idx + 1).padStart(3, '0')}`,
+            taskId: task.id,
+            taskNo: task.taskNo,
+            productName: task.productName,
+            platform: task.platform,
+            market: task.market,
+            riskLevel: task.detectionResult?.riskLevel || '高风险',
+            systemDecision: task.detectionResult?.decision || '人工复核',
+            status: isPending ? '待复核' : idx % 3 === 0 ? '复核通过' : idx % 3 === 1 ? '退回优化' : '暂缓发布',
+            submittedAt: submittedAt.toISOString(),
+            processor: assignee,
+            decision,
+            reason,
+            processedAt,
+            history,
+        };
+    });
+}
+function buildMockUsageRecords(tasks, random) {
+    const records = [];
+    const detectedTasks = tasks.filter((t) => t.detectionResult);
+    detectedTasks.forEach((task, idx) => {
+        const createdAt = new Date(task.updatedAt || task.createdAt);
+        createdAt.setMinutes(createdAt.getMinutes() + Math.floor(random() * 30));
+        records.push({
+            id: `usage-seed-${String(idx + 1).padStart(3, '0')}`,
+            usageType: 'DETECT',
+            amount: 1,
+            taskId: task.id,
+            companyName: '智选优发演示企业',
+            planName: '专业版',
+            createdAt: createdAt.toISOString(),
+        });
+    });
+    return records.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
+}
+function buildMockBatchTasks(config, timeline, random) {
+    const records = [];
+    for (let i = 0; i < config.batchCount; i += 1) {
+        const totalCount = 8 + Math.floor(random() * 13);
+        const day = timeline[Math.max(0, timeline.length - 8 - i * 6)];
+        const createdAt = new Date(day.date);
+        createdAt.setHours(10 + i, 20, 0, 0);
+        const items = [];
+        let successCount = 0;
+        let failedCount = 0;
+        for (let row = 0; row < totalCount; row += 1) {
+            const forceFail = row === totalCount - 1;
+            const shouldFail = forceFail || random() < 0.2;
+            if (shouldFail)
+                failedCount += 1;
+            else
+                successCount += 1;
+            items.push({
+                id: makeId('bitem'),
+                rowNo: row + 1,
+                payload: {
+                    sku: `BATCH-SKU-${i + 1}-${row + 1}`,
+                    productName: `批量素材${i + 1}-${row + 1}`,
+                    platform: ['Amazon', 'TikTok Shop', 'Shopee'][row % 3],
+                    market: ['欧美', '东南亚', '中东'][row % 3],
+                    title: `批量任务素材 ${row + 1}`,
+                    sellingPoints: '稳定合规\n本土化优化\n多场景适配',
+                    detailText: '用于评委演示的批量检测样本',
+                    adText: '突出卖点并避免违规表达',
+                },
+                status: shouldFail ? 'FAILED' : 'DONE',
+                taskId: shouldFail ? null : `task-seed-from-batch-${i + 1}-${row + 1}`,
+                error: shouldFail ? '图片缺失或字段不完整' : '',
+            });
+        }
+        records.push({
+            id: `batch-seed-90d-${String(i + 1).padStart(2, '0')}`,
+            name: `活动波峰批量检测-${i + 1}`,
+            status: failedCount > 0 ? 'DONE_WITH_ERRORS' : 'DONE',
+            totalCount,
+            successCount,
+            failedCount,
+            items,
+            createdAt: createdAt.toISOString(),
+            updatedAt: new Date(createdAt.getTime() + 2 * 3600 * 1000).toISOString(),
+        });
+    }
+    return records.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
+}
+function buildMockMaterialVersions(tasks, config, random) {
+    const candidates = tasks.filter((t) => t.materialContent).slice(0, 20);
+    const records = [];
+    const versionCounter = {};
+    candidates.forEach((task) => {
+        for (let i = 0; i < 2; i += 1) {
+            const v = (versionCounter[task.id] || 0) + 1;
+            versionCounter[task.id] = v;
+            const baseTime = new Date(task.createdAt);
+            baseTime.setHours(baseTime.getHours() + 6 * v + Math.floor(random() * 5));
+            records.push({
+                id: makeId('mv'),
+                taskId: task.id,
+                versionNo: v,
+                title: `${task.materialContent.title} v${v}`,
+                sellingPoints: task.materialContent.sellingPoints,
+                detailText: `${task.materialContent.detailText}（第${v}次修订）`,
+                adText: `${task.materialContent.adText}（版本${v}）`,
+                imageUrls: task.materialContent.imageUrls || [],
+                scoreSnapshot: task.detectionResult?.score ?? null,
+                riskSnapshot: task.detectionResult?.riskLevel ?? null,
+                createdAt: baseTime.toISOString(),
+            });
+        }
+    });
+    return records.slice(0, config.materialVersionCount).sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
+}
+function buildMockLogs(tasks, reports, reviews, timeline, config, random) {
+    const logs = [];
+    const actors = [
+        { username: '系统管理员A', role: 'SYSTEM_ADMIN' },
+        { username: '运营人员A', role: 'OPERATOR' },
+        { username: '设计人员A', role: 'DESIGNER' },
+        { username: '复核人员A', role: 'REVIEWER' },
+        { username: '企业管理员A', role: 'ENTERPRISE_ADMIN' },
+        { username: '管理人员A', role: 'MANAGER' },
+    ];
+    const pushLog = (payload) => logs.push({ id: makeId('log'), logId: makeId('log'), ip: '127.0.0.1', result: '成功', ...payload });
+    for (let i = 0; i < 26; i += 1) {
+        const d = timeline[Math.max(0, timeline.length - 1 - i * 3)]?.date || new Date();
+        const actor = actors[i % actors.length];
+        pushLog({
+            operator: actor.username,
+            role: actor.role,
+            action: '用户登录',
+            target: `${actor.username.toLowerCase().replace('人员', '').replace('管理员', 'admin')}@example.com`,
+            note: '日常登录',
+            createdAt: new Date(d.getTime() + 9 * 3600 * 1000).toISOString(),
+        });
+    }
+    tasks.forEach((task, idx) => {
+        const creator = actors[idx % actors.length];
+        pushLog({
+            operator: creator.username,
+            role: creator.role,
+            action: '创建任务',
+            target: task.taskNo,
+            note: `${task.productName}/${task.platform}/${task.market}`,
+            createdAt: task.createdAt,
+        });
+        if (task.detectionResult) {
+            pushLog({
+                operator: '系统',
+                role: 'SYSTEM_ADMIN',
+                action: '启动检测',
+                target: task.taskNo,
+                note: `${task.detectionResult.riskLevel}/${task.detectionResult.decision}`,
+                createdAt: task.detectionResult.detectedAt || task.updatedAt,
+            });
+        }
+    });
+    reports.forEach((report) => {
+        pushLog({
+            operator: '系统',
+            role: 'SYSTEM_ADMIN',
+            action: '生成审核报告',
+            target: report.reportNo,
+            note: report.summary,
+            createdAt: report.createdAt,
+        });
+    });
+    reviews.forEach((review) => {
+        pushLog({
+            operator: '系统',
+            role: 'SYSTEM_ADMIN',
+            action: '提交人工复核',
+            target: review.taskNo,
+            note: `风险:${review.riskLevel}`,
+            createdAt: review.submittedAt,
+        });
+        if (review.processedAt) {
+            pushLog({
+                operator: review.processor || '复核人员A',
+                role: 'REVIEWER',
+                action: '人工复核操作',
+                target: review.taskNo,
+                note: `${review.decision}/${review.reason}`,
+                createdAt: review.processedAt,
+            });
+        }
+    });
+    const extraActions = ['规则更新', '规则审批', '套餐变更', '下载报告', '批量任务执行'];
+    while (logs.length < config.logCount) {
+        const action = extraActions[Math.floor(random() * extraActions.length)];
+        const actor = actors[Math.floor(random() * actors.length)];
+        const day = timeline[Math.floor(random() * timeline.length)]?.date || new Date();
+        const createdAt = new Date(day);
+        createdAt.setHours(8 + Math.floor(random() * 12), Math.floor(random() * 60), Math.floor(random() * 60), 0);
+        pushLog({
+            operator: actor.username,
+            role: actor.role,
+            action,
+            target: action === '下载报告' ? reports[Math.floor(random() * reports.length)]?.reportNo || '-' : `OBJ-${1000 + logs.length}`,
+            note: '演示环境运营记录',
+            createdAt: createdAt.toISOString(),
+        });
+    }
+    return logs
+        .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))
+        .slice(0, config.logCount);
+}
 function initMockData() {
     if (mockTasks.length > 0)
         return;
-    const now = Date.now();
-    const task1Id = `task-seed-${now - 1}`;
-    const task2Id = `task-seed-${now - 2}`;
-    const task3Id = `task-seed-${now - 3}`;
-    const result1 = seedDetection(91, '低风险', '可发布');
-    const result2 = seedDetection(78, '中风险', '优化后发布');
-    const result3 = seedDetection(62, '高风险', '人工复核');
-    mockTasks = [
-        {
-            id: task1Id,
-            taskNo: 'TSK-DEMO-0001',
-            sku: 'SKU-DEMO-001',
-            productName: '便携榨汁杯',
-            category: '家居用品',
-            platform: 'Amazon',
-            market: '欧美',
-            purpose: '上架前审核',
-            status: 'COMPLETED',
-            createdAt: new Date(now - 1000 * 60 * 60 * 12).toISOString(),
-            updatedAt: new Date(now - 1000 * 60 * 40).toISOString(),
-            materialContent: {
-                title: '便携榨汁杯 大容量双杯设计',
-                sellingPoints: ['Type-C 快充', '食品级材质', '一键清洗'],
-                detailText: '适合健身、办公和户外场景，操作便捷，清洗简单。',
-                adText: '随时随地鲜榨果汁，轻松补充维C。',
-                imageUrls: ['mock://img/juicer-main-01.jpg', 'mock://img/juicer-scene-01.jpg'],
-            },
-            detectionResult: result1,
-        },
-        {
-            id: task2Id,
-            taskNo: 'TSK-DEMO-0002',
-            sku: 'SKU-DEMO-002',
-            productName: '蓝牙降噪耳机',
-            category: '3C电子',
-            platform: 'TikTok Shop',
-            market: '东南亚',
-            purpose: '广告投放前审核',
-            status: 'REPORTED',
-            createdAt: new Date(now - 1000 * 60 * 60 * 30).toISOString(),
-            updatedAt: new Date(now - 1000 * 60 * 120).toISOString(),
-            materialContent: {
-                title: '蓝牙降噪耳机 超长续航',
-                sellingPoints: ['48小时续航', 'ENC通话降噪', '低延迟游戏模式'],
-                detailText: '适合通勤、游戏和视频会议，多设备快速切换。',
-                adText: '全天佩戴也舒适，连接稳定不断连。',
-                imageUrls: ['mock://img/earphone-main-01.jpg', 'mock://img/earphone-scene-01.jpg'],
-            },
-            detectionResult: result2,
-        },
-        {
-            id: task3Id,
-            taskNo: 'TSK-DEMO-0003',
-            sku: 'SKU-DEMO-003',
-            productName: '防晒喷雾',
-            category: '美妆个护',
-            platform: 'Shopee',
-            market: '中东',
-            purpose: '活动素材审核',
-            status: 'REVIEW_REQUIRED',
-            createdAt: new Date(now - 1000 * 60 * 60 * 48).toISOString(),
-            updatedAt: new Date(now - 1000 * 60 * 150).toISOString(),
-            materialContent: {
-                title: '防晒喷雾 最强防护',
-                sellingPoints: ['快速成膜', '轻薄透气', '防水防汗'],
-                detailText: '适配多种户外场景，补喷方便。',
-                adText: '立刻见效，全天无惧烈日。',
-                imageUrls: ['mock://img/sunscreen-main-01.jpg'],
-            },
-            detectionResult: result3,
-        },
-    ];
-    mockReviews = [
-        {
-            id: 'review-seed-1',
-            reviewId: 'review-seed-1',
-            taskId: task3Id,
-            taskNo: 'TSK-DEMO-0003',
-            productName: '防晒喷雾',
-            platform: 'Shopee',
-            market: '中东',
-            riskLevel: '高风险',
-            systemDecision: '人工复核',
-            status: '待复核',
-            submittedAt: new Date(now - 1000 * 60 * 90).toISOString(),
-            history: [{ time: new Date(now - 1000 * 60 * 90).toISOString(), action: '提交人工复核', note: '命中高风险词' }],
-        },
-    ];
-    mockReports = [
-        {
-            id: 'report-seed-1',
-            taskId: task1Id,
-            reportNo: 'RPT-DEMO-0001',
-            title: '便携榨汁杯 审核报告',
-            summary: '综合评分 91，建议可发布',
-            createdAt: new Date(now - 1000 * 60 * 35).toISOString(),
-            updatedAt: new Date(now - 1000 * 60 * 35).toISOString(),
-            task: mockTasks[0],
-            result: result1,
-            logs: [{ time: new Date(now - 1000 * 60 * 35).toISOString(), action: '生成报告', operator: '系统' }],
-        },
-        {
-            id: 'report-seed-2',
-            taskId: task2Id,
-            reportNo: 'RPT-DEMO-0002',
-            title: '蓝牙降噪耳机 审核报告',
-            summary: '综合评分 78，建议优化后发布',
-            createdAt: new Date(now - 1000 * 60 * 110).toISOString(),
-            updatedAt: new Date(now - 1000 * 60 * 110).toISOString(),
-            task: mockTasks[1],
-            result: result2,
-            logs: [{ time: new Date(now - 1000 * 60 * 110).toISOString(), action: '生成报告', operator: '系统' }],
-        },
-    ];
-    mockLogs = [
-        { id: 'log-seed-1', logId: 'log-seed-1', operator: '系统管理员A', role: 'SYSTEM_ADMIN', action: '用户登录', target: 'sysadmin@example.com', result: '成功', createdAt: new Date(now - 1000 * 60 * 180).toISOString(), ip: '127.0.0.1', note: 'Mock 登录' },
-        { id: 'log-seed-2', logId: 'log-seed-2', operator: '运营人员A', role: 'OPERATOR', action: '创建任务', target: 'TSK-DEMO-0001', result: '成功', createdAt: new Date(now - 1000 * 60 * 160).toISOString(), ip: '127.0.0.1', note: '新建便携榨汁杯任务' },
-        { id: 'log-seed-3', logId: 'log-seed-3', operator: '系统', role: 'SYSTEM_ADMIN', action: '生成审核报告', target: 'RPT-DEMO-0001', result: '成功', createdAt: new Date(now - 1000 * 60 * 35).toISOString(), ip: '127.0.0.1', note: '自动生成报告' },
-    ];
+    const random = createSeededRandom(MOCK_SEED_CONFIG.seed);
+    const timeline = buildMockTimeline(MOCK_SEED_CONFIG, random);
+    mockTasks = buildMockTasks(MOCK_SEED_CONFIG, timeline, random);
+    mockReports = buildMockReports(mockTasks, MOCK_SEED_CONFIG, random);
+    mockReviews = buildMockReviews(mockTasks, MOCK_SEED_CONFIG, random);
+    mockUsageRecords = buildMockUsageRecords(mockTasks, random);
+    mockBatchTasks = buildMockBatchTasks(MOCK_SEED_CONFIG, timeline, random);
+    mockMaterialVersions = buildMockMaterialVersions(mockTasks, MOCK_SEED_CONFIG, random);
+    mockLogs = buildMockLogs(mockTasks, mockReports, mockReviews, timeline, MOCK_SEED_CONFIG, random);
     mockRuleVersions = mockRules.map((r) => ({
         id: makeId('rv'),
         ruleId: r.id,
@@ -346,7 +718,17 @@ function initMockData() {
     ];
     const pro = mockPlans.find((p) => p.name === '专业版');
     mockSubscriptions = [
-        { id: 'sub-1', companyName: '智选优发演示企业', planId: pro?.id, status: 'ACTIVE', startAt: nowIso(), endAt: null, quotaTotal: pro?.quota || 1000, quotaUsed: 12, quotaRemaining: (pro?.quota || 1000) - 12 },
+        {
+            id: 'sub-1',
+            companyName: '智选优发演示企业',
+            planId: pro?.id,
+            status: 'ACTIVE',
+            startAt: nowIso(),
+            endAt: null,
+            quotaTotal: pro?.quota || 1000,
+            quotaUsed: mockUsageRecords.length,
+            quotaRemaining: Math.max(0, (pro?.quota || 1000) - mockUsageRecords.length),
+        },
     ];
     mockCompanies = [
         { id: 'comp-1', name: '智选优发演示企业', industryType: '跨境电商', contactPerson: '张三', contactPhone: '13800000000', targetMarkets: ['欧美', '中东'], planType: '专业版', serviceStatus: '试点中', createdAt: nowIso(), members: 6 },
@@ -370,7 +752,7 @@ function appendLog(action, target, remark) {
         result: '成功',
         ip: '127.0.0.1',
         note: remark || '',
-        createdAt: nowIso(),
+        createdAt: nextMockIso(),
     });
 }
 function currentCompanyName() {
@@ -777,12 +1159,14 @@ export const api = {
             if (!bypass && sub.quotaRemaining <= 0) {
                 throw new ApiError('当前套餐检测额度不足，请升级套餐或联系团队开通试点额度');
             }
+            const createdAt = nextMockIso();
+            const updatedAt = nextMockIso(30000 + Math.floor(Math.random() * 90000));
             const task = {
                 id: makeId('task'),
-                taskNo: `TSK-${Date.now()}`,
+                taskNo: nextMockNo('TSK'),
                 status: 'DRAFT',
-                createdAt: nowIso(),
-                updatedAt: nowIso(),
+                createdAt,
+                updatedAt,
                 ...payload,
                 materialContent: {
                     title: payload.title,
@@ -841,9 +1225,11 @@ export const api = {
                 throw new ApiError('当前套餐检测额度不足，请升级套餐或联系团队开通试点额度');
             }
             const result = ensureDetection(task);
+            const detectAt = nextMockIso(40000 + Math.floor(Math.random() * 140000));
+            result.detectedAt = detectAt;
             task.detectionResult = result;
             task.status = 'COMPLETED';
-            task.updatedAt = nowIso();
+            task.updatedAt = detectAt;
             if (!bypass) {
                 sub.quotaUsed += 1;
                 sub.quotaRemaining = Math.max(0, sub.quotaRemaining - 1);
@@ -854,10 +1240,11 @@ export const api = {
                     taskId,
                     companyName: sub.companyName,
                     planName: plan?.name || '-',
-                    createdAt: nowIso(),
+                    createdAt: nextMockIso(20000 + Math.floor(Math.random() * 70000)),
                 });
             }
             if (result.decision === '人工复核') {
+                const reviewSubmitAt = nextMockIso(30000 + Math.floor(Math.random() * 120000));
                 const review = {
                     id: makeId('review'),
                     reviewId: makeId('review'),
@@ -869,7 +1256,7 @@ export const api = {
                     riskLevel: result.riskLevel,
                     systemDecision: result.decision,
                     status: '待复核',
-                    submittedAt: nowIso(),
+                    submittedAt: reviewSubmitAt,
                     history: [],
                 };
                 mockReviews.unshift(review);
@@ -894,6 +1281,7 @@ export const api = {
             if (!task)
                 throw new ApiError('任务不存在');
             task.status = 'REVIEW_REQUIRED';
+            const submittedAt = nextMockIso(35000 + Math.floor(Math.random() * 110000));
             if (!mockReviews.some((r) => r.taskId === taskId)) {
                 mockReviews.unshift({
                     id: makeId('review'),
@@ -906,8 +1294,8 @@ export const api = {
                     riskLevel: task.detectionResult?.riskLevel || '高风险',
                     systemDecision: task.detectionResult?.decision || '人工复核',
                     status: '待复核',
-                    submittedAt: nowIso(),
-                    history: [{ time: nowIso(), action: '提交人工复核', note: note || '' }],
+                    submittedAt,
+                    history: [{ time: submittedAt, action: '提交人工复核', note: note || '' }],
                 });
             }
             appendLog('提交人工复核', taskId, note);
@@ -920,17 +1308,18 @@ export const api = {
             if (!task)
                 throw new ApiError('任务不存在');
             const result = await api.getDetectionResult(taskId);
+            const reportCreatedAt = nextMockIso(40000 + Math.floor(Math.random() * 130000));
             const report = {
                 id: makeId('report'),
                 taskId,
-                reportNo: `RPT-${Date.now()}`,
+                reportNo: nextMockNo('RPT'),
                 title: `${task.productName} 审核报告`,
                 summary: `综合评分 ${result.totalScore}，建议 ${result.decision}`,
-                createdAt: nowIso(),
-                updatedAt: nowIso(),
+                createdAt: reportCreatedAt,
+                updatedAt: reportCreatedAt,
                 task,
                 result,
-                logs: [{ time: nowIso(), action: '生成报告', operator: '系统' }],
+                logs: [{ time: reportCreatedAt, action: '生成报告', operator: '系统' }],
             };
             mockReports.unshift(report);
             task.report = report;
@@ -1554,39 +1943,57 @@ export const api = {
         }, () => mockLogs);
     },
     getDashboardData() {
-        return run(() => request('/dashboard', 'GET'), () => ({
-            metrics: {
-                todayTaskCount: mockTasks.length,
-                pendingReviewCount: mockReviews.filter((r) => r.status === '待复核').length,
-                highRiskCount: mockTasks.filter((t) => (t.detectionResult?.riskLevel || '') === '高风险').length,
-                reportCount: mockReports.length,
-            },
-            highRiskTasks: mockTasks
-                .filter((t) => (t.detectionResult?.riskLevel || '') === '高风险')
-                .map((t) => ({
-                id: t.id,
-                productName: t.productName,
-                platform: t.platform,
-                market: t.market,
-                riskLevel: t.detectionResult?.riskLevel || '高风险',
-                decision: t.detectionResult?.decision || '人工复核',
-            }))
-                .slice(0, 10),
-            enhanced: {
-                byPlan: { 专业版: 2, 企业版: 1 },
-                byPlatform: { Amazon: 2, 'TikTok Shop': 1, Shopee: 1 },
-                byMarket: { 欧美: 1, 东南亚: 1, 中东: 2 },
-                byCategory: { 家居用品: 1, '3C电子': 1, 美妆个护: 1 },
-                byRisk: { 低风险: 1, 中风险: 1, 高风险: 1 },
-                reportCount: mockReports.length,
-                reviewCount: mockReviews.length,
-                highRiskCount: mockTasks.filter((t) => (t.detectionResult?.riskLevel || '') === '高风险').length,
-                usageCount: mockUsageRecords.length,
-                batchCount: mockBatchTasks.length,
-                suggestionAdoptionRate: null,
-                notice: 'MVP试点版统计：建议采纳率为占位指标。',
-            },
-        }));
+        return run(() => request('/dashboard', 'GET'), () => {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const highRiskSet = new Set(['高风险', '严重风险']);
+            const aggregate = (list, getter) => {
+                const bucket = {};
+                list.forEach((item) => {
+                    const key = getter(item) || '未知';
+                    bucket[key] = (bucket[key] || 0) + 1;
+                });
+                return bucket;
+            };
+            const highRiskTasks = mockTasks.filter((t) => highRiskSet.has(t.detectionResult?.riskLevel || ''));
+            const byPlan = aggregate(mockCustomers, (x) => x.plan || x.planType || '未分配');
+            const byPlatform = aggregate(mockTasks, (x) => x.platform || '未知');
+            const byMarket = aggregate(mockTasks, (x) => x.market || '未知');
+            const byCategory = aggregate(mockTasks, (x) => x.category || '未知');
+            const byRisk = aggregate(mockTasks.filter((t) => t.detectionResult), (x) => x.detectionResult?.riskLevel || '未知');
+            return {
+                metrics: {
+                    todayTaskCount: mockTasks.filter((t) => +new Date(t.createdAt) >= +today).length,
+                    pendingReviewCount: mockReviews.filter((r) => r.status === '待复核').length,
+                    highRiskCount: highRiskTasks.length,
+                    reportCount: mockReports.length,
+                },
+                highRiskTasks: highRiskTasks
+                    .map((t) => ({
+                    id: t.id,
+                    productName: t.productName,
+                    platform: t.platform,
+                    market: t.market,
+                    riskLevel: t.detectionResult?.riskLevel || '高风险',
+                    decision: t.detectionResult?.decision || '人工复核',
+                }))
+                    .slice(0, 10),
+                enhanced: {
+                    byPlan,
+                    byPlatform,
+                    byMarket,
+                    byCategory,
+                    byRisk,
+                    reportCount: mockReports.length,
+                    reviewCount: mockReviews.length,
+                    highRiskCount: highRiskTasks.length,
+                    usageCount: mockUsageRecords.length,
+                    batchCount: mockBatchTasks.length,
+                    suggestionAdoptionRate: null,
+                    notice: 'MVP试点版统计：建议采纳率为占位指标。',
+                },
+            };
+        });
     },
 };
 export function getFriendlyError(error) {

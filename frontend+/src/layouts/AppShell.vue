@@ -65,14 +65,14 @@
     </aside>
 
     <div v-if="dialog.open" class="modal-mask app-dialog-mask" @click.self="resolveDialog(false)">
-      <section class="glass card modal-panel app-dialog-panel">
+      <AppGlassSurface as="section" class="card modal-panel app-dialog-panel">
         <h3 class="section-title">{{ dialog.title }}</h3>
         <p>{{ dialog.message }}</p>
         <div class="actions dialog-actions">
           <button v-if="dialog.kind === 'confirm'" class="btn btn-secondary" @click="resolveDialog(false)">取消</button>
           <button class="btn btn-primary" @click="resolveDialog(true)">{{ dialog.kind === 'confirm' ? '确认' : '知道了' }}</button>
         </div>
-      </section>
+      </AppGlassSurface>
     </div>
 
     <div v-if="toasts.length" class="toast-stack" aria-live="polite" aria-atomic="true">
@@ -136,6 +136,8 @@
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { House, BarChart3, ListTodo, ShieldCheck, ClipboardCheck, FileText, BookKey, Users, Logs, SlidersHorizontal, PanelLeftClose, PanelLeftOpen, LogOut, ChevronDown, ChevronRight } from "lucide-vue-next";

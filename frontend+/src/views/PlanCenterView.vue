@@ -1,14 +1,14 @@
 ﻿<template>
   <AppShell title="套餐中心">
     <section class="page-stack fade-up">
-      <section class="glass card">
+      <AppGlassSurface as="section" class="card">
         <h2 class="section-title">套餐中心 / 版本选择</h2>
-      </section>
+      </AppGlassSurface>
 
-      <section v-if="loading" class="glass card state loading center-loading">套餐加载中</section>
-      <section v-else-if="error" class="glass card state error">{{ error }}</section>
+      <AppGlassSurface as="section" v-if="loading" class="card state loading center-loading">套餐加载中</AppGlassSurface>
+      <AppGlassSurface as="section" v-else-if="error" class="card state error">{{ error }}</AppGlassSurface>
       <section v-else class="plan-grid">
-        <article class="glass card plan-card" v-for="plan in plans" :key="plan.id">
+        <AppGlassSurface as="article" class="card plan-card" v-for="plan in plans" :key="plan.id">
           <div class="plan-head">
             <h3>{{ plan.name }}</h3>
             <strong>{{ plan.priceText }}</strong>
@@ -35,23 +35,25 @@
             <button class="btn btn-secondary" @click="openCommercial(plan, 'API试点')">申请API试点</button>
             <button class="btn btn-secondary" @click="openCommercial(plan, '联系定制')">联系定制</button>
           </div>
-        </article>
+        </AppGlassSurface>
       </section>
 
       <div v-if="modal.open" class="modal-mask" @click.self="modal.open=false">
-        <section class="glass card modal-panel">
+        <AppGlassSurface as="section" class="card modal-panel">
           <h3 class="section-title">商业化阶段能力说明</h3>
           <p>{{ modal.message }}</p>
           <div class="actions" style="justify-content:flex-end;">
             <button class="btn btn-secondary" @click="modal.open=false">关闭</button>
           </div>
-        </section>
+        </AppGlassSurface>
       </div>
     </section>
   </AppShell>
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, ref } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
 import { api, getFriendlyError } from '@/lib/api';

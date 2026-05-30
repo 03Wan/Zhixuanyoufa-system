@@ -1,7 +1,7 @@
 ﻿<template>
   <AppShell title="用户与客户管理">
     <section class="page-stack fade-up">
-      <section class="glass card block">
+      <AppGlassSurface as="section" class="card block">
         <div class="row-between">
           <h2 class="section-title">用户管理</h2>
           <div class="actions">
@@ -28,9 +28,9 @@
           </table>
         </div>
         <p v-else class="state">暂无用户</p>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card block">
+      <AppGlassSurface as="section" class="card block">
         <h2 class="section-title">客户套餐与额度</h2>
         <section v-if="loading" class="state loading">客户数据加载中</section>
         <div class="table-wrap" v-else-if="customers.length">
@@ -53,9 +53,9 @@
           </table>
         </div>
         <p v-else class="state">暂无客户数据</p>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card block">
+      <AppGlassSurface as="section" class="card block">
         <h2 class="section-title">角色权限说明（MVP版）</h2>
         <ul>
           <li>系统管理员：全局管理、规则、用户、日志、套餐与企业配置。</li>
@@ -65,11 +65,11 @@
           <li>复核人员：人工复核流转处理。</li>
           <li>客户查看员：仅查看报告和看板（后续企业版可配置）。</li>
         </ul>
-      </section>
+      </AppGlassSurface>
     </section>
 
     <div v-if="modal.open" class="modal-mask" @click.self="closeModal">
-      <section class="glass card modal-panel">
+      <AppGlassSurface as="section" class="card modal-panel">
         <h3 class="section-title" style="margin-bottom:8px;">{{ modal.mode === 'create' ? '新增用户' : '设置角色' }}</h3>
         <div class="block">
           <input v-if="modal.mode === 'create'" class="input" v-model.trim="form.username" placeholder="姓名" />
@@ -90,12 +90,14 @@
             <button class="btn btn-primary" @click="saveModal">保存</button>
           </div>
         </div>
-      </section>
+      </AppGlassSurface>
     </div>
   </AppShell>
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, reactive, ref } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
 import { api, getFriendlyError } from '@/lib/api';

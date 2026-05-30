@@ -1,7 +1,7 @@
 ﻿<template>
   <AppShell title="API接口版">
     <section class="page-stack fade-up">
-      <section class="glass card">
+      <AppGlassSurface as="section" class="card">
         <h2 class="section-title">API接口版</h2>
         <div v-if="loading" class="state loading center-loading">接口清单加载中</div>
         <template v-else>
@@ -14,12 +14,14 @@
           <button class="btn btn-primary" :disabled="saving" @click="apply">{{ saving ? '提交中' : '提交API试点申请' }}</button>
         </div>
         </template>
-      </section>
+      </AppGlassSurface>
     </section>
   </AppShell>
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, ref } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
 import { api } from '@/lib/api';

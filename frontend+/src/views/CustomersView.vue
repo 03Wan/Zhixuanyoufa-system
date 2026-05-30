@@ -1,7 +1,7 @@
 ﻿<template>
   <AppShell title="客户档案">
     <section class="page-stack fade-up">
-      <section class="glass card">
+      <AppGlassSurface as="section" class="card">
         <h2 class="section-title">客户档案</h2>
         <div class="grid-3">
           <input class="input" v-model="form.name" placeholder="客户名称" />
@@ -33,9 +33,9 @@
         </div>
         <textarea class="input" style="margin-top:8px;" v-model="form.remark" placeholder="备注"></textarea>
         <div class="actions" style="margin-top:8px;"><button class="btn btn-primary" :disabled="saving" @click="create">{{ saving ? '保存中' : '新增客户' }}</button></div>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card">
+      <AppGlassSurface as="section" class="card">
         <div class="row-between"><h3>客户列表</h3><button class="btn btn-secondary" :disabled="loading" @click="load">{{ loading ? '刷新中' : '刷新' }}</button></div>
         <div v-if="loading" class="state loading center-loading">客户数据加载中</div>
         <table v-else class="table">
@@ -46,12 +46,14 @@
             </tr>
           </tbody>
         </table>
-      </section>
+      </AppGlassSurface>
     </section>
   </AppShell>
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, reactive, ref } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
 import { api, getFriendlyError } from '@/lib/api';

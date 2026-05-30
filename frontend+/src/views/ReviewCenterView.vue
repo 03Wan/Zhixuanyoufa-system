@@ -6,7 +6,7 @@
         <button class="btn btn-secondary" :disabled="loading" @click="load">{{ loading ? '刷新中' : '刷新复核任务' }}</button>
       </div>
 
-      <section class="glass card">
+      <AppGlassSurface as="section" class="card">
         <div v-if="loading" class="state loading">复核任务加载中</div>
         <div v-else-if="error" class="state error">{{ error }}</div>
         <div v-else-if="rows.length === 0" class="state">暂无待复核任务。</div>
@@ -40,12 +40,14 @@
             </tbody>
           </table>
         </div>
-      </section>
+      </AppGlassSurface>
     </section>
   </AppShell>
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import AppShell from '@/layouts/AppShell.vue';

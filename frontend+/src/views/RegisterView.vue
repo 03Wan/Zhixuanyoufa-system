@@ -2,7 +2,7 @@
   <main class="auth-page fade-up">
     <div class="auth-bg"></div>
     <section class="auth-shell">
-      <div class="register-card glass">
+      <AppGlassSurface as="div" class="register-card" :radius="24">
         <div class="row-between">
           <div class="brand-mini">
             <div class="logo">智</div>
@@ -31,12 +31,13 @@
           <router-link to="/login">返回登录</router-link>
         </p>
         <p class="safe-note">企业级权限控制 · 全程审计留痕 · 数据分级管理</p>
-      </div>
+      </AppGlassSurface>
     </section>
   </main>
 </template>
 
 <script setup lang="ts">
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import ThemeToggle from "@/components/ThemeToggle.vue";
@@ -90,9 +91,9 @@ async function submit() {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 10% 12%, rgba(14, 165, 233, .18), transparent 28%),
-    radial-gradient(circle at 90% 86%, rgba(37, 99, 235, .16), transparent 34%),
-    linear-gradient(145deg, #eff6ff, #dbeafe 58%, #c7d2fe);
+    radial-gradient(circle at 0% 10%, rgba(106, 206, 255, 0.22), transparent 36%),
+    radial-gradient(circle at 100% 0%, rgba(145, 133, 255, 0.2), transparent 40%),
+    linear-gradient(160deg, var(--bg-0), var(--bg-1) 58%, var(--bg-2));
 }
 .auth-shell {
   position: relative;
@@ -107,9 +108,6 @@ async function submit() {
 .register-card {
   width: 100%;
   border-radius: 24px;
-  border: 1px solid var(--border);
-  background: var(--card-strong);
-  box-shadow: 0 18px 42px rgba(15, 23, 42, .12);
   padding: clamp(18px, 1.5vw, 24px);
   display: grid;
   gap: 12px;
@@ -124,35 +122,16 @@ async function submit() {
   font-weight: 800;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, #2bb8ff, #2f63f3);
+  background: linear-gradient(135deg, var(--brand-0), var(--brand-1));
 }
-.register-card h2 { margin: 0; font-size: clamp(40px, 3vw, 56px); line-height: 1.05; }
+.register-card h2 { margin: 0; font-size: clamp(30px, 2.6vw, 40px); line-height: 1.1; }
 .register-card header p { margin: 4px 0 0; color: var(--muted); }
 .form-grid { display: grid; gap: 10px; }
-.err { margin: 0; color: #ef4444; }
+.err { margin: 0; color: var(--danger); }
 .submit-btn { min-height: 48px; }
 .links { margin: 0; display: flex; gap: 6px; color: var(--muted); align-items: center; }
 .links a { color: var(--brand-1); font-weight: 700; text-decoration: none; }
 .safe-note { margin: 0; color: var(--muted); font-size: 13px; }
-
-html.dark .auth-page .auth-bg {
-  background:
-    radial-gradient(circle at 10% 12%, rgba(37, 99, 235, .16), transparent 30%),
-    radial-gradient(circle at 90% 86%, rgba(30, 58, 138, .18), transparent 34%),
-    linear-gradient(145deg, #020817, #071327 56%, #0b1f3f) !important;
-}
-html.dark .auth-page .register-card {
-  background: rgba(15, 32, 58, .88);
-  border-color: rgba(120, 143, 180, .35);
-  box-shadow: 0 22px 46px rgba(2, 8, 23, .5);
-}
-html.dark .auth-page .brand-mini strong,
-html.dark .auth-page .register-card h2 { color: #e8eefb; }
-html.dark .auth-page .register-card header p,
-html.dark .auth-page .safe-note,
-html.dark .auth-page .links,
-html.dark .auth-page .links span { color: #9db0cf; }
-html.dark .auth-page .links a { color: #60a5fa; }
 
 @media (max-width: 760px) {
   .auth-shell { width: min(96vw, 560px); }

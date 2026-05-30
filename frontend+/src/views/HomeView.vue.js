@@ -1,3 +1,4 @@
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import AppShell from "@/layouts/AppShell.vue";
@@ -123,9 +124,17 @@ __VLS_2.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
     ...{ class: "page-stack fade-up" },
 });
-__VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-    ...{ class: "glass card home-card" },
-});
+/** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+// @ts-ignore
+const __VLS_4 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+    as: "section",
+    ...{ class: "card home-card" },
+}));
+const __VLS_5 = __VLS_4({
+    as: "section",
+    ...{ class: "card home-card" },
+}, ...__VLS_functionalComponentArgsRest(__VLS_4));
+__VLS_6.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "row-between" },
 });
@@ -152,33 +161,77 @@ else {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "kpi-grid" },
     });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElements.article)({
-        ...{ class: "kpi-card" },
-    });
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_7 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }));
+    const __VLS_8 = __VLS_7({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_7));
+    __VLS_9.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     (__VLS_ctx.dashboard.metrics.todayTaskCount);
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElements.article)({
-        ...{ class: "kpi-card" },
-    });
+    var __VLS_9;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_10 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }));
+    const __VLS_11 = __VLS_10({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_10));
+    __VLS_12.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     (__VLS_ctx.dashboard.metrics.pendingReviewCount);
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElements.article)({
-        ...{ class: "kpi-card" },
-    });
+    var __VLS_12;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_13 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }));
+    const __VLS_14 = __VLS_13({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_13));
+    __VLS_15.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     (__VLS_ctx.dashboard.metrics.highRiskCount);
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElements.article)({
-        ...{ class: "kpi-card" },
-    });
+    var __VLS_15;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_16 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }));
+    const __VLS_17 = __VLS_16({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_16));
+    __VLS_18.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     (__VLS_ctx.dashboard.metrics.reportCount);
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "panel" },
-    });
+    var __VLS_18;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_19 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card panel" },
+    }));
+    const __VLS_20 = __VLS_19({
+        as: "section",
+        ...{ class: "card panel" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_19));
+    __VLS_21.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "row-between" },
     });
@@ -190,49 +243,112 @@ else {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "kpi-grid" },
     });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElements.article)({
-        ...{ class: "kpi-card" },
-    });
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_22 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }));
+    const __VLS_23 = __VLS_22({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_22));
+    __VLS_24.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     (__VLS_ctx.usageInfo.subscription?.plan?.name || '-');
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElements.article)({
-        ...{ class: "kpi-card" },
-    });
+    var __VLS_24;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_25 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }));
+    const __VLS_26 = __VLS_25({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_25));
+    __VLS_27.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     (__VLS_ctx.usageInfo.monthlyUsed ?? 0);
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElements.article)({
-        ...{ class: "kpi-card" },
-    });
+    var __VLS_27;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_28 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }));
+    const __VLS_29 = __VLS_28({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_28));
+    __VLS_30.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     (__VLS_ctx.usageInfo.quotaRemaining ?? 0);
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElements.article)({
-        ...{ class: "kpi-card" },
-    });
+    var __VLS_30;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_31 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }));
+    const __VLS_32 = __VLS_31({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_31));
+    __VLS_33.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     (__VLS_ctx.usageInfo.privileges?.canExportReport ? '支持' : '受限');
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElements.article)({
-        ...{ class: "kpi-card" },
-    });
+    var __VLS_33;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_34 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }));
+    const __VLS_35 = __VLS_34({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_34));
+    __VLS_36.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     (__VLS_ctx.usageInfo.privileges?.canBatchDetect ? '支持' : '受限');
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.article, __VLS_intrinsicElements.article)({
-        ...{ class: "kpi-card" },
-    });
+    var __VLS_36;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_37 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }));
+    const __VLS_38 = __VLS_37({
+        as: "article",
+        ...{ class: "card kpi-card" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_37));
+    __VLS_39.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
     (__VLS_ctx.usageInfo.privileges?.canUseApi ? '试点可申请' : '未开通');
+    var __VLS_39;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({
         ...{ class: "text-muted" },
         ...{ style: {} },
     });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "panel" },
-    });
+    var __VLS_21;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_40 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card panel" },
+    }));
+    const __VLS_41 = __VLS_40({
+        as: "section",
+        ...{ class: "card panel" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_40));
+    __VLS_42.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "row-between" },
     });
@@ -290,12 +406,21 @@ else {
             });
         }
     }
+    var __VLS_42;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "grid-2" },
     });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "panel" },
-    });
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_43 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card panel" },
+    }));
+    const __VLS_44 = __VLS_43({
+        as: "section",
+        ...{ class: "card panel" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_43));
+    __VLS_45.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "row-between" },
     });
@@ -365,9 +490,18 @@ else {
             });
         }
     }
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "panel" },
-    });
+    var __VLS_45;
+    /** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+    // @ts-ignore
+    const __VLS_46 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+        as: "section",
+        ...{ class: "card panel" },
+    }));
+    const __VLS_47 = __VLS_46({
+        as: "section",
+        ...{ class: "card panel" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_46));
+    __VLS_48.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "row-between" },
     });
@@ -428,6 +562,7 @@ else {
             });
         }
     }
+    var __VLS_48;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
         ...{ class: "quick-grid" },
     });
@@ -456,10 +591,10 @@ else {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h4, __VLS_intrinsicElements.h4)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
 }
+var __VLS_6;
 var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['page-stack']} */ ;
 /** @type {__VLS_StyleScopedClasses['fade-up']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['home-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['row-between']} */ ;
@@ -471,22 +606,34 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['state']} */ ;
 /** @type {__VLS_StyleScopedClasses['error']} */ ;
 /** @type {__VLS_StyleScopedClasses['kpi-grid']} */ ;
+/** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['kpi-card']} */ ;
+/** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['kpi-card']} */ ;
+/** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['kpi-card']} */ ;
+/** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['kpi-card']} */ ;
+/** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['panel']} */ ;
 /** @type {__VLS_StyleScopedClasses['row-between']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn-secondary']} */ ;
 /** @type {__VLS_StyleScopedClasses['kpi-grid']} */ ;
+/** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['kpi-card']} */ ;
+/** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['kpi-card']} */ ;
+/** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['kpi-card']} */ ;
+/** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['kpi-card']} */ ;
+/** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['kpi-card']} */ ;
+/** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['kpi-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['text-muted']} */ ;
+/** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['panel']} */ ;
 /** @type {__VLS_StyleScopedClasses['row-between']} */ ;
 /** @type {__VLS_StyleScopedClasses['text-muted']} */ ;
@@ -496,6 +643,7 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['btn']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn-secondary']} */ ;
 /** @type {__VLS_StyleScopedClasses['grid-2']} */ ;
+/** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['panel']} */ ;
 /** @type {__VLS_StyleScopedClasses['row-between']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn']} */ ;
@@ -508,6 +656,7 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['btn-secondary']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn-secondary']} */ ;
+/** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['panel']} */ ;
 /** @type {__VLS_StyleScopedClasses['row-between']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn']} */ ;
@@ -527,6 +676,7 @@ var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
+            AppGlassSurface: AppGlassSurface,
             AppShell: AppShell,
             loading: loading,
             error: error,

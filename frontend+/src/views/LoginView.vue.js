@@ -1,3 +1,4 @@
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import ThemeToggle from "@/components/ThemeToggle.vue";
@@ -77,35 +78,6 @@ let __VLS_directives;
 /** @type {__VLS_StyleScopedClasses['login-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['login-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['links']} */ ;
-/** @type {__VLS_StyleScopedClasses['auth-page']} */ ;
-/** @type {__VLS_StyleScopedClasses['auth-bg']} */ ;
-/** @type {__VLS_StyleScopedClasses['dark']} */ ;
-/** @type {__VLS_StyleScopedClasses['auth-page']} */ ;
-/** @type {__VLS_StyleScopedClasses['login-card']} */ ;
-/** @type {__VLS_StyleScopedClasses['dark']} */ ;
-/** @type {__VLS_StyleScopedClasses['auth-page']} */ ;
-/** @type {__VLS_StyleScopedClasses['brand-mini']} */ ;
-/** @type {__VLS_StyleScopedClasses['dark']} */ ;
-/** @type {__VLS_StyleScopedClasses['auth-page']} */ ;
-/** @type {__VLS_StyleScopedClasses['login-card']} */ ;
-/** @type {__VLS_StyleScopedClasses['dark']} */ ;
-/** @type {__VLS_StyleScopedClasses['auth-page']} */ ;
-/** @type {__VLS_StyleScopedClasses['login-card']} */ ;
-/** @type {__VLS_StyleScopedClasses['dark']} */ ;
-/** @type {__VLS_StyleScopedClasses['auth-page']} */ ;
-/** @type {__VLS_StyleScopedClasses['safe-note']} */ ;
-/** @type {__VLS_StyleScopedClasses['dark']} */ ;
-/** @type {__VLS_StyleScopedClasses['auth-page']} */ ;
-/** @type {__VLS_StyleScopedClasses['hint']} */ ;
-/** @type {__VLS_StyleScopedClasses['dark']} */ ;
-/** @type {__VLS_StyleScopedClasses['auth-page']} */ ;
-/** @type {__VLS_StyleScopedClasses['links']} */ ;
-/** @type {__VLS_StyleScopedClasses['dark']} */ ;
-/** @type {__VLS_StyleScopedClasses['auth-page']} */ ;
-/** @type {__VLS_StyleScopedClasses['link-btn']} */ ;
-/** @type {__VLS_StyleScopedClasses['dark']} */ ;
-/** @type {__VLS_StyleScopedClasses['auth-page']} */ ;
-/** @type {__VLS_StyleScopedClasses['forgot-box']} */ ;
 /** @type {__VLS_StyleScopedClasses['auth-shell']} */ ;
 // CSS variable injection 
 // CSS variable injection end 
@@ -118,9 +90,19 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.d
 __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
     ...{ class: "auth-shell" },
 });
-__VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "login-card glass" },
-});
+/** @type {[typeof AppGlassSurface, typeof AppGlassSurface, ]} */ ;
+// @ts-ignore
+const __VLS_0 = __VLS_asFunctionalComponent(AppGlassSurface, new AppGlassSurface({
+    as: "div",
+    ...{ class: "login-card" },
+    radius: (24),
+}));
+const __VLS_1 = __VLS_0({
+    as: "div",
+    ...{ class: "login-card" },
+    radius: (24),
+}, ...__VLS_functionalComponentArgsRest(__VLS_0));
+__VLS_2.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "row-between" },
 });
@@ -133,8 +115,8 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.d
 __VLS_asFunctionalElement(__VLS_intrinsicElements.strong, __VLS_intrinsicElements.strong)({});
 /** @type {[typeof ThemeToggle, ]} */ ;
 // @ts-ignore
-const __VLS_0 = __VLS_asFunctionalComponent(ThemeToggle, new ThemeToggle({}));
-const __VLS_1 = __VLS_0({}, ...__VLS_functionalComponentArgsRest(__VLS_0));
+const __VLS_3 = __VLS_asFunctionalComponent(ThemeToggle, new ThemeToggle({}));
+const __VLS_4 = __VLS_3({}, ...__VLS_functionalComponentArgsRest(__VLS_3));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.header, __VLS_intrinsicElements.header)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
@@ -173,17 +155,17 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.button, __VLS_intrinsicElement
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "links" },
 });
-const __VLS_3 = {}.RouterLink;
+const __VLS_6 = {}.RouterLink;
 /** @type {[typeof __VLS_components.RouterLink, typeof __VLS_components.routerLink, typeof __VLS_components.RouterLink, typeof __VLS_components.routerLink, ]} */ ;
 // @ts-ignore
-const __VLS_4 = __VLS_asFunctionalComponent(__VLS_3, new __VLS_3({
+const __VLS_7 = __VLS_asFunctionalComponent(__VLS_6, new __VLS_6({
     to: "/register",
 }));
-const __VLS_5 = __VLS_4({
+const __VLS_8 = __VLS_7({
     to: "/register",
-}, ...__VLS_functionalComponentArgsRest(__VLS_4));
-__VLS_6.slots.default;
-var __VLS_6;
+}, ...__VLS_functionalComponentArgsRest(__VLS_7));
+__VLS_9.slots.default;
+var __VLS_9;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.button, __VLS_intrinsicElements.button)({
     ...{ onClick: (__VLS_ctx.openForgot) },
     ...{ class: "link-btn" },
@@ -230,12 +212,12 @@ if (__VLS_ctx.showForgot) {
 __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({
     ...{ class: "safe-note" },
 });
+var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['auth-page']} */ ;
 /** @type {__VLS_StyleScopedClasses['fade-up']} */ ;
 /** @type {__VLS_StyleScopedClasses['auth-bg']} */ ;
 /** @type {__VLS_StyleScopedClasses['auth-shell']} */ ;
 /** @type {__VLS_StyleScopedClasses['login-card']} */ ;
-/** @type {__VLS_StyleScopedClasses['glass']} */ ;
 /** @type {__VLS_StyleScopedClasses['row-between']} */ ;
 /** @type {__VLS_StyleScopedClasses['brand-mini']} */ ;
 /** @type {__VLS_StyleScopedClasses['logo']} */ ;
@@ -264,6 +246,7 @@ var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
+            AppGlassSurface: AppGlassSurface,
             ThemeToggle: ThemeToggle,
             showForgot: showForgot,
             loading: loading,

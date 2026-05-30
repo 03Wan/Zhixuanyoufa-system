@@ -1,7 +1,7 @@
 ﻿<template>
   <AppShell title="批量检测">
     <section class="page-stack fade-up">
-      <section class="glass card">
+      <AppGlassSurface as="section" class="card">
         <h2 class="section-title">批量检测</h2>
         <p class="text-muted">当前支持表格批量录入并批量创建检测子任务。</p>
         <div class="actions">
@@ -32,9 +32,9 @@
             </tbody>
           </table>
         </div>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card">
+      <AppGlassSurface as="section" class="card">
         <div class="row-between"><h3>批量任务列表</h3><button class="btn btn-secondary" :disabled="loading" @click="load">{{ loading ? '刷新中' : '刷新' }}</button></div>
         <div v-if="loading" class="state loading center-loading">批量任务加载中</div>
         <div v-else class="table-wrap">
@@ -48,9 +48,9 @@
             </tbody>
           </table>
         </div>
-      </section>
+      </AppGlassSurface>
 
-      <section class="glass card" v-if="activeBatch">
+      <AppGlassSurface as="section" class="card" v-if="activeBatch">
         <h3>批量检测结果明细</h3>
         <table class="table">
           <thead><tr><th>行号</th><th>状态</th><th>任务ID</th><th>操作</th></tr></thead>
@@ -64,12 +64,14 @@
             </tr>
           </tbody>
         </table>
-      </section>
+      </AppGlassSurface>
     </section>
   </AppShell>
 </template>
 
 <script setup lang="ts">
+
+import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import AppShell from '@/layouts/AppShell.vue';

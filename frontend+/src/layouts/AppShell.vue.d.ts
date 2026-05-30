@@ -1,11 +1,11 @@
 type __VLS_Props = {
     title: string;
 };
-declare var __VLS_20: {}, __VLS_22: {};
+declare var __VLS_23: {}, __VLS_25: {};
 type __VLS_Slots = {} & {
-    default?: (props: typeof __VLS_20) => any;
+    default?: (props: typeof __VLS_23) => any;
 } & {
-    default?: (props: typeof __VLS_22) => any;
+    default?: (props: typeof __VLS_25) => any;
 };
 declare const __VLS_component: import("vue").DefineComponent<__VLS_Props, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<__VLS_Props> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, false, {}, any>;
 declare const _default: __VLS_WithSlots<typeof __VLS_component, __VLS_Slots>;

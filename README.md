@@ -105,3 +105,26 @@ PORT=3000
 
 登录注册 → 创建任务 → 录入素材 → 启动检测 → 查看检测结果 → 生成人工复核任务（高风险）→ 生成报告 → 报告查看/下载/打印 → 规则库维护 → 操作日志追踪
 
+## GitHub 自动部署到 Vercel
+
+仓库已内置 2 条 GitHub Actions 工作流：
+
+- `.github/workflows/vercel-frontend.yml`
+- `.github/workflows/vercel-backend.yml`
+
+触发策略：
+
+- 对 `frontend+/**` 的 PR：自动部署 `system` 预览环境
+- 对 `frontend+/**` 合并到 `main`：自动部署 `system` 生产环境
+- 对 `backend/**` 的 PR：自动部署 `system-api` 预览环境
+- 对 `backend/**` 合并到 `main`：自动部署 `system-api` 生产环境
+
+在 GitHub 仓库 `Settings -> Secrets and variables -> Actions` 中新增：
+
+- `VERCEL_TOKEN`：Vercel 访问令牌
+
+说明：
+
+- `VERCEL_ORG_ID` 和 `VERCEL_PROJECT_ID` 已写入 workflow（对应当前 `system` / `system-api`）。
+- 这是“先提交 GitHub，再自动部署”的 CI/CD 路径，不依赖本机 `vercel` CLI 登录状态。
+

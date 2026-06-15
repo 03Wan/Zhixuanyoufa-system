@@ -19,6 +19,8 @@ const FALLBACK_DATABASE_URL =
   'postgresql://postgres.wnnkwjlrqvczdleqngyu:%40Wb15262578750@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1';
 const FALLBACK_DIRECT_URL =
   'postgresql://postgres.wnnkwjlrqvczdleqngyu:%40Wb15262578750@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres';
+const TARGET_SUPABASE_HOST = 'aws-1-ap-southeast-1.pooler.supabase.com';
+const TARGET_SUPABASE_REF = 'wnnkwjlrqvczdleqngyu';
 
 function normalizeSupabaseUrl(value?: string, fallback?: string) {
   if (!value) return fallback;
@@ -30,8 +32,18 @@ function normalizeSupabaseUrl(value?: string, fallback?: string) {
   return value;
 }
 
-process.env.DATABASE_URL = normalizeSupabaseUrl(process.env.DATABASE_URL, FALLBACK_DATABASE_URL);
-process.env.DIRECT_URL = normalizeSupabaseUrl(process.env.DIRECT_URL, FALLBACK_DIRECT_URL);
+function shouldUseFallbackInVercel(value: string | undefined) {
+  if (!process.env.VERCEL) return false;
+  if (!value) return true;
+  return !value.includes(TARGET_SUPABASE_HOST) || !value.includes(TARGET_SUPABASE_REF);
+}
+
+process.env.DATABASE_URL = shouldUseFallbackInVercel(process.env.DATABASE_URL)
+  ? FALLBACK_DATABASE_URL
+  : normalizeSupabaseUrl(process.env.DATABASE_URL, FALLBACK_DATABASE_URL);
+process.env.DIRECT_URL = shouldUseFallbackInVercel(process.env.DIRECT_URL)
+  ? FALLBACK_DIRECT_URL
+  : normalizeSupabaseUrl(process.env.DIRECT_URL, FALLBACK_DIRECT_URL);
 
 if (process.env.VERCEL && process.env.DATABASE_URL === FALLBACK_DATABASE_URL) {
   process.env.DIRECT_URL = FALLBACK_DIRECT_URL;

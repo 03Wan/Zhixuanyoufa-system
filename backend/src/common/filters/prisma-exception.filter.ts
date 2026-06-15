@@ -1,4 +1,4 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus, Logger } from '@nestjs/common';
 import { Response } from 'express';
 import {
   PrismaClientInitializationError,
@@ -14,9 +14,13 @@ import {
   PrismaClientValidationError,
 )
 export class PrismaExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(PrismaExceptionFilter.name);
+
   catch(exception: unknown, host: ArgumentsHost) {
     const response = host.switchToHttp().getResponse<Response>();
     const message = String((exception as any)?.message || '');
+
+    this.logger.error(message, (exception as any)?.stack);
 
     response.status(HttpStatus.SERVICE_UNAVAILABLE).json({
       code: HttpStatus.SERVICE_UNAVAILABLE,

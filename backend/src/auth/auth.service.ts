@@ -6,12 +6,17 @@ import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcryptjs';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { BootstrapDataService } from '../bootstrap-data.service';
 
 @Injectable()
 export class AuthService {
   private readonly resetTokenStore = new Map<string, { token: string; expiresAt: number }>();
 
-  constructor(private readonly prisma: PrismaService, private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+    private readonly bootstrapDataService: BootstrapDataService,
+  ) {}
 
   async register(dto: RegisterDto) {
     const exists = await this.prisma.user.findFirst({ where: { OR: [{ email: dto.email }, { username: dto.username }] } });
@@ -31,7 +36,11 @@ export class AuthService {
   }
 
   async login(dto: LoginDto) {
-    const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
+    let user = await this.prisma.user.findUnique({ where: { email: dto.email } });
+    if (!user && this.bootstrapDataService.isDemoEmail(dto.email)) {
+      await this.bootstrapDataService.ensureReady();
+      user = await this.prisma.user.findUnique({ where: { email: dto.email } });
+    }
     if (!user) throw new UnauthorizedException('账号或密码错误');
     const ok = await bcrypt.compare(dto.password, user.passwordHash);
     if (!ok) throw new UnauthorizedException('账号或密码错误');

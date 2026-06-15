@@ -1,10 +1,11 @@
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
 import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
+import { BootstrapDataService } from './bootstrap-data.service';
 
 const allowedOrigins = new Set([
   'https://www.paperhelper.fun',
@@ -38,6 +39,7 @@ if (process.env.VERCEL && process.env.DATABASE_URL === FALLBACK_DATABASE_URL) {
 }
 
 export async function createNestApp(adapterOrOptions?: unknown) {
+  const logger = new Logger('Bootstrap');
   const app = adapterOrOptions
     ? await NestFactory.create(AppModule, adapterOrOptions as never)
     : await NestFactory.create(AppModule);
@@ -64,6 +66,11 @@ export async function createNestApp(adapterOrOptions?: unknown) {
   } catch {
     // Vercel serverless runtime is read-only outside /tmp; skip static asset mounting if unavailable.
   }
+
+  const bootstrapDataService = app.get(BootstrapDataService, { strict: false });
+  void bootstrapDataService
+    .ensureReady()
+    .catch((error) => logger.error('Failed to warm bootstrap data', error?.stack || String(error)));
 
   return app;
 }

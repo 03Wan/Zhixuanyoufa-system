@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -45,11 +45,13 @@ export class FilesController {
     }),
   )
   async upload(
+    @Req() req: Request,
     @CurrentUser('id') userId: string,
     @UploadedFile() file: Express.Multer.File,
     @Query('taskId') taskId?: string,
   ) {
-    const url = `/uploads/${file.filename}`;
+    const origin = `${req.protocol}://${req.get('host')}`;
+    const url = new URL(`/uploads/${file.filename}`, origin).toString();
     return this.filesService.saveFileRecord(userId, {
       taskId,
       originalName: safeName(file.originalname),

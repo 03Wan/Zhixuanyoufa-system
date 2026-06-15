@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
 import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 
@@ -47,6 +48,7 @@ export async function createNestApp(adapterOrOptions?: unknown) {
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalFilters(new PrismaExceptionFilter());
   const uploadDir = process.env.VERCEL ? join('/tmp', 'uploads') : join(process.cwd(), 'uploads');
   try {
     if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });

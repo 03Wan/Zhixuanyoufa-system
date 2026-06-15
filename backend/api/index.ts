@@ -4,6 +4,11 @@ import { createNestApp } from '../src/bootstrap';
 
 let server: express.Express | null = null;
 
+export const config = {
+  runtime: 'nodejs',
+  maxDuration: 30,
+};
+
 async function getServer() {
   if (server) return server;
 

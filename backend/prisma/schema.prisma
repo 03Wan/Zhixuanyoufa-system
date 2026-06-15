@@ -33,6 +33,7 @@ enum RiskLevel {
   LOW
   MEDIUM
   HIGH
+  CRITICAL
 }
 
 enum DecisionType {
@@ -78,6 +79,8 @@ model User {
   customers       Customer[]      @relation("customerOwner")
   batchTasks      BatchTask[]
   apiCallLogs     ApiCallLog[]
+  modelConfig     ModelConfig?
+  commercialApplications CommercialApplication[]
 }
 
 model MaterialTask {
@@ -425,4 +428,36 @@ model ApiCallLog {
   createdAt   DateTime @default(now())
 
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model ModelConfig {
+  id               String   @id @default(cuid())
+  ownerUserId      String   @unique
+  enabled          Boolean  @default(false)
+  provider         String   @default("OPENAI_COMPATIBLE")
+  apiUrl           String?
+  apiKeyCiphertext String?
+  modelName        String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  owner User @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+}
+
+model CommercialApplication {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String
+  companyName String?
+  contact     String?
+  status      String   @default("PENDING")
+  note        String?  @db.Text
+  reviewNote  String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
 }

@@ -1,5 +1,5 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
-export const USE_MOCK = String(import.meta.env.VITE_USE_MOCK || 'true').toLowerCase() !== 'false';
+export const USE_MOCK = String(import.meta.env.VITE_USE_MOCK || 'false').toLowerCase() === 'true';
 const TOKEN_KEY = 'zyyf_token';
 const USER_KEY = 'zyyf_user';
 const LOADING_DELAY_MS = 150;
@@ -851,13 +851,7 @@ async function run(live, mock) {
     try {
         if (USE_MOCK)
             return await mock();
-        try {
-            return await live();
-        }
-        catch (error) {
-            console.warn('[api] live request failed, fallback to mock:', error);
-            return await mock();
-        }
+        return await live();
     }
     finally {
         endGlobalLoading();
@@ -1779,6 +1773,26 @@ export const api = {
             mockMaterialVersions.unshift(rec);
             return rec;
         });
+    },
+    getModelConfig() {
+        return run(() => request('/model-config/me', 'GET'), () => ({
+            enabled: false,
+            provider: 'OPENAI_COMPATIBLE',
+            apiUrl: '',
+            modelName: 'gpt-4.1-mini',
+            hasApiKey: false,
+            maskedApiKey: '',
+        }));
+    },
+    saveModelConfig(payload) {
+        return run(() => request('/model-config/me', 'PATCH', payload), () => ({
+            enabled: !!payload.enabled,
+            provider: payload.provider || 'OPENAI_COMPATIBLE',
+            apiUrl: payload.apiUrl || '',
+            modelName: payload.modelName || 'gpt-4.1-mini',
+            hasApiKey: !!payload.apiKey,
+            maskedApiKey: payload.apiKey ? '已保存' : '',
+        }));
     },
     getApiOpenCatalog() {
         return run(() => request('/api-open/catalog', 'GET'), () => ({

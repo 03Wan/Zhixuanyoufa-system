@@ -41,7 +41,7 @@ const showWorkspaceTabs = computed(() => false);
 const descByPath = {
     "/home": "总览任务进度、风险分布与报告动态",
     "/dashboard": "通过图表分析近7天检测趋势与风险结构",
-    "/plans": "展示演示版套餐体系与商业化阶段规划",
+    "/plans": "查看当前套餐能力、额度与升级申请入口",
     "/my-plan": "查看当前套餐、额度使用与升级建议",
     "/batch": "MVP批量检测：支持表格批量录入与批量创建任务",
     "/companies": "企业组织管理：企业信息、成员、任务与报告关联",

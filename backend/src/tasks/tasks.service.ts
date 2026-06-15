@@ -4,6 +4,7 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { LogsService } from '../logs/logs.service';
 import { SubscriptionService } from '../subscription/subscription.service';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Injectable()
 export class TasksService {
@@ -91,6 +92,46 @@ export class TasksService {
     const task = await this.prisma.materialTask.findFirst({ where, include: { materialContent: true, detectionResult: true, report: true, reviewTask: true, files: true } });
     if (!task) throw new NotFoundException('任务不存在');
     return task;
+  }
+
+  async update(userId: string, taskId: string, dto: UpdateTaskDto) {
+    const task = await this.detail(userId, taskId);
+    const payload = dto as Record<string, any>;
+    const hasMaterialChange = ['title', 'sellingPoints', 'detailText', 'adText'].some((key) => payload[key] !== undefined);
+
+    return this.prisma.materialTask.update({
+      where: { id: task.id },
+      data: {
+        ...(dto.sku !== undefined ? { sku: dto.sku } : {}),
+        ...(dto.productName !== undefined ? { productName: dto.productName } : {}),
+        ...(dto.category !== undefined ? { category: dto.category } : {}),
+        ...(dto.platform !== undefined ? { platform: dto.platform } : {}),
+        ...(dto.market !== undefined ? { market: dto.market } : {}),
+        ...(dto.purpose !== undefined ? { purpose: dto.purpose } : {}),
+        ...(hasMaterialChange
+          ? {
+              materialContent: {
+                upsert: {
+                  create: {
+                    title: dto.title,
+                    sellingPoints: dto.sellingPoints ? [dto.sellingPoints] : [],
+                    detailText: dto.detailText,
+                    adText: dto.adText,
+                    imageUrls: [],
+                  },
+                  update: {
+                    ...(dto.title !== undefined ? { title: dto.title } : {}),
+                    ...(dto.sellingPoints !== undefined ? { sellingPoints: [dto.sellingPoints] } : {}),
+                    ...(dto.detailText !== undefined ? { detailText: dto.detailText } : {}),
+                    ...(dto.adText !== undefined ? { adText: dto.adText } : {}),
+                  },
+                },
+              },
+            }
+          : {}),
+      },
+      include: { materialContent: true, detectionResult: true, report: true, reviewTask: true, files: true },
+    });
   }
 
   async updateStatus(userId: string, taskId: string, dto: UpdateTaskStatusDto) {

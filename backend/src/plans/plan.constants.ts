@@ -121,4 +121,4 @@ export const DEMO_PLAN_SEEDS: PlanSeed[] = [
   },
 ];
 
-export const DEMO_NOTICE = '当前为演示版套餐体系，真实支付、合同开通和企业定制将在商业化阶段接入。';
+export const DEMO_NOTICE = '套餐能力来自真实数据库配置；付费、合同和试点开通仍通过人工审批流程执行。';

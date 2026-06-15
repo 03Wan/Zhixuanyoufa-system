@@ -1,17 +1,20 @@
-﻿import { Body, Controller, Delete, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
 
 @Controller('users')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  list() {
-    return this.usersService.listUsers();
+  @Roles('SYSTEM_ADMIN', 'ENTERPRISE_ADMIN')
+  list(@CurrentUser('id') userId: string) {
+    return this.usersService.listUsers(userId);
   }
 
   @Get('me')
@@ -25,13 +28,18 @@ export class UsersController {
   }
 
   @Patch(':id')
-  updateUser(@Param('id') id: string, @Body() dto: Partial<UpdateProfileDto & { role?: string }>) {
-    return this.usersService.updateUser(id, dto);
+  @Roles('SYSTEM_ADMIN', 'ENTERPRISE_ADMIN')
+  updateUser(
+    @CurrentUser('id') currentUserId: string,
+    @Param('id') id: string,
+    @Body() dto: Partial<UpdateProfileDto & { role?: string }>,
+  ) {
+    return this.usersService.updateUser(currentUserId, id, dto);
   }
 
   @Delete(':id')
-  deleteUser(@Param('id') id: string) {
-    return this.usersService.deleteUser(id);
+  @Roles('SYSTEM_ADMIN', 'ENTERPRISE_ADMIN')
+  deleteUser(@CurrentUser('id') currentUserId: string, @Param('id') id: string) {
+    return this.usersService.deleteUser(currentUserId, id);
   }
 }
-

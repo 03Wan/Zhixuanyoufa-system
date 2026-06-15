@@ -3,9 +3,11 @@ import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { ReviewsService } from './reviews.service';
 import { ReviewDecisionDto } from './dto/review-decision.dto';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
 
 @Controller('reviews')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
@@ -33,11 +35,13 @@ export class ReviewsController {
   }
 
   @Post(':id/start')
+  @Roles('REVIEWER', 'SYSTEM_ADMIN')
   start(@CurrentUser('id') userId: string, @Param('id') id: string) {
     return this.reviewsService.startReview(userId, id);
   }
 
   @Post(':id/decision')
+  @Roles('REVIEWER', 'SYSTEM_ADMIN')
   submitDecision(
     @CurrentUser('id') userId: string,
     @Param('id') id: string,

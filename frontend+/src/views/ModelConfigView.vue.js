@@ -1,40 +1,66 @@
 import AppGlassSurface from "@/components/AppGlassSurface.vue";
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
+import { api, getFriendlyError } from '@/lib/api';
 import { notify } from '@/lib/dialog';
 const modelPlans = [
-    { key: 'gpt', name: 'GPT 系列', modelName: 'gpt5.5', price: '按量计费 / 套餐开通', desc: '适用于文案检测、风险解释、优化建议生成。', features: ['文本检测', '优化建议', '报告摘要'] },
-    { key: 'gemini', name: 'Gemini 系列', modelName: 'gemini-pro', price: '按量计费 / 套餐开通', desc: '适用于图文混合素材、多模态理解与平台适配判断。', features: ['图文理解', '多市场适配', '素材归因'] },
-    { key: 'claude', name: 'Claude Code', modelName: 'claude-code', price: '企业版开通', desc: '适用于规则解释、结构化输出和复杂审核流程辅助。', features: ['规则解释', '结构化输出', '企业流程'] },
+    { key: 'gpt', name: 'GPT 系列', modelName: 'gpt-4.1-mini', price: '按量计费 / 套餐开通' },
+    { key: 'gemini', name: 'Gemini 系列', modelName: 'gemini-2.5-flash', price: '按量计费 / 套餐开通' },
+    { key: 'claude', name: 'Claude 系列', modelName: 'claude-3-5-sonnet', price: '企业版开通' },
 ];
-const selectedPlan = ref(null);
-const form = reactive({ enabled: false, apiUrl: '', apiKey: '', modelName: 'gpt5.5' });
-function selectPlan(plan) { selectedPlan.value = plan; }
-async function choosePlan(plan) { form.modelName = plan.modelName; await notify(`已选择 ${plan.name}，具体价格和开通方式需购买后由团队配置。`); }
-function load() {
-    try {
-        const raw = localStorage.getItem('zyyf_model_config');
-        if (!raw)
-            return;
-        const parsed = JSON.parse(raw);
-        form.enabled = !!parsed.enabled;
-        form.apiUrl = String(parsed.apiUrl || '');
-        form.apiKey = String(parsed.apiKey || '');
-        form.modelName = String(parsed.modelName || 'gpt5.5');
-    }
-    catch { }
+const form = reactive({ enabled: false, apiUrl: '', apiKey: '', modelName: 'gpt-4.1-mini', provider: 'OPENAI_COMPATIBLE' });
+const loading = ref(false);
+const saving = ref(false);
+const hasApiKey = ref(false);
+function selectPlan(plan) {
+    form.modelName = plan.modelName;
 }
-async function save() { localStorage.setItem('zyyf_model_config', JSON.stringify(form)); await notify('模型配置已保存。'); }
-load();
+async function load() {
+    loading.value = true;
+    try {
+        const data = await api.getModelConfig();
+        form.enabled = !!data.enabled;
+        form.apiUrl = String(data.apiUrl || '');
+        form.apiKey = '';
+        form.modelName = String(data.modelName || 'gpt-4.1-mini');
+        form.provider = String(data.provider || 'OPENAI_COMPATIBLE');
+        hasApiKey.value = !!data.hasApiKey;
+    }
+    catch (error) {
+        await notify(getFriendlyError(error));
+    }
+    finally {
+        loading.value = false;
+    }
+}
+async function save() {
+    saving.value = true;
+    try {
+        const data = await api.saveModelConfig({
+            enabled: form.enabled,
+            apiUrl: form.apiUrl,
+            apiKey: form.apiKey,
+            modelName: form.modelName,
+            provider: form.provider,
+        });
+        hasApiKey.value = !!data.hasApiKey;
+        form.apiKey = '';
+        await notify('模型配置已保存到服务端。');
+    }
+    catch (error) {
+        await notify(getFriendlyError(error));
+    }
+    finally {
+        saving.value = false;
+    }
+}
+onMounted(load);
 debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
 /** @type {__VLS_StyleScopedClasses['model-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['model-card']} */ ;
-/** @type {__VLS_StyleScopedClasses['model-detail']} */ ;
-/** @type {__VLS_StyleScopedClasses['model-detail']} */ ;
-/** @type {__VLS_StyleScopedClasses['feature-tags']} */ ;
 /** @type {__VLS_StyleScopedClasses['model-grid']} */ ;
 // CSS variable injection 
 // CSS variable injection end 
@@ -75,6 +101,7 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)(
 __VLS_asFunctionalElement(__VLS_intrinsicElements.button, __VLS_intrinsicElements.button)({
     ...{ onClick: (__VLS_ctx.load) },
     ...{ class: "btn btn-secondary" },
+    disabled: (__VLS_ctx.loading),
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "model-grid" },
@@ -87,42 +114,12 @@ for (const [item] of __VLS_getVForSourceType((__VLS_ctx.modelPlans))) {
         key: (item.key),
         type: "button",
         ...{ class: "model-card" },
-        ...{ class: ({ active: __VLS_ctx.selectedPlan?.key === item.key }) },
+        ...{ class: ({ active: __VLS_ctx.form.modelName === item.modelName }) },
     });
     __VLS_asFunctionalElement(__VLS_intrinsicElements.strong, __VLS_intrinsicElements.strong)({});
     (item.name);
     __VLS_asFunctionalElement(__VLS_intrinsicElements.b, __VLS_intrinsicElements.b)({});
     (item.price);
-}
-if (__VLS_ctx.selectedPlan) {
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "model-detail" },
-    });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "row-between" },
-    });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({});
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({});
-    (__VLS_ctx.selectedPlan.name);
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
-    (__VLS_ctx.selectedPlan.desc);
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.button, __VLS_intrinsicElements.button)({
-        ...{ onClick: (...[$event]) => {
-                if (!(__VLS_ctx.selectedPlan))
-                    return;
-                __VLS_ctx.choosePlan(__VLS_ctx.selectedPlan);
-            } },
-        ...{ class: "btn btn-primary" },
-    });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "feature-tags" },
-    });
-    for (const [f] of __VLS_getVForSourceType((__VLS_ctx.selectedPlan.features))) {
-        __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({
-            key: (f),
-        });
-        (f);
-    }
 }
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "field" },
@@ -147,7 +144,7 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.d
 __VLS_asFunctionalElement(__VLS_intrinsicElements.label, __VLS_intrinsicElements.label)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.input)({
     ...{ class: "input" },
-    placeholder: "sk-...",
+    placeholder: (__VLS_ctx.hasApiKey ? '留空则保持当前密钥不变' : 'sk-...'),
 });
 (__VLS_ctx.form.apiKey);
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
@@ -156,16 +153,23 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.d
 __VLS_asFunctionalElement(__VLS_intrinsicElements.label, __VLS_intrinsicElements.label)({});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.input)({
     ...{ class: "input" },
-    placeholder: "gpt5.5",
+    placeholder: "gpt-4.1-mini",
 });
 (__VLS_ctx.form.modelName);
+if (__VLS_ctx.hasApiKey) {
+    __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({
+        ...{ class: "text-muted" },
+    });
+}
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "actions" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.button, __VLS_intrinsicElements.button)({
     ...{ onClick: (__VLS_ctx.save) },
     ...{ class: "btn btn-primary" },
+    disabled: (__VLS_ctx.saving || __VLS_ctx.loading),
 });
+(__VLS_ctx.saving ? '保存中...' : '保存配置');
 var __VLS_6;
 var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['page-stack']} */ ;
@@ -179,11 +183,6 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['btn-secondary']} */ ;
 /** @type {__VLS_StyleScopedClasses['model-grid']} */ ;
 /** @type {__VLS_StyleScopedClasses['model-card']} */ ;
-/** @type {__VLS_StyleScopedClasses['model-detail']} */ ;
-/** @type {__VLS_StyleScopedClasses['row-between']} */ ;
-/** @type {__VLS_StyleScopedClasses['btn']} */ ;
-/** @type {__VLS_StyleScopedClasses['btn-primary']} */ ;
-/** @type {__VLS_StyleScopedClasses['feature-tags']} */ ;
 /** @type {__VLS_StyleScopedClasses['field']} */ ;
 /** @type {__VLS_StyleScopedClasses['field']} */ ;
 /** @type {__VLS_StyleScopedClasses['input']} */ ;
@@ -191,6 +190,7 @@ var __VLS_2;
 /** @type {__VLS_StyleScopedClasses['input']} */ ;
 /** @type {__VLS_StyleScopedClasses['field']} */ ;
 /** @type {__VLS_StyleScopedClasses['input']} */ ;
+/** @type {__VLS_StyleScopedClasses['text-muted']} */ ;
 /** @type {__VLS_StyleScopedClasses['actions']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn']} */ ;
 /** @type {__VLS_StyleScopedClasses['btn-primary']} */ ;
@@ -201,10 +201,11 @@ const __VLS_self = (await import('vue')).defineComponent({
             AppGlassSurface: AppGlassSurface,
             AppShell: AppShell,
             modelPlans: modelPlans,
-            selectedPlan: selectedPlan,
             form: form,
+            loading: loading,
+            saving: saving,
+            hasApiKey: hasApiKey,
             selectPlan: selectPlan,
-            choosePlan: choosePlan,
             load: load,
             save: save,
         };

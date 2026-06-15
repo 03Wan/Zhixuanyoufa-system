@@ -12,6 +12,7 @@ import {
   RiskLevelText,
 } from './detection.types';
 import { IMAGE_BANNED_FILE_WORDS, LOCALIZATION_RULES, TEXT_RISK_RULES } from './risk-rules';
+import { ModelConfigService } from '../model-config/model-config.service';
 
 @Injectable()
 export class DetectionService {
@@ -19,6 +20,7 @@ export class DetectionService {
     private readonly prisma: PrismaService,
     private readonly logsService: LogsService,
     private readonly subscriptionService: SubscriptionService,
+    private readonly modelConfigService: ModelConfigService,
   ) {}
 
   private async buildTaskScope(userId: string, extra: Record<string, any> = {}) {
@@ -57,7 +59,8 @@ export class DetectionService {
       imageUrls: this.jsonToStringArray(content?.imageUrls),
     };
 
-    const output = await this.evaluateWithOptionalModel(input, runtimeModelConfig);
+    const savedModelConfig = await this.modelConfigService.getRuntimeConfig(userId);
+    const output = await this.evaluateWithOptionalModel(input, savedModelConfig ?? runtimeModelConfig);
 
     await this.prisma.$transaction(async (tx) => {
       await tx.materialTask.update({
@@ -451,32 +454,37 @@ export class DetectionService {
   private toPrismaRiskLevel(level: RiskLevelText): RiskLevel {
     if (level === '低风险') return RiskLevel.LOW;
     if (level === '中风险') return RiskLevel.MEDIUM;
-    return RiskLevel.HIGH;
+    if (level === '高风险') return RiskLevel.HIGH;
+    return RiskLevel.CRITICAL;
   }
 
   private toPrismaDecision(decision: DecisionText): DecisionType {
     if (decision === '可发布') return DecisionType.APPROVE;
     if (decision === '优化后发布') return DecisionType.OPTIMIZE_AND_REVIEW;
-    return DecisionType.REJECT;
+    if (decision === '人工复核') return DecisionType.REJECT;
+    return DecisionType.HOLD;
   }
 
   private toRiskLevelText(level: RiskLevel): RiskLevelText {
     if (level === RiskLevel.LOW) return '低风险';
     if (level === RiskLevel.MEDIUM) return '中风险';
-    return '高风险';
+    if (level === RiskLevel.HIGH) return '高风险';
+    return '严重风险';
   }
 
   private toDecisionText(decision: DecisionType): DecisionText {
     if (decision === DecisionType.APPROVE) return '可发布';
     if (decision === DecisionType.OPTIMIZE_AND_REVIEW) return '优化后发布';
-    return '人工复核';
+    if (decision === DecisionType.REJECT) return '人工复核';
+    return '暂缓发布';
   }
 
   private deriveDecisionFromPersistedResult(totalScore: number, riskLevel: RiskLevel): DecisionText {
     if (totalScore < 50) return '暂缓发布';
     if (riskLevel === RiskLevel.LOW) return '可发布';
     if (riskLevel === RiskLevel.MEDIUM) return '优化后发布';
-    return '人工复核';
+    if (riskLevel === RiskLevel.HIGH) return '人工复核';
+    return '暂缓发布';
   }
 
   private recommendedTextFor(keyword: string) {

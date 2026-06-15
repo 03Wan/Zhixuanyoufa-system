@@ -21,6 +21,7 @@ import { BatchModule } from './batch/batch.module';
 import { MaterialVersionsModule } from './material-versions/material-versions.module';
 import { ApiOpenModule } from './api-open/api-open.module';
 import { ReportTemplatesModule } from './report-templates/report-templates.module';
+import { ModelConfigModule } from './model-config/model-config.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { ReportTemplatesModule } from './report-templates/report-templates.modul
     MaterialVersionsModule,
     ApiOpenModule,
     ReportTemplatesModule,
+    ModelConfigModule,
   ],
 })
 export class AppModule {}

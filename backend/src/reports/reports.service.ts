@@ -165,7 +165,7 @@ export class ReportsService {
       decision: result.decision,
       operationLogs: [{ action: '报告导出', at: new Date().toISOString(), operator: userId }],
       exportedAt: new Date().toISOString(),
-      notice: '演示版导出文件：商业化阶段将接入企业模板与签章能力。',
+      notice: '报告基于当前真实检测记录导出；企业模板与签章能力可在后续审批开通。',
     };
 
     if (format === 'json') {
@@ -191,7 +191,7 @@ export class ReportsService {
       doc.on('data', (chunk) => chunks.push(chunk));
       doc.on('end', () => resolve(Buffer.concat(chunks)));
 
-      doc.fontSize(18).text('智选优发审核报告（演示版）', { align: 'center' });
+      doc.fontSize(18).text('智选优发审核报告', { align: 'center' });
       doc.moveDown();
       doc.fontSize(11);
       doc.text(`报告标题：${payload.reportTitle}`);

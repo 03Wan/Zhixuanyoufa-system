@@ -13,12 +13,6 @@ const taskId = ref('');
 const localMainImages = ref([]);
 const localSceneImages = ref([]);
 const quotaInfo = ref({ quotaRemaining: 0, planName: '-' });
-const modelConfig = reactive({
-    enabled: false,
-    apiUrl: '',
-    apiKey: '',
-    modelName: 'gpt-4.1-mini',
-});
 const platforms = [
     'Amazon',
     'TikTok Shop',
@@ -168,12 +162,7 @@ async function startDetect() {
         detectStep.value = '准备任务与素材...';
         await new Promise((r) => setTimeout(r, 700));
         detectStep.value = '调用检测引擎分析文本与图片...';
-        await api.analyzeTask(id, {
-            enabled: modelConfig.enabled,
-            apiUrl: modelConfig.apiUrl,
-            apiKey: modelConfig.apiKey,
-            modelName: modelConfig.modelName,
-        });
+        await api.analyzeTask(id);
         detectStep.value = '整理检测结果与风险建议...';
         const elapsed = Date.now() - startedAt;
         if (elapsed < 2600) {
@@ -190,19 +179,6 @@ async function startDetect() {
         detectStep.value = '';
         loading.value = false;
     }
-}
-{
-    try {
-        const raw = localStorage.getItem('zyyf_model_config');
-        if (raw) {
-            const parsed = JSON.parse(raw);
-            modelConfig.enabled = !!parsed.enabled;
-            modelConfig.apiUrl = String(parsed.apiUrl || '');
-            modelConfig.apiKey = String(parsed.apiKey || '');
-            modelConfig.modelName = String(parsed.modelName || 'gpt-4.1-mini');
-        }
-    }
-    catch { }
 }
 async function submitReview() {
     closeErrorModal();

@@ -1,29 +1,36 @@
-﻿import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
-import { LogsService } from '../logs/logs.service';
+import { CommercialService } from './commercial.service';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
 
 @Controller('commercial')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class CommercialController {
-  constructor(private readonly logsService: LogsService) {}
+  constructor(private readonly commercialService: CommercialService) {}
 
   @Post('apply')
-  async apply(
+  apply(
     @CurrentUser('id') userId: string,
     @Body() body: { type?: string; contact?: string; companyName?: string; note?: string },
   ) {
-    await this.logsService.createLog({
-      userId,
-      action: 'COMMERCIAL_APPLY',
-      targetType: 'COMMERCIAL',
-      targetId: body.type || 'GENERAL',
-      detail: body,
-    });
+    return this.commercialService.apply(userId, body);
+  }
 
-    return {
-      submitted: true,
-      message: '已提交试点申请。当前功能属于商业化阶段规划，团队会线下联系开通。',
-    };
+  @Get('applications')
+  @Roles('SYSTEM_ADMIN', 'ENTERPRISE_ADMIN', 'MANAGER')
+  list(@CurrentUser('id') userId: string) {
+    return this.commercialService.list(userId);
+  }
+
+  @Patch('applications/:id')
+  @Roles('SYSTEM_ADMIN')
+  approve(
+    @CurrentUser('id') userId: string,
+    @Param('id') id: string,
+    @Body() body: { status: string; reviewNote?: string },
+  ) {
+    return this.commercialService.approve(userId, id, body);
   }
 }

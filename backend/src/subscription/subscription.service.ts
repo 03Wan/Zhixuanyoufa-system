@@ -57,7 +57,7 @@ export class SubscriptionService {
     const sub = await this.ensureDemoSubscription(userId);
 
     return {
-      notice: DEMO_NOTICE,
+      notice: '当前套餐状态来自真实数据库记录。增购、升级和接口试点将以申请审批结果为准。',
       companyName: sub.companyName,
       isUnlimited: this.isUnlimitedRole(user.role),
       subscription: sub,
@@ -116,7 +116,7 @@ export class SubscriptionService {
       include: { plan: true },
     });
 
-    return { notice: DEMO_NOTICE, subscription: sub };
+    return { notice: `套餐已更新为 ${plan.name}，后续额度将按当前记录执行。`, subscription: sub };
   }
 
   async upgrade(userId: string, dto: UpgradeSubscriptionDto) {

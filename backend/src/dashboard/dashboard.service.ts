@@ -28,7 +28,7 @@ export class DashboardService {
     const [todayTaskCount, pendingReviewCount, highRiskCount, reportCount] = await Promise.all([
       this.safeCount(this.prisma.materialTask.count({ where: taskScope })),
       this.safeCount(this.prisma.reviewTask.count({ where: { task: reviewScope, status: 'PENDING' } })),
-      this.safeCount(this.prisma.detectionResult.count({ where: { task: { is: taskScope }, riskLevel: 'HIGH' } })),
+      this.safeCount(this.prisma.detectionResult.count({ where: { task: { is: taskScope }, riskLevel: { in: ['HIGH', 'CRITICAL'] } } })),
       this.safeCount(this.prisma.report.count({ where: { task: { is: taskScope } } })),
     ]);
 
@@ -42,7 +42,7 @@ export class DashboardService {
 
     try {
       highRiskTasks = await this.prisma.materialTask.findMany({
-        where: { ...taskScope, detectionResult: { is: { riskLevel: 'HIGH' } } },
+        where: { ...taskScope, detectionResult: { is: { riskLevel: { in: ['HIGH', 'CRITICAL'] } } } },
         include: { detectionResult: true },
         orderBy: { updatedAt: 'desc' },
         take: 10,
@@ -96,7 +96,7 @@ export class DashboardService {
     const [reportCount, reviewCount, highRiskCount, usageCount, batchCount] = await Promise.all([
       this.prisma.report.count({ where: { task: taskScope } }),
       this.prisma.reviewTask.count({ where: { task: taskScope } }),
-      this.prisma.detectionResult.count({ where: { task: { is: taskScope }, riskLevel: 'HIGH' } }),
+      this.prisma.detectionResult.count({ where: { task: { is: taskScope }, riskLevel: { in: ['HIGH', 'CRITICAL'] } } }),
       this.prisma.usageRecord.count({ where: { user: taskScopeAny.user || undefined } as any }).catch(() => 0),
       this.prisma.batchTask.count({}).catch(() => 0),
     ]);

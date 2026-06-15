@@ -36,7 +36,7 @@ export class AuthService {
     const ok = await bcrypt.compare(dto.password, user.passwordHash);
     if (!ok) throw new UnauthorizedException('账号或密码错误');
 
-    const accessToken = await this.jwtService.signAsync({ sub: user.id, email: user.email, username: user.username });
+    const accessToken = await this.jwtService.signAsync({ sub: user.id });
     return {
       accessToken,
       user: {
@@ -59,7 +59,7 @@ export class AuthService {
 
     return {
       success: true,
-      message: '重置口令已生成（演示模式）',
+      message: '重置口令已生成，请在有效期内完成密码重置',
       resetToken: token,
       expiresInMinutes: 15,
     };

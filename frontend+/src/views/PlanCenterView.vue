@@ -76,8 +76,8 @@ async function choose(plan: any) {
     await openCommercial(plan, primaryAction(plan.name));
     return;
   }
-  await api.selectSubscription(plan.name);
-  modal.value = { open: true, message: `已切换为 ${plan.name}（演示版）。真实支付与合同开通将在商业化阶段接入。` };
+  const result: any = await api.selectSubscription(plan.name);
+  modal.value = { open: true, message: result?.notice || `已提交 ${plan.name} 的套餐变更申请。` };
 }
 
 async function openCommercial(plan: any, type: string) {

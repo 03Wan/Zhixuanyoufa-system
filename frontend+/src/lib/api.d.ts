@@ -126,6 +126,14 @@ export declare const api: {
     runBatchTask(batchId: string): Promise<any>;
     getMaterialVersions(taskId: string): Promise<unknown>;
     snapshotMaterialVersion(taskId: string, payload: any): Promise<unknown>;
+    getModelConfig(): Promise<unknown>;
+    saveModelConfig(payload: {
+        enabled?: boolean;
+        apiUrl?: string;
+        apiKey?: string;
+        modelName?: string;
+        provider?: string;
+    }): Promise<unknown>;
     getApiOpenCatalog(): Promise<unknown>;
     getReportTemplates(): Promise<unknown>;
     createReportTemplate(payload: any): Promise<any>;

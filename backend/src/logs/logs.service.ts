@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -30,12 +30,21 @@ export class LogsService {
     });
   }
 
-  async listLogs(query?: { page?: number; pageSize?: number; action?: string; targetType?: string }) {
+  async listLogs(userId: string, query?: { page?: number; pageSize?: number; action?: string; targetType?: string }) {
+    const me = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { role: true, companyName: true },
+    });
+    if (!me) throw new NotFoundException('用户不存在');
+
     const page = Math.max(1, Number(query?.page || 1));
     const pageSize = Math.min(200, Math.max(1, Number(query?.pageSize || 20)));
     const where: any = {};
     if (query?.action) where.action = query.action;
     if (query?.targetType) where.targetType = query.targetType;
+    if (me.role !== 'SYSTEM_ADMIN' && me.role !== 'ADMIN') {
+      where.user = me.companyName ? { companyName: me.companyName } : { id: userId };
+    }
 
     const [items, total] = await this.prisma.$transaction([
       this.prisma.operationLog.findMany({
@@ -57,4 +66,3 @@ export class LogsService {
     return { items: mapped, total, page, pageSize };
   }
 }
-

@@ -84,7 +84,7 @@ async function submitLogin() {
 }
 
 function useDemoAccount() {
-  loginForm.email = "admin@example.com";
+  loginForm.email = "sysadmin@example.com";
   loginForm.password = "123456";
 }
 

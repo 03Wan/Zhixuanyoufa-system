@@ -28,7 +28,7 @@ npm run prisma:generate
 npm run start:dev
 ```
 
-默认接口前缀（示例）：`http://localhost:3001/api`
+默认接口前缀（示例）：`https://api.paperhelper.fun/api`
 
 ## 环境变量
 
@@ -37,7 +37,7 @@ npm run start:dev
 复制 `frontend+/.env.example` 为 `frontend+/.env`：
 
 ```env
-VITE_API_BASE_URL=http://localhost:3001/api
+VITE_API_BASE_URL=https://api.paperhelper.fun/api
 ```
 
 ### 后端 `.env`

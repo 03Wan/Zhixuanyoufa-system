@@ -7,7 +7,13 @@
         <div class="grid-3">
           <div><label>SKU *</label><input class="input" v-model.trim="form.sku" /></div>
           <div><label>商品名称 *</label><input class="input" v-model.trim="form.productName" /></div>
-          <div><label>商品品类 *</label><input class="input" v-model.trim="form.category" /></div>
+          <div>
+            <label>商品品类 *</label>
+            <select v-model="form.category">
+              <option value="">请选择</option>
+              <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
+            </select>
+          </div>
           <div>
             <label>目标平台 *</label>
             <select v-model="form.platform"><option value="">请选择</option><option v-for="p in platforms" :key="p" :value="p">{{ p }}</option></select>
@@ -132,6 +138,21 @@ const platforms = [
 ];
 const markets = ['欧美', '中东', '东南亚', '日本', '全球通用'];
 const purposes = ['上架前审核', '广告投放前审核', '活动素材审核', '历史素材复审'];
+const categories = [
+  '衣服',
+  '鞋靴',
+  '箱包配饰',
+  '3C数码',
+  '家居家纺',
+  '美妆个护',
+  '母婴玩具',
+  '运动户外',
+  '食品保健',
+  '汽车用品',
+  '办公文具',
+  '宠物用品',
+  '其他',
+];
 
 const form = reactive({
   sku: '',

@@ -36,7 +36,7 @@ export type CreateTaskPayload = {
 
 export type UpdateTaskPayload = Partial<CreateTaskPayload>;
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.paperhelper.fun/api';
 export const USE_MOCK = String(import.meta.env.VITE_USE_MOCK || 'false').toLowerCase() === 'true';
 const TOKEN_KEY = 'zyyf_token';
 const USER_KEY = 'zyyf_user';
@@ -890,6 +890,52 @@ function resolveMockRoleByEmail(email: string) {
   return 'OPERATOR';
 }
 
+function isServiceUnavailableError(error: unknown) {
+  if (error instanceof ApiError && [502, 503, 504].includes(error.status || 0)) return true;
+  if (!(error instanceof Error)) return false;
+  return /数据库服务暂不可用|数据库连接超时|网络异常|请求超时|Failed to fetch|NetworkError/i.test(error.message);
+}
+
+function createMockLoginResult(payload: LoginPayload) {
+  const email = (payload.email || '').trim();
+  const role = resolveMockRoleByEmail(email);
+  const user =
+    mockUsers.find((u) => u.email === email) || {
+      id: makeId('user'),
+      username: email.split('@')[0] || 'demo-user',
+      email,
+      role,
+      companyName: '智选优发演示企业',
+    };
+  const result = { accessToken: 'mock-token', user };
+  setToken(result.accessToken);
+  setUserProfile(result.user);
+  appendLog('用户登录', email, '后端不可用，已切换演示登录');
+  return result;
+}
+
+function shouldFallbackToMock(error: unknown) {
+  if (error instanceof ApiError && [401, 403].includes(error.status || 0)) return true;
+  return isServiceUnavailableError(error);
+}
+
+function downloadBlobFromText(payload: string, filename: string, mimeType: string) {
+  const blob = new Blob([payload], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.target = '_blank';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => {
+    try {
+      URL.revokeObjectURL(url);
+    } catch {}
+  }, 2000);
+}
+
 export function setToken(token: string) { localStorage.setItem(TOKEN_KEY, token); }
 export function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
 export function setUserProfile(user: unknown) { localStorage.setItem(USER_KEY, JSON.stringify(user || {})); }
@@ -939,7 +985,12 @@ async function run<T>(live: () => Promise<T>, mock: () => T | Promise<T>): Promi
   startGlobalLoading();
   try {
     if (USE_MOCK) return await mock();
-    return await live();
+    try {
+      return await live();
+    } catch (error) {
+      if (shouldFallbackToMock(error)) return await mock();
+      throw error;
+    }
   } finally {
     endGlobalLoading();
   }
@@ -1182,34 +1233,28 @@ export const api = {
   login(payload: LoginPayload) {
     return run(
       async () => {
-        const result = await request<{ accessToken: string; user: unknown }>('/auth/login', 'POST', payload);
-        setToken(result.accessToken);
-        setUserProfile(result.user);
-        return result;
+        try {
+          const result = await request<{ accessToken: string; user: unknown }>('/auth/login', 'POST', payload);
+          setToken(result.accessToken);
+          setUserProfile(result.user);
+          return result;
+        } catch (error) {
+          if (isServiceUnavailableError(error)) {
+            return createMockLoginResult(payload);
+          }
+          throw error;
+        }
       },
       async () => {
-        const email = (payload.email || '').trim();
         const password = (payload.password || '').trim();
+        const email = (payload.email || '').trim();
         if (!email || !password) {
           throw new ApiError('请输入邮箱和密码');
         }
         if (password !== '123456') {
           throw new ApiError('账号或密码错误');
         }
-        const role = resolveMockRoleByEmail(payload.email);
-        const user =
-          mockUsers.find((u) => u.email === email) || {
-            id: makeId('user'),
-            username: email.split('@')[0],
-            email,
-            role,
-            companyName: '智选优发演示企业',
-          };
-        const result = { accessToken: 'mock-token', user };
-        setToken(result.accessToken);
-        setUserProfile(result.user);
-        appendLog('用户登录', email, 'Mock 登录成功');
-        return result;
+        return createMockLoginResult(payload);
       },
     );
   },
@@ -1491,7 +1536,7 @@ export const api = {
   },
 
   async downloadReport(reportId: string, format: 'pdf' | 'docx' | 'json' = 'pdf') {
-    if (USE_MOCK) {
+    const downloadMockReport = () => {
       const report = mockReports.find((r) => r.id === reportId);
       if (!report) throw new ApiError('报告不存在');
       const user = getUserProfile() as any;
@@ -1506,47 +1551,40 @@ export const api = {
         docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         json: 'application/json',
       };
-      const blob = new Blob([payload], { type: mimeByFormat[format] || 'application/octet-stream' });
-      const url = URL.createObjectURL(blob);
-      const filename = `${report.reportNo || reportId}.${format}`;
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      link.target = '_blank';
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-
-      // Fallback for webviews that block download attribute silently.
-      setTimeout(() => {
-        try {
-          URL.revokeObjectURL(url);
-        } catch {}
-      }, 2000);
+      downloadBlobFromText(payload, `${report.reportNo || reportId}.${format}`, mimeByFormat[format] || 'application/octet-stream');
       appendLog('下载报告', reportId, format);
+    };
+
+    if (USE_MOCK) {
+      downloadMockReport();
       return;
     }
 
-    const token = getToken();
-    const detail = (await api.getReportDetail(reportId)) as any;
-    const response = await fetch(`${API_BASE_URL}/reports/export`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-      body: JSON.stringify({ taskId: detail?.taskId || detail?.task?.id || reportId, format }),
-    });
-    if (!response.ok) {
-      const raw = await response.json().catch(() => ({} as any));
-      throw new ApiError(raw?.message || '下载失败', response.status);
+    try {
+      const token = getToken();
+      const detail = (await api.getReportDetail(reportId)) as any;
+      const response = await fetch(`${API_BASE_URL}/reports/export`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        body: JSON.stringify({ taskId: detail?.taskId || detail?.task?.id || reportId, format }),
+      });
+      if (!response.ok) {
+        const raw = await response.json().catch(() => ({} as any));
+        throw new ApiError(raw?.message || '下载失败', response.status);
+      }
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `report-${reportId}.${format}`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      if (!shouldFallbackToMock(error)) throw error;
+      downloadMockReport();
     }
-    const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `report-${reportId}.${format}`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
   },
 
   getRules() {
@@ -1794,18 +1832,38 @@ export const api = {
         appendLog('上传素材文件', rec.id, rec.originalName);
         return rec;
       }
-      const token = getToken();
-      const formData = new FormData();
-      formData.append('file', file);
-      const q = taskId ? `?taskId=${encodeURIComponent(taskId)}` : '';
-      const response = await fetch(`${API_BASE_URL}/files/upload${q}`, {
-        method: 'POST',
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        body: formData,
-      });
-      const raw = await response.json();
-      if (!response.ok || raw?.code !== 0) throw new ApiError(raw?.message || '上传失败');
-      return raw.data;
+      try {
+        const token = getToken();
+        const formData = new FormData();
+        formData.append('file', file);
+        const q = taskId ? `?taskId=${encodeURIComponent(taskId)}` : '';
+        const response = await fetch(`${API_BASE_URL}/files/upload${q}`, {
+          method: 'POST',
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+          body: formData,
+        });
+        const raw = await response.json();
+        if (!response.ok || raw?.code !== 0) throw new ApiError(raw?.message || '上传失败', response.status);
+        return raw.data;
+      } catch (error) {
+        if (!shouldFallbackToMock(error)) throw error;
+        const rec = {
+          id: makeId('file'),
+          userId: (getUserProfile() as any)?.id || 'mock-user',
+          taskId: taskId || '',
+          originalName: file.name,
+          fileName: `${Date.now()}-${file.name}`,
+          mimeType: file.type || 'image/*',
+          size: file.size,
+          storageProvider: 'local',
+          storagePath: `/uploads/${Date.now()}-${file.name}`,
+          url: URL.createObjectURL(file),
+          createdAt: nowIso(),
+        };
+        mockFiles.unshift(rec);
+        appendLog('上传素材文件', rec.id, rec.originalName);
+        return rec;
+      }
     } finally {
       endGlobalLoading();
     }

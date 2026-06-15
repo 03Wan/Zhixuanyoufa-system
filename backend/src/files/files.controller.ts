@@ -1,7 +1,8 @@
-﻿import { Controller, Get, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { existsSync, mkdirSync } from 'fs';
 import { Request } from 'express';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
@@ -9,6 +10,10 @@ import { FilesService } from './files.service';
 
 function safeName(name: string) {
   return name.replace(/[^a-zA-Z0-9._-]/g, '_');
+}
+
+function resolveUploadDir() {
+  return process.env.VERCEL ? '/tmp/uploads' : 'uploads';
 }
 
 @Controller('files')
@@ -20,7 +25,13 @@ export class FilesController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: 'uploads',
+        destination: (_req, _file, cb) => {
+          const uploadDir = resolveUploadDir();
+          try {
+            if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
+          } catch {}
+          cb(null, uploadDir);
+        },
         filename: (_req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
           const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
           cb(null, `${unique}${extname(file.originalname)}`);
@@ -45,7 +56,7 @@ export class FilesController {
       fileName: file.filename,
       mimeType: file.mimetype,
       size: file.size,
-      storageProvider: 'local',
+      storageProvider: process.env.VERCEL ? 'vercel-tmp' : 'local',
       storagePath: file.path,
       url,
     });

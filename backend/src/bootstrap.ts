@@ -33,9 +33,13 @@ export async function createNestApp(adapterOrOptions?: unknown) {
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.useGlobalInterceptors(new ResponseInterceptor());
-  const uploadDir = join(process.cwd(), 'uploads');
-  if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
-  (app as any).useStaticAssets(uploadDir, { prefix: '/uploads/' });
+  const uploadDir = process.env.VERCEL ? join('/tmp', 'uploads') : join(process.cwd(), 'uploads');
+  try {
+    if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
+    (app as any).useStaticAssets(uploadDir, { prefix: '/uploads/' });
+  } catch {
+    // Vercel serverless runtime is read-only outside /tmp; skip static asset mounting if unavailable.
+  }
 
   return app;
 }

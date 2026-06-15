@@ -14,6 +14,20 @@ const allowedOrigins = new Set([
   'http://127.0.0.1:5174',
 ]);
 
+const FALLBACK_DATABASE_URL =
+  'postgresql://postgres.wnnkwjlrqvczdleqngyu:%40Wb15262578750@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres';
+const FALLBACK_DIRECT_URL =
+  'postgresql://postgres.wnnkwjlrqvczdleqngyu:%40Wb15262578750@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres';
+
+if (process.env.VERCEL) {
+  if (!process.env.DATABASE_URL || process.env.DATABASE_URL.startsWith('mysql://')) {
+    process.env.DATABASE_URL = FALLBACK_DATABASE_URL;
+  }
+  if (!process.env.DIRECT_URL || process.env.DIRECT_URL.startsWith('mysql://')) {
+    process.env.DIRECT_URL = FALLBACK_DIRECT_URL;
+  }
+}
+
 export async function createNestApp(adapterOrOptions?: unknown) {
   const app = adapterOrOptions
     ? await NestFactory.create(AppModule, adapterOrOptions as never)

@@ -16,17 +16,25 @@ const allowedOrigins = new Set([
 ]);
 
 const FALLBACK_DATABASE_URL =
-  'postgresql://postgres.wnnkwjlrqvczdleqngyu:%40Wb15262578750@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres';
+  'postgresql://postgres.wnnkwjlrqvczdleqngyu:%40Wb15262578750@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1';
 const FALLBACK_DIRECT_URL =
   'postgresql://postgres.wnnkwjlrqvczdleqngyu:%40Wb15262578750@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres';
 
-if (process.env.VERCEL) {
-  if (!process.env.DATABASE_URL || process.env.DATABASE_URL.startsWith('mysql://')) {
-    process.env.DATABASE_URL = FALLBACK_DATABASE_URL;
+function normalizeSupabaseUrl(value?: string, fallback?: string) {
+  if (!value) return fallback;
+  if (value.startsWith('mysql://')) return fallback;
+  if (value.includes('pooler.supabase.com') && value.includes(':6543/') && !value.includes('pgbouncer=true')) {
+    const hasQuery = value.includes('?');
+    return `${value}${hasQuery ? '&' : '?'}pgbouncer=true&connection_limit=1`;
   }
-  if (!process.env.DIRECT_URL || process.env.DIRECT_URL.startsWith('mysql://')) {
-    process.env.DIRECT_URL = FALLBACK_DIRECT_URL;
-  }
+  return value;
+}
+
+process.env.DATABASE_URL = normalizeSupabaseUrl(process.env.DATABASE_URL, FALLBACK_DATABASE_URL);
+process.env.DIRECT_URL = normalizeSupabaseUrl(process.env.DIRECT_URL, FALLBACK_DIRECT_URL);
+
+if (process.env.VERCEL && process.env.DATABASE_URL === FALLBACK_DATABASE_URL) {
+  process.env.DIRECT_URL = FALLBACK_DIRECT_URL;
 }
 
 export async function createNestApp(adapterOrOptions?: unknown) {

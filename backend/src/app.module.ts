@@ -22,6 +22,7 @@ import { MaterialVersionsModule } from './material-versions/material-versions.mo
 import { ApiOpenModule } from './api-open/api-open.module';
 import { ReportTemplatesModule } from './report-templates/report-templates.module';
 import { ModelConfigModule } from './model-config/model-config.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { ModelConfigModule } from './model-config/model-config.module';
     ApiOpenModule,
     ReportTemplatesModule,
     ModelConfigModule,
+    HealthModule,
   ],
 })
 export class AppModule {}

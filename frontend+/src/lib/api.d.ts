@@ -27,6 +27,16 @@ export type ModelRuntimeConfig = {
     apiKey?: string;
     modelName?: string;
 };
+export type ModelConnectionTestResult = {
+    success: boolean;
+    provider: string;
+    apiUrl: string;
+    modelName: string;
+    statusCode: number;
+    latencyMs: number;
+    message: string;
+    responsePreview: string;
+};
 export type CreateTaskPayload = {
     sku: string;
     productName: string;
@@ -134,6 +144,21 @@ export declare const api: {
         modelName?: string;
         provider?: string;
     }): Promise<unknown>;
+    testModelConfig(payload: {
+        apiUrl?: string;
+        apiKey?: string;
+        modelName?: string;
+        provider?: string;
+    }): Promise<{
+        success: boolean;
+        provider: string;
+        apiUrl: string;
+        modelName: string;
+        statusCode: number;
+        latencyMs: number;
+        message: string;
+        responsePreview: string;
+    }>;
     getApiOpenCatalog(): Promise<unknown>;
     getReportTemplates(): Promise<unknown>;
     createReportTemplate(payload: any): Promise<any>;

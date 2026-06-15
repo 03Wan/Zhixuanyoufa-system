@@ -814,7 +814,7 @@ export function clearToken() { localStorage.removeItem(TOKEN_KEY); localStorage.
 async function request(path, method, body) {
     const token = getToken();
     const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 15000);
+    const timeout = window.setTimeout(() => controller.abort(), 30000);
     let response;
     try {
         response = await fetch(`${API_BASE_URL}${path}`, {
@@ -1794,6 +1794,18 @@ export const api = {
             maskedApiKey: payload.apiKey ? '已保存' : '',
         }));
     },
+    testModelConfig(payload) {
+        return run(() => request('/model-config/me/test', 'POST', payload), () => ({
+            success: true,
+            provider: payload.provider || 'OPENAI_COMPATIBLE',
+            apiUrl: payload.apiUrl || '',
+            modelName: payload.modelName || 'gpt-4.1-mini',
+            statusCode: 200,
+            latencyMs: 120,
+            message: '连接成功',
+            responsePreview: '',
+        }));
+    },
     getApiOpenCatalog() {
         return run(() => request('/api-open/catalog', 'GET'), () => ({
             notice: 'MVP试点版：接口服务规划/试点开放，后续接入API Key与签名校验。',
@@ -2011,7 +2023,14 @@ export const api = {
     },
 };
 export function getFriendlyError(error) {
-    if (error instanceof Error)
+    if (error instanceof Error) {
+        if (/^Cannot (GET|POST|PATCH|DELETE) \//i.test(error.message)) {
+            return '接口未找到，请检查后端服务是否已重启。';
+        }
+        if (/network|fetch/i.test(error.message) && error.message.includes('Failed to fetch')) {
+            return '网络请求失败，请检查后端服务是否已启动。';
+        }
         return error.message;
+    }
     return '操作失败，请稍后重试';
 }

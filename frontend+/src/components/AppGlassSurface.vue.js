@@ -1,4 +1,4 @@
-import { computed } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { GlassMode, LiquidGlass } from "@wxperia/liquid-glass-vue";
 import { useGlassCapability } from "@/composables/useGlassCapability";
 const props = withDefaults(defineProps(), {
@@ -11,7 +11,25 @@ const props = withDefaults(defineProps(), {
     forceStatic: false,
 });
 const capability = useGlassCapability();
-const dynamicEnabled = computed(() => capability.enabled.value && capability.mode.value !== "static" && !props.forceStatic);
+const isDark = ref(false);
+let themeObserver = null;
+function syncThemeMode() {
+    if (typeof document === "undefined")
+        return;
+    isDark.value = document.documentElement.classList.contains("dark");
+}
+onMounted(() => {
+    syncThemeMode();
+    if (typeof MutationObserver === "undefined" || typeof document === "undefined")
+        return;
+    themeObserver = new MutationObserver(syncThemeMode);
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+});
+onBeforeUnmount(() => {
+    themeObserver?.disconnect();
+    themeObserver = null;
+});
+const dynamicEnabled = computed(() => capability.enabled.value && capability.mode.value !== "static" && !props.forceStatic && !isDark.value);
 const runtimeMode = computed(() => (capability.mode.value === "shader" ? GlassMode.shader : GlassMode.standard));
 const runtimeEffect = computed(() => (capability.mode.value === "shader" ? "liquidGlass" : "transparentIce"));
 const runtimeDisplacement = computed(() => (capability.mode.value === "shader" ? 70 : 52));
@@ -35,8 +53,7 @@ const surfaceStyle = computed(() => ({
 }));
 const overlayStyle = computed(() => ({
     position: "absolute",
-    top: "50%",
-    left: "50%",
+    inset: "0",
     width: "100%",
     height: "100%",
     pointerEvents: "none",

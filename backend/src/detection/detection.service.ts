@@ -35,7 +35,7 @@ export class DetectionService {
   async runDetection(
     userId: string,
     taskId: string,
-    runtimeModelConfig?: { enabled?: boolean; apiUrl?: string; apiKey?: string; modelName?: string },
+    runtimeModelConfig?: { enabled?: boolean; provider?: string; apiUrl?: string; apiKey?: string; modelName?: string },
   ) {
     await this.subscriptionService.assertCanDetect(userId, 1);
     const where = await this.buildTaskScope(userId, { id: taskId });
@@ -283,7 +283,7 @@ export class DetectionService {
 
   private async evaluateWithOptionalModel(
     input: DetectionInput,
-    runtimeModelConfig?: { enabled?: boolean; apiUrl?: string; apiKey?: string; modelName?: string },
+    runtimeModelConfig?: { enabled?: boolean; provider?: string; apiUrl?: string; apiKey?: string; modelName?: string },
   ): Promise<DetectionOutput> {
     const modelOutput = await this.tryModelDetection(input, runtimeModelConfig);
     if (modelOutput) return modelOutput;
@@ -292,17 +292,16 @@ export class DetectionService {
 
   private async tryModelDetection(
     input: DetectionInput,
-    runtimeModelConfig?: { enabled?: boolean; apiUrl?: string; apiKey?: string; modelName?: string },
+    runtimeModelConfig?: { enabled?: boolean; provider?: string; apiUrl?: string; apiKey?: string; modelName?: string },
   ): Promise<DetectionOutput | null> {
     const useRuntime = !!runtimeModelConfig?.enabled;
     const apiUrl = (useRuntime ? runtimeModelConfig?.apiUrl : process.env.MODEL_API_URL) || '';
     const apiKey = (useRuntime ? runtimeModelConfig?.apiKey : process.env.MODEL_API_KEY) || '';
     const model = (useRuntime ? runtimeModelConfig?.modelName : process.env.MODEL_NAME) || 'gpt-4.1-mini';
+    const provider = (useRuntime ? runtimeModelConfig?.provider : process.env.MODEL_PROVIDER) || 'OPENAI_COMPATIBLE';
     if (!apiUrl || !apiKey) return null;
 
     try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 20000);
       const prompt = `你是跨境电商素材检测助手。请基于输入返回JSON，不要markdown：
 {
   "totalScore": number,
@@ -314,25 +313,19 @@ export class DetectionService {
 }
 输入：${JSON.stringify(input)}`;
 
-      const res = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model,
-          messages: [{ role: 'user', content: prompt }],
-          temperature: 0.2,
-        }),
-        signal: controller.signal,
+      const result = await this.modelConfigService.invokeModel({
+        provider,
+        apiUrl,
+        apiKey,
+        modelName: model,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.2,
+        maxTokens: 2048,
+        timeoutMs: 20_000,
       });
-      clearTimeout(timer);
-      if (!res.ok) return null;
-      const json = (await res.json()) as any;
-      const content = json?.choices?.[0]?.message?.content || json?.output?.[0]?.content?.[0]?.text || '';
-      if (!content) return null;
-      const parsed = this.safeParseJson(content);
+
+      if (!result.ok) return null;
+      const parsed = this.safeParseJson(result.text);
       if (!parsed) return null;
       return this.normalizeModelOutput(parsed);
     } catch {

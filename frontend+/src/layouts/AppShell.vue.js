@@ -19,7 +19,6 @@ const dialog = ref({
     message: "",
     resolve: null,
 });
-const globalLoading = ref(false);
 const toasts = ref([]);
 let toastSeq = 0;
 const toastTimers = new Map();
@@ -217,10 +216,6 @@ function handleToastEvent(e) {
     const timer = setTimeout(() => removeToast(id), duration);
     toastTimers.set(id, timer);
 }
-function handleLoadingEvent(e) {
-    const detail = e.detail || {};
-    globalLoading.value = !!detail.active;
-}
 let themeObserver = null;
 onMounted(() => {
     const theme = localStorage.getItem("theme") || "light";
@@ -230,7 +225,6 @@ onMounted(() => {
     window.addEventListener("message", handleMessageTheme);
     window.addEventListener("zyyf-dialog", handleDialogEvent);
     window.addEventListener("zyyf-toast", handleToastEvent);
-    window.addEventListener("zyyf-loading", handleLoadingEvent);
     if (!isEmbedded.value) {
         themeObserver = new MutationObserver(() => {
             const current = document.documentElement.classList.contains("dark") ? "dark" : "light";
@@ -250,7 +244,6 @@ onBeforeUnmount(() => {
     window.removeEventListener("message", handleMessageTheme);
     window.removeEventListener("zyyf-dialog", handleDialogEvent);
     window.removeEventListener("zyyf-toast", handleToastEvent);
-    window.removeEventListener("zyyf-loading", handleLoadingEvent);
     for (const timer of toastTimers.values())
         clearTimeout(timer);
     toastTimers.clear();
@@ -568,20 +561,6 @@ if (__VLS_ctx.toasts.length) {
         (item.message);
     }
 }
-if (__VLS_ctx.globalLoading) {
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "global-loading-mask" },
-        'aria-live': "assertive",
-        'aria-busy': "true",
-    });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "global-loading-card" },
-    });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.span)({
-        ...{ class: "global-loading-spinner" },
-    });
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({});
-}
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "app-shell" },
 });
@@ -692,9 +671,6 @@ else {
 /** @type {__VLS_StyleScopedClasses['btn-primary']} */ ;
 /** @type {__VLS_StyleScopedClasses['toast-stack']} */ ;
 /** @type {__VLS_StyleScopedClasses['toast-item']} */ ;
-/** @type {__VLS_StyleScopedClasses['global-loading-mask']} */ ;
-/** @type {__VLS_StyleScopedClasses['global-loading-card']} */ ;
-/** @type {__VLS_StyleScopedClasses['global-loading-spinner']} */ ;
 /** @type {__VLS_StyleScopedClasses['app-shell']} */ ;
 /** @type {__VLS_StyleScopedClasses['page-stack']} */ ;
 /** @type {__VLS_StyleScopedClasses['content-body']} */ ;
@@ -727,7 +703,6 @@ const __VLS_self = (await import('vue')).defineComponent({
             hoverTip: hoverTip,
             expandedGroups: expandedGroups,
             dialog: dialog,
-            globalLoading: globalLoading,
             toasts: toasts,
             baseTabId: baseTabId,
             activeTabId: activeTabId,

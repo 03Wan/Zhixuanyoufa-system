@@ -86,13 +86,6 @@
       </div>
     </div>
 
-    <div v-if="globalLoading" class="global-loading-mask" aria-live="assertive" aria-busy="true">
-      <div class="global-loading-card">
-        <span class="global-loading-spinner" />
-        <span>加载中</span>
-      </div>
-    </div>
-
     <div class="app-shell">
       <main class="page-stack content-body" :class="{ 'embed-content-body': isEmbedded }">
         <template v-if="!isEmbedded">
@@ -159,7 +152,6 @@ const dialog = ref({
   message: "",
   resolve: null as null | ((value: boolean) => void),
 });
-const globalLoading = ref(false);
 const toasts = ref<Array<{ id: number; message: string; kind: "success" | "error" | "info" }>>([]);
 let toastSeq = 0;
 const toastTimers = new Map<number, ReturnType<typeof setTimeout>>();
@@ -377,11 +369,6 @@ function handleToastEvent(e: Event) {
   toastTimers.set(id, timer);
 }
 
-function handleLoadingEvent(e: Event) {
-  const detail = (e as CustomEvent).detail || {};
-  globalLoading.value = !!detail.active;
-}
-
 let themeObserver: MutationObserver | null = null;
 
 onMounted(() => {
@@ -392,7 +379,6 @@ onMounted(() => {
   window.addEventListener("message", handleMessageTheme);
   window.addEventListener("zyyf-dialog", handleDialogEvent);
   window.addEventListener("zyyf-toast", handleToastEvent);
-  window.addEventListener("zyyf-loading", handleLoadingEvent);
 
   if (!isEmbedded.value) {
     themeObserver = new MutationObserver(() => {
@@ -418,7 +404,6 @@ onBeforeUnmount(() => {
   window.removeEventListener("message", handleMessageTheme);
   window.removeEventListener("zyyf-dialog", handleDialogEvent);
   window.removeEventListener("zyyf-toast", handleToastEvent);
-  window.removeEventListener("zyyf-loading", handleLoadingEvent);
   for (const timer of toastTimers.values()) clearTimeout(timer);
   toastTimers.clear();
   themeObserver?.disconnect();
@@ -551,7 +536,13 @@ function toggleGroup(key: string) {
   display: grid;
   gap: 8px;
 }
-.dialog-actions { justify-content: flex-end; }
+.dialog-actions {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
 .app-dialog-mask {
   position: fixed;
   inset: 0;
@@ -603,42 +594,9 @@ function toggleGroup(key: string) {
 .toast-info {
   border-color: color-mix(in srgb, var(--brand-1) 45%, var(--border) 55%);
 }
-.global-loading-mask {
-  position: fixed;
-  inset: 0;
-  z-index: 11000;
-  display: grid;
-  place-items: center;
-  background: color-mix(in srgb, var(--modal-mask) 82%, transparent);
-  backdrop-filter: blur(1px);
-  -webkit-backdrop-filter: blur(1px);
-}
-.global-loading-card {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  background: var(--card-strong);
-  color: var(--text);
-  padding: 10px 14px;
-  box-shadow: var(--glass-shadow-soft);
-  font-weight: 700;
-}
-.global-loading-spinner {
-  width: 18px;
-  height: 18px;
-  border-radius: 999px;
-  border: 3px solid rgba(58, 121, 255, 0.24);
-  border-top-color: var(--brand-1);
-  animation: globalSpin 0.9s linear infinite;
-}
 @keyframes toastFadeIn {
   from { opacity: 0; transform: translateY(-6px); }
   to { opacity: 1; transform: translateY(0); }
-}
-@keyframes globalSpin {
-  to { transform: rotate(360deg); }
 }
 .version-badge {
   text-align: center;
@@ -701,6 +659,7 @@ function toggleGroup(key: string) {
   gap: 10px;
   height: calc(100vh - 36px);
   min-height: 0;
+  position: relative;
 }
 .embed-content-body { margin-top: 0; }
 

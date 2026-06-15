@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { ModelConfigService } from './model-config.service';
@@ -19,5 +19,13 @@ export class ModelConfigController {
     @Body() body: { enabled?: boolean; apiUrl?: string; apiKey?: string; modelName?: string; provider?: string },
   ) {
     return this.modelConfigService.saveConfig(userId, body);
+  }
+
+  @Post('me/test')
+  testMine(
+    @CurrentUser('id') userId: string,
+    @Body() body: { apiUrl?: string; apiKey?: string; modelName?: string; provider?: string },
+  ) {
+    return this.modelConfigService.testConnection(userId, body);
   }
 }

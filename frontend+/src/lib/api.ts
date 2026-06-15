@@ -6,6 +6,16 @@ export type LoginPayload = { email: string; password: string };
 export type ForgotPasswordPayload = { email: string };
 export type ResetPasswordPayload = { email: string; token: string; newPassword: string };
 export type ModelRuntimeConfig = { enabled?: boolean; apiUrl?: string; apiKey?: string; modelName?: string };
+export type ModelConnectionTestResult = {
+  success: boolean;
+  provider: string;
+  apiUrl: string;
+  modelName: string;
+  statusCode: number;
+  latencyMs: number;
+  message: string;
+  responsePreview: string;
+};
 
 export type CreateTaskPayload = {
   sku: string;
@@ -893,7 +903,7 @@ export function clearToken() { localStorage.removeItem(TOKEN_KEY); localStorage.
 async function request<T>(path: string, method: RequestMethod, body?: unknown): Promise<T> {
   const token = getToken();
   const controller = new AbortController();
-  const timeout = window.setTimeout(() => controller.abort(), 15000);
+  const timeout = window.setTimeout(() => controller.abort(), 30000);
   let response: Response;
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
@@ -2029,6 +2039,22 @@ export const api = {
     );
   },
 
+  testModelConfig(payload: { apiUrl?: string; apiKey?: string; modelName?: string; provider?: string }) {
+    return run(
+      () => request<ModelConnectionTestResult>('/model-config/me/test', 'POST', payload),
+      () => ({
+        success: true,
+        provider: payload.provider || 'OPENAI_COMPATIBLE',
+        apiUrl: payload.apiUrl || '',
+        modelName: payload.modelName || 'gpt-4.1-mini',
+        statusCode: 200,
+        latencyMs: 120,
+        message: '连接成功',
+        responsePreview: '',
+      }),
+    );
+  },
+
   getApiOpenCatalog() {
     return run(
       () => request('/api-open/catalog', 'GET'),
@@ -2299,7 +2325,15 @@ export const api = {
 };
 
 export function getFriendlyError(error: unknown) {
-  if (error instanceof Error) return error.message;
+  if (error instanceof Error) {
+    if (/^Cannot (GET|POST|PATCH|DELETE) \//i.test(error.message)) {
+      return '接口未找到，请检查后端服务是否已重启。';
+    }
+    if (/network|fetch/i.test(error.message) && error.message.includes('Failed to fetch')) {
+      return '网络请求失败，请检查后端服务是否已启动。';
+    }
+    return error.message;
+  }
   return '操作失败，请稍后重试';
 }
 

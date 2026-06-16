@@ -307,33 +307,52 @@ export class ModelConfigService {
 
     const existing = await this.prisma.modelConfig.findUnique({ where: { ownerUserId: userId } });
     const provider = this.normalizeProvider(body.provider);
-    const result = await this.invokeModel({
-      provider,
-      apiUrl: body.apiUrl?.trim() || existing?.apiUrl || '',
-      apiKey: body.apiKey?.trim() || this.decrypt(existing?.apiKeyCiphertext) || '',
-      modelName: body.modelName?.trim() || existing?.modelName || 'gpt-4.1-mini',
-      messages: [{ role: 'user', content: 'ping' }],
-      temperature: 0,
-      maxTokens: 1,
-      timeoutMs: 12_000,
-    });
+    const apiUrl = body.apiUrl?.trim() || existing?.apiUrl || '';
+    const apiKey = body.apiKey?.trim() || this.decrypt(existing?.apiKeyCiphertext) || '';
+    const modelName = body.modelName?.trim() || existing?.modelName || 'gpt-4.1-mini';
 
-    return {
-      success: result.ok,
-      provider: result.provider,
-      apiUrl: result.apiUrl,
-      modelName: result.modelName,
-      statusCode: result.statusCode,
-      latencyMs: result.latencyMs,
-      message: result.ok
-        ? '连接成功'
-        : result.statusCode === 401 || result.statusCode === 403
-          ? 'API 可达，但鉴权失败，请检查 API Key'
-          : result.statusCode === 404
-            ? 'API 可达，但接口地址可能不正确'
-            : `连接失败，HTTP ${result.statusCode}`,
-      responsePreview: result.preview,
-    };
+    try {
+      const result = await this.invokeModel({
+        provider,
+        apiUrl,
+        apiKey,
+        modelName,
+        messages: [{ role: 'user', content: 'ping' }],
+        temperature: 0,
+        maxTokens: 1,
+        timeoutMs: 8_000,
+      });
+
+      return {
+        success: result.ok,
+        provider: result.provider,
+        apiUrl: result.apiUrl,
+        modelName: result.modelName,
+        statusCode: result.statusCode,
+        latencyMs: result.latencyMs,
+        message: result.ok
+          ? '连接成功'
+          : result.statusCode === 401 || result.statusCode === 403
+            ? 'API 可达，但鉴权失败，请检查 API Key'
+            : result.statusCode === 404
+              ? 'API 可达，但接口地址可能不正确'
+              : `连接失败，HTTP ${result.statusCode}`,
+        responsePreview: result.preview,
+      };
+    } catch (error) {
+      if (error instanceof BadRequestException) throw error;
+      const isTimeout = error instanceof Error && /aborted|timeout/i.test(error.message);
+      return {
+        success: false,
+        provider,
+        apiUrl,
+        modelName,
+        statusCode: 0,
+        latencyMs: isTimeout ? 8_000 : 0,
+        message: isTimeout ? '网络请求超时，请检查接口地址或稍后重试' : '网络服务错误，请检查接口地址、网络连通性或服务状态',
+        responsePreview: error instanceof Error ? error.message.slice(0, 240) : '',
+      };
+    }
   }
 
   async getRuntimeConfig(userId: string) {

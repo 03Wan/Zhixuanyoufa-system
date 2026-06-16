@@ -307,7 +307,7 @@ async function submitRegister() {
 .landing { position: relative; z-index: 1; width: 100%; max-width: 1680px; margin: 0 auto; display: grid; gap: 14px; box-sizing: border-box; }
 .nav { padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; border-radius: 18px; }
 .brand, .nav-actions, .icon-btn, .section-title, .chip { display: inline-flex; align-items: center; gap: 8px; }
-.logo { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-weight: 800; color: #fff; background: linear-gradient(135deg, var(--brand-0), var(--brand-1)); }
+.logo { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; font-weight: 800; font-size: 28px; color: #fff; background: linear-gradient(135deg, var(--brand-0), var(--brand-1)); }
 .brand h1 { margin: 0; font-size: 24px; line-height: 1.1; }
 .brand p, .sub { color: color-mix(in srgb, var(--text) 76%, #5b77a7 24%); font-size: 15px; }
 .hero { border-radius: 18px; padding: 16px; }
@@ -322,9 +322,16 @@ async function submitRegister() {
 .grid-2, .steps, .chip-wrap, .two-col, .faq-list { display: grid; gap: 12px; }
 .grid-2, .steps, .chip-wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .two-col { grid-template-columns: 1fr 1fr; }
-.plain-item { padding: 10px 0; }
+.plain-item {
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  display: grid;
+  gap: 8px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
+}
 .item-head { display: inline-flex; align-items: center; gap: 8px; }
-.plain-item h4 { margin: 0 0 8px; font-size: 22px; line-height: 1.16; color: color-mix(in srgb, var(--text) 92%, #123774 8%); }
+.plain-item h4 { margin: 0; font-size: 22px; line-height: 1.16; color: color-mix(in srgb, var(--text) 92%, #123774 8%); }
 .plain-item p { margin: 0; color: color-mix(in srgb, var(--text) 78%, #5d79a9 22%); font-size: 16px; }
 .section-title { margin: 0 0 12px; font-size: clamp(22px, 1.8vw, 30px); line-height: 1.15; color: color-mix(in srgb, var(--text) 92%, #133971 8%); }
 .card-icon { width: 19px; height: 19px; color: var(--brand-1); }

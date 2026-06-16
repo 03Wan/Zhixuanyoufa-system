@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <AppShell title="企业组织管理">
     <section class="page-stack fade-up">
       <AppGlassSurface as="section" class="card">
@@ -24,17 +24,30 @@
           <span>目标市场：</span>
           <label v-for="item in marketOptions" :key="item"><input type="checkbox" :value="item" v-model="form.targetMarkets" /> {{ item }}</label>
         </div>
-        <div class="actions" style="margin-top:8px;"><button class="btn btn-primary" :disabled="saving" @click="create">{{ saving ? '保存中' : '新增企业' }}</button></div>
+        <div class="actions" style="margin-top: 8px;">
+          <button class="btn btn-primary" :disabled="saving" @click="create">{{ saving ? "保存中" : "新增企业" }}</button>
+        </div>
       </AppGlassSurface>
 
       <AppGlassSurface as="section" class="card">
-        <div class="row-between"><h3>企业列表</h3><button class="btn btn-secondary" :disabled="loading" @click="load">{{ loading ? '刷新中' : '刷新' }}</button></div>
+        <div class="row-between">
+          <h3>企业列表</h3>
+          <button class="btn btn-secondary" :disabled="loading || refreshing" @click="load">
+            {{ loading ? "刷新中" : refreshing ? "同步中" : "刷新" }}
+          </button>
+        </div>
         <div v-if="loading" class="state loading center-loading">企业数据加载中</div>
+        <div v-else-if="refreshing" class="state">后台同步中</div>
         <table v-else class="table">
           <thead><tr><th>企业名称</th><th>行业</th><th>联系人</th><th>目标市场</th><th>套餐</th><th>状态</th><th>操作</th></tr></thead>
           <tbody>
             <tr v-for="c in rows" :key="c.id">
-              <td>{{ c.name }}</td><td>{{ c.industryType || '-' }}</td><td>{{ c.contactPerson || '-' }}</td><td>{{ (c.targetMarkets||[]).join('、') || '-' }}</td><td>{{ c.planType || '-' }}</td><td>{{ c.serviceStatus || '-' }}</td>
+              <td>{{ c.name }}</td>
+              <td>{{ c.industryType || "-" }}</td>
+              <td>{{ c.contactPerson || "-" }}</td>
+              <td>{{ (c.targetMarkets || []).join("、") || "-" }}</td>
+              <td>{{ c.planType || "-" }}</td>
+              <td>{{ c.serviceStatus || "-" }}</td>
               <td><button class="btn btn-secondary btn-xs" @click="removeCompany(c)">删除</button></td>
             </tr>
           </tbody>
@@ -45,56 +58,76 @@
 </template>
 
 <script setup lang="ts">
-
 import AppGlassSurface from "@/components/AppGlassSurface.vue";
-import { onMounted, reactive, ref } from 'vue';
-import AppShell from '@/layouts/AppShell.vue';
-import { api, getFriendlyError } from '@/lib/api';
-import { confirmDialog, notify, toast } from '@/lib/dialog';
+import { onMounted, reactive, ref } from "vue";
+import AppShell from "@/layouts/AppShell.vue";
+import { api, getFriendlyError } from "@/lib/api";
+import { confirmDialog, notify, toast } from "@/lib/dialog";
+import { readViewCache, writeViewCache } from "@/lib/view-cache";
 
+const COMPANY_CACHE_KEY = "view-cache:companies";
 const rows = ref<any[]>([]);
-const industryOptions = ['跨境电商', '品牌出海', '代运营机构', '外贸服务', '产业带机构', '教育实训'];
-const planOptions = ['体验包/按次检测', '基础版', '专业版', '企业版', '定制版', 'API接口版'];
-const statusOptions = ['试点中', '服务中', '待开通', '已暂停'];
-const marketOptions = ['欧美', '中东', '东南亚', '日本', '全球通用'];
-const form = reactive({ name: '', industryType: '', contactPerson: '', contactPhone: '', planType: '', serviceStatus: '试点中', targetMarkets: [] as string[] });
+const industryOptions = ["跨境电商", "品牌出海", "代运营机构", "外贸服务", "产业带机构", "教育实训"];
+const planOptions = ["体验包/按次检测", "基础版", "专业版", "企业版", "定制版", "API接口版"];
+const statusOptions = ["试点中", "服务中", "待开通", "已暂停"];
+const marketOptions = ["欧美", "中东", "东南亚", "日本", "全球通用"];
+const form = reactive({ name: "", industryType: "", contactPerson: "", contactPhone: "", planType: "", serviceStatus: "试点中", targetMarkets: [] as string[] });
 const loading = ref(true);
+const refreshing = ref(false);
 const saving = ref(false);
 
 async function load() {
-  loading.value = true;
+  const silent = rows.value.length > 0;
+  if (silent) refreshing.value = true;
+  else loading.value = true;
   try {
-    rows.value = await api.getCompanies() as any[];
+    rows.value = (await api.getCompanies()) as any[];
+    writeViewCache(COMPANY_CACHE_KEY, rows.value, 45_000);
   } catch (e) {
     await notify(getFriendlyError(e));
   } finally {
     loading.value = false;
+    refreshing.value = false;
   }
 }
+
 async function create() {
   saving.value = true;
   try {
     if (!form.name) {
-      await notify('请输入企业名称');
+      await notify("请输入企业名称");
       return;
     }
-    await api.createCompany({ ...form, targetMarkets: form.targetMarkets.length ? form.targetMarkets : ['欧美'] });
-    Object.assign(form, { name: '', industryType: '', contactPerson: '', contactPhone: '', planType: '', serviceStatus: '试点中', targetMarkets: [] });
+    await api.createCompany({ ...form, targetMarkets: form.targetMarkets.length ? form.targetMarkets : ["欧美"] });
+    Object.assign(form, { name: "", industryType: "", contactPerson: "", contactPhone: "", planType: "", serviceStatus: "试点中", targetMarkets: [] });
     await load();
-  } catch (e) { await notify(getFriendlyError(e)); }
-  finally { saving.value = false; }
+  } catch (e) {
+    await notify(getFriendlyError(e));
+  } finally {
+    saving.value = false;
+  }
 }
+
 async function removeCompany(item: any) {
   if (!item?.id) return;
-  if (!(await confirmDialog(`确认删除企业「${item.name || '-'}」吗？`))) return;
+  if (!(await confirmDialog(`确认删除企业「${item.name || "-"}」吗？`))) return;
   try {
     await api.deleteCompany(item.id);
     await load();
-    toast('企业已删除', 'success');
-  } catch (e) { await notify(getFriendlyError(e)); }
+    toast("企业已删除", "success");
+  } catch (e) {
+    await notify(getFriendlyError(e));
+  }
 }
 
-onMounted(load);
+onMounted(() => {
+  const cached = readViewCache<any[]>(COMPANY_CACHE_KEY);
+  if (cached?.length) {
+    rows.value = cached;
+    loading.value = false;
+  }
+  void load();
+});
 </script>
 
 <style scoped>

@@ -17,9 +17,10 @@
       <AppGlassSurface as="section" class="card">
         <div class="row-between">
           <h2 class="section-title">报告列表</h2>
-          <button class="btn btn-secondary" :disabled="loading" @click="load">{{ loading ? '刷新中' : '刷新报告' }}</button>
+          <button class="btn btn-secondary" :disabled="loading || refreshing" @click="load">{{ loading ? '刷新中' : refreshing ? '同步中' : '刷新报告' }}</button>
         </div>
         <div v-if="loading" class="state loading">报告加载中</div>
+        <div v-else-if="refreshing" class="state">后台同步中</div>
         <div v-else-if="error" class="state error">{{ error }}</div>
         <div v-else-if="filtered.length===0" class="state">暂无符合条件的报告。</div>
         <div v-else class="table-wrap">
@@ -78,14 +79,17 @@ import { useRouter } from 'vue-router';
 import AppShell from '@/layouts/AppShell.vue';
 import { api, getFriendlyError } from '@/lib/api';
 import { confirmDialog, notify, toast } from '@/lib/dialog';
+import { readViewCache, writeViewCache } from '@/lib/view-cache';
 
 const router = useRouter();
 const loading = ref(true);
+const refreshing = ref(false);
 const error = ref('');
 const rows = ref<any[]>([]);
 const page = ref(1);
 const pageSize = 10;
 const exportFormat = ref<'pdf' | 'docx' | 'json'>('pdf');
+const REPORTS_CACHE_KEY = 'view-cache:reports';
 
 const platforms = [
   'Amazon',
@@ -146,14 +150,18 @@ watch(filtered, () => {
 });
 
 async function load() {
-  loading.value = true;
+  const silent = rows.value.length > 0;
+  if (silent) refreshing.value = true;
+  else loading.value = true;
   error.value = '';
   try {
     rows.value = await api.getReportList();
+    writeViewCache(REPORTS_CACHE_KEY, rows.value, 45_000);
   } catch (e) {
     error.value = getFriendlyError(e);
   } finally {
     loading.value = false;
+    refreshing.value = false;
   }
 }
 
@@ -179,7 +187,14 @@ async function removeReport(id: string) {
   }
 }
 
-onMounted(load);
+onMounted(() => {
+  const cached = readViewCache<any[]>(REPORTS_CACHE_KEY);
+  if (cached?.length) {
+    rows.value = cached;
+    loading.value = false;
+  }
+  void load();
+});
 </script>
 
 <style scoped>

@@ -5,7 +5,7 @@
         <h2 class="section-title">操作日志</h2>
         <div class="actions-row">
           <span class="text-muted">最近同步：{{ lastSyncText }}</span>
-          <button class="btn btn-secondary" :disabled="loading" @click="load">{{ loading ? '刷新中' : '刷新日志' }}</button>
+          <button class="btn btn-secondary" :disabled="loading || refreshing" @click="load()">{{ loading ? '刷新中' : refreshing ? '同步中' : '刷新日志' }}</button>
         </div>
       </div>
 
@@ -69,19 +69,22 @@ import { api } from '@/lib/api';
 import { ROLE_LABELS, normalizeRole } from '@/lib/permissions';
 
 const loading = ref(true);
+const refreshing = ref(false);
 const rows = ref<any[]>([]);
 const page = ref(1);
 const pageSize = 10;
 const lastSyncAt = ref<number>(0);
 const syncTimer = ref<number | null>(null);
+let loadPromise: Promise<void> | null = null;
 const filters = reactive({ operator: '', action: '', result: '', startDate: '', endDate: '' });
 const ACTION_MAP: Record<string, string> = {
   USER_LOGIN: '用户登录', USER_LOGOUT: '用户退出', CREATE_TASK: '创建任务', UPDATE_TASK: '编辑任务', EDIT_TASK: '编辑任务',
   UPLOAD_MATERIAL: '上传素材', RUN_DETECTION: '启动检测', REQUEST_MANUAL_REVIEW: '提交人工复核', REVIEW_ACTION: '人工复核操作',
   GENERATE_REPORT: '生成审核报告', DOWNLOAD_REPORT: '下载报告', CREATE_RULE: '新增规则', UPDATE_RULE: '编辑规则', RULE_APPROVAL: '规则审批',
   RULE_ROLLBACK: '规则回滚', CUSTOMER_PLAN_UPDATE: '客户套餐调整', SEED_CREATE_TASK: '初始化任务',
+  COMMERCIAL_APPLY: '商业化申请', COMMERCIAL_APPROVE: '商业化审批',
 };
-const TARGET_MAP: Record<string, string> = { MATERIAL_TASK: '检测任务', REPORT: '审核报告', RULE: '规则', USER: '用户', REVIEW_TASK: '复核任务', RESOURCE: '资源' };
+const TARGET_MAP: Record<string, string> = { MATERIAL_TASK: '检测任务', REPORT: '审核报告', RULE: '规则', USER: '用户', REVIEW_TASK: '复核任务', RESOURCE: '资源', COMMERCIAL: '商业化申请' };
 const actionOptions = Object.entries(ACTION_MAP).map(([value, label]) => ({ value, label }));
 const operatorOptions = computed(() => Array.from(new Set(rows.value.map((row) => row.operator).filter(Boolean))).sort());
 
@@ -103,8 +106,34 @@ const totalPages = computed(() => Math.max(1, Math.ceil(filteredRows.value.lengt
 const pagedRows = computed(() => filteredRows.value.slice((page.value - 1) * pageSize, (page.value - 1) * pageSize + pageSize));
 const lastSyncText = computed(() => lastSyncAt.value ? time(new Date(lastSyncAt.value).toISOString()) : '-');
 watch(filteredRows, () => { if (page.value > totalPages.value) page.value = 1; });
-async function load() { loading.value = true; try { rows.value = await api.getLogs(); lastSyncAt.value = Date.now(); } finally { loading.value = false; } }
-onMounted(async () => { await load(); syncTimer.value = window.setInterval(load, 8000); });
+
+async function load(options: { silent?: boolean } = {}) {
+  if (loadPromise) return loadPromise;
+  const silent = !!options.silent && rows.value.length > 0;
+  if (silent) refreshing.value = true;
+  else loading.value = true;
+  loadPromise = (async () => {
+    try {
+      rows.value = await api.getLogs();
+      lastSyncAt.value = Date.now();
+    } finally {
+      loading.value = false;
+      refreshing.value = false;
+      loadPromise = null;
+    }
+  })();
+  return loadPromise;
+}
+
+function scheduleRefresh() {
+  if (document.visibilityState !== 'visible') return;
+  void load({ silent: true });
+}
+
+onMounted(async () => {
+  await load();
+  syncTimer.value = window.setInterval(scheduleRefresh, 30000);
+});
 onUnmounted(() => { if (syncTimer.value) clearInterval(syncTimer.value); });
 </script>
 

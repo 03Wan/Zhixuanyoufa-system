@@ -93,7 +93,7 @@
 import AppGlassSurface from '@/components/AppGlassSurface.vue';
 import AppShell from '@/layouts/AppShell.vue';
 import { api, getFriendlyError, type ModelConnectionTestResult } from '@/lib/api';
-import { notify } from '@/lib/dialog';
+import { notify, toast } from '@/lib/dialog';
 import { onMounted, reactive, ref } from 'vue';
 
 type ProviderPreset = {
@@ -227,7 +227,7 @@ async function save() {
     });
     hasApiKey.value = !!data.hasApiKey;
     form.apiKey = '';
-    await notify('模型配置已保存');
+    toast('模型配置已保存');
   } catch (error) {
     await notify(getFriendlyError(error));
   } finally {
@@ -245,7 +245,7 @@ async function testConnection() {
       provider: form.provider,
     })) as ModelConnectionTestResult;
     testResult.value = data;
-    await notify(data.message);
+    toast(data.message, data.success ? 'success' : 'error');
   } catch (error) {
     const message = getFriendlyError(error);
     testResult.value = {
@@ -258,7 +258,7 @@ async function testConnection() {
       message,
       responsePreview: '',
     };
-    await notify(message);
+    toast(message, 'error');
   } finally {
     testing.value = false;
   }

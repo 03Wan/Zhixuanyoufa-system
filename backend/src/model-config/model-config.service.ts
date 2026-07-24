@@ -40,7 +40,10 @@ export class ModelConfigService {
   constructor(private readonly prisma: PrismaService) {}
 
   private encryptionKey() {
-    const seed = process.env.CONFIG_ENCRYPTION_KEY || process.env.JWT_SECRET || 'dev_secret';
+    const seed = process.env.CONFIG_ENCRYPTION_KEY?.trim();
+    if (!seed) {
+      throw new BadRequestException('模型配置加密密钥未配置，请联系系统管理员');
+    }
     return createHash('sha256').update(seed).digest();
   }
 

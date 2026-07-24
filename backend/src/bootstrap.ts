@@ -73,7 +73,6 @@ function requireProductionEnv(name: string) {
 if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
   process.env.DATABASE_URL = normalizeSupabaseUrl(requireProductionEnv('DATABASE_URL'));
   process.env.JWT_SECRET = requireProductionEnv('JWT_SECRET');
-  process.env.CONFIG_ENCRYPTION_KEY = requireProductionEnv('CONFIG_ENCRYPTION_KEY');
 } else {
   process.env.DATABASE_URL = normalizeSupabaseUrl(process.env.DATABASE_URL);
 }

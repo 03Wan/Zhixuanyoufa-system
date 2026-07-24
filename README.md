@@ -1,53 +1,100 @@
-﻿# 智选优发
+# 智选优发 · ZhiXuanYouFa
 
-智选优发是一套面向跨境电商企业团队的商品素材发布前检测、风险评估、复核协作与报告归档系统。
+> 跨境商品发布前的智能决策伙伴  
+> Intelligent pre-publish readiness for cross-border commerce teams.
 
-## 项目概览
+[中文](#中文) · [English](#english) · [License](#license)
+
+![智选优发商品素材场景](frontend+/public/assets/kettle-product.png)
+
+---
+
+## 中文
+
+### 产品简介
+
+智选优发面向跨境电商运营、品牌、设计与合规团队，帮助团队在商品发布前统一整理素材、匹配目标平台与市场要求，并将发布准备过程沉淀为可协作、可追溯的工作流。
+
+它不是又一个内容生成工具，而是为“发布之前该准备什么、由谁确认、如何协作”提供清晰的工作界面。
+
+### 核心能力
+
+- 发布前准备：围绕目标平台、市场与商品类目组织发布任务。
+- 素材集中管理：统一承接商品文案、图片与详情页内容。
+- 团队协作：支持运营、设计、品牌与合规角色在同一任务中协同。
+- 规则体系：将平台规则、市场要求和类目限制纳入统一管理。
+- 过程可追溯：为发布准备、复核与处理记录保留清晰依据。
+
+### 适用场景
+
+| 场景 | 价值 |
+| --- | --- |
+| 新品上架 | 在首发前集中完成素材与发布准备。 |
+| 多平台发布 | 按不同平台和市场组织对应的发布要求。 |
+| 团队复核 | 减少跨角色沟通成本，统一处理结论。 |
+| 品牌规范管理 | 让素材准备与品牌、市场表达保持一致。 |
+
+### 技术概览
 
 - 前端：Vue 3、TypeScript、Vite、Vue Router、ECharts
-- 后端：NestJS、Prisma、PostgreSQL、JWT/Passport
-- 数据：Supabase PostgreSQL 与 Supabase Storage
-- 部署：Vercel、GitHub Actions
+- 服务端：NestJS、Prisma、PostgreSQL、JWT/Passport
+- 数据服务：Supabase PostgreSQL 与 Storage
 
-系统覆盖素材录入、图片上传、规则检测、风险评分、人工复核、报告导出、企业账号申请、成员权限、企业与客户管理、操作审计等流程。生产环境默认连接真实 API 与数据库，不启用本地假数据降级。
+### 部署与交付
 
-## 运行要求
+前端采用 Vercel 托管，生产站点为 [paperhelper.fun](https://www.paperhelper.fun)。项目按前后端分离交付：
 
-后端生产环境必须显式配置以下变量：
+- 前端部署目录：`frontend+`
+- 后端服务目录：`backend`
+- 生产配置通过托管平台的环境变量管理，不提交凭据、Token 或连接字符串
 
-- `DATABASE_URL`
-- `DIRECT_URL`
-- `JWT_SECRET`
-- `CONFIG_ENCRYPTION_KEY`
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY` 或 `SUPABASE_SECRET_KEY`
-- `SUPABASE_STORAGE_BUCKET`
+发布前建议完成前端构建、后端测试、数据库迁移验证与关键业务路径验收。
 
-## 常用命令
+---
 
-```bash
-cd backend
-npm ci
-npm run prisma:generate
-npm run lint
-npm test
-npm run build
+## English
 
-cd ../frontend+
-npm ci
-npm run build
-```
+### Overview
 
-生产包禁用词扫描：
+ZhiXuanYouFa is a pre-publish readiness platform for cross-border commerce teams. It gives operations, brand, design, and compliance teams a shared workspace for preparing product materials, aligning release requirements, and retaining a clear decision trail before a listing goes live.
 
-```bash
-node scripts/scan_forbidden_terms.mjs
-```
+It is not another generic content-generation tool. It is a focused operational layer for deciding what needs to be prepared, who needs to review it, and how a team moves a listing toward release.
 
-## 发布前检查
+### Key capabilities
 
-- 执行数据库备份与密钥轮换
-- 执行 Prisma 迁移并完成真实读写验证
-- 确认 `/api/health/live` 与 `/api/health/ready` 状态
-- 确认前端生产包禁用词扫描通过
-- 确认依赖审计、后端自动化校验、前后端构建全部通过
+- Pre-publish preparation organized by marketplace, market, and product category.
+- Centralized handling of product copy, images, and detail-page content.
+- Shared workflows for operations, design, brand, and compliance roles.
+- Unified management of platform policies, market requirements, and category constraints.
+- Traceable preparation and review records for each publishing workflow.
+
+### Primary use cases
+
+| Use case | Outcome |
+| --- | --- |
+| New product launches | Prepare core listing materials before first release. |
+| Multi-marketplace publishing | Keep requirements aligned across marketplaces and markets. |
+| Cross-functional review | Reduce handoff friction and retain clear decisions. |
+| Brand governance | Keep publishing preparation consistent with brand standards. |
+
+### Technology
+
+- Frontend: Vue 3, TypeScript, Vite, Vue Router, ECharts
+- Backend: NestJS, Prisma, PostgreSQL, JWT/Passport
+- Data services: Supabase PostgreSQL and Storage
+
+### Deployment and delivery
+
+The frontend is hosted on Vercel and available at [paperhelper.fun](https://www.paperhelper.fun). The repository follows a separated frontend/backend delivery model:
+
+- Frontend deployment root: `frontend+`
+- Backend service root: `backend`
+- Production credentials, tokens, and connection strings are managed through hosting-provider environment variables and are never committed to the repository.
+
+Before a production release, validate the frontend build, backend tests, database migrations, and the primary user journeys.
+
+---
+
+## License
+
+This project is released under the [MIT License](LICENSE).

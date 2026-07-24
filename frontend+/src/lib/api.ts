@@ -36,7 +36,10 @@ export type CreateTaskPayload = {
 
 export type UpdateTaskPayload = Partial<CreateTaskPayload>;
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.paperhelper.fun/api';
+const DEFAULT_API_BASE_URL = 'https://api.paperhelper.fun/api';
+const rawApiBaseUrl = String(import.meta.env.VITE_API_BASE_URL || '').trim();
+const API_BASE_URL =
+  !rawApiBaseUrl || rawApiBaseUrl === '[SENSITIVE]' ? DEFAULT_API_BASE_URL : rawApiBaseUrl;
 export const USE_MOCK = import.meta.env.DEV && String(import.meta.env.VITE_USE_MOCK || 'false').toLowerCase() === 'true';
 const TOKEN_KEY = 'zyyf_token';
 const USER_KEY = 'zyyf_user';

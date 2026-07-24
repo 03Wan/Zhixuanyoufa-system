@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import PublicHomeView from "@/views/PublicHomeView.vue";
+import PublicInfoView from "@/views/PublicInfoView.vue";
 import TaskNewView from "@/views/TaskNewView.vue";
 import TaskDetailView from "@/views/TaskDetailView.vue";
 import TaskResultView from "@/views/TaskResultView.vue";
@@ -33,6 +34,11 @@ const router = createRouter({
   routes: [
     { path: "/", redirect: "/home-public" },
     { path: "/home-public", component: PublicHomeView },
+    { path: "/product-capabilities", component: PublicInfoView },
+    { path: "/solutions", component: PublicInfoView },
+    { path: "/rule-library", component: PublicInfoView },
+    { path: "/customer-cases", component: PublicInfoView },
+    { path: "/help-center", component: PublicInfoView },
     { path: "/privacy", component: PrivacyView },
     { path: "/terms", component: TermsView },
     { path: "/home", component: HomeView, meta: { auth: true } },
@@ -45,7 +51,7 @@ const router = createRouter({
     { path: "/report-templates", component: ReportTemplatesView, meta: { auth: true, roles: ["ENTERPRISE_ADMIN", "SYSTEM_ADMIN"] as UserRole[] } },
     { path: "/dashboard", component: DashboardView, meta: { auth: true, roles: ["MANAGER", "SYSTEM_ADMIN"] as UserRole[] } },
     { path: "/login", redirect: () => ({ path: "/home-public", query: { auth: "login" } }) },
-    { path: "/register", redirect: () => ({ path: "/home-public", query: { auth: "login" } }) },
+    { path: "/register", redirect: () => ({ path: "/home-public", query: { auth: "register" } }) },
 
     { path: "/tasks/new", component: TaskNewView, meta: { auth: true, roles: ["ENTERPRISE_ADMIN", "OPERATOR", "DESIGNER", "SYSTEM_ADMIN"] as UserRole[] } },
     { path: "/tasks/:id", component: TaskDetailView, meta: { auth: true, roles: ["ENTERPRISE_ADMIN", "OPERATOR", "DESIGNER", "SYSTEM_ADMIN"] as UserRole[] } },

@@ -60,6 +60,11 @@ export class ReviewsService {
 
   async startReview(userId: string, reviewId: string) {
     const review = await this.detail(userId, reviewId);
+    // Opening the detail page is intentionally idempotent. Without this guard,
+    // a later refresh could overwrite an approved/returned/held decision.
+    if (review.status !== ReviewStatus.PENDING) {
+      return { success: true, alreadyStarted: true, review };
+    }
     const history = Array.isArray(review.history as any) ? (review.history as any) : [];
     history.unshift({
       time: new Date().toISOString(),

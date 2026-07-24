@@ -113,6 +113,9 @@ model MaterialTask {
   batchItems       BatchTaskItem[]
   customerId       String?
   customer         Customer?         @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([companyId, createdAt])
 }
 
 model MaterialContent {
@@ -144,6 +147,8 @@ model DetectionResult {
   updatedAt         DateTime     @updatedAt
 
   task MaterialTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([riskLevel])
 }
 
 model Rule {
@@ -211,6 +216,8 @@ model ReviewTask {
   task     MaterialTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
   creator  User         @relation("creator", fields: [createdBy], references: [id], onDelete: Cascade)
   reviewer User?        @relation("reviewer", fields: [reviewerId], references: [id], onDelete: SetNull)
+
+  @@index([status])
 }
 
 model Plan {

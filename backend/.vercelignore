@@ -1,0 +1,9 @@
+# Deployment configuration comes exclusively from Vercel environment variables.
+# Never upload workstation credentials or local database URLs.
+.env
+.env.*
+!.env.example
+node_modules
+dist
+coverage
+*.log

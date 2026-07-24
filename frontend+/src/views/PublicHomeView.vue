@@ -1,365 +1,69 @@
-﻿<template>
-  <main class="public-home">
-    <div class="public-bg"></div>
-    <section class="landing">
-      <header class="nav glass">
-        <div class="brand">
-          <div class="logo">智</div>
-          <div>
-            <h1>智选优发</h1>
-            <p>基于 AIGC 的商品素材智能评估与发布决策辅助系统</p>
-          </div>
-        </div>
-        <div class="nav-actions">
-          <ThemeToggle />
-          <button type="button" class="btn btn-primary icon-btn" @click="openAuth('login')">
-            <LogIn :size="18" aria-hidden="true" />
-            <span>登录</span>
-          </button>
-        </div>
-      </header>
+<template>
+  <main class="landing-page">
+    <header class="topbar">
+      <button class="brand" @click="scrollTo('top')" aria-label="返回首页">
+        <span class="brand-mark">智</span><span>智选优发</span>
+      </button>
+      <nav class="nav-links" aria-label="主导航">
+        <button v-for="item in mainNavItems" :key="item.path" @click="goTo(item.path)">{{ item.label }}</button>
+        <div class="more-nav"><button @click="moreOpen = !moreOpen">更多 <ChevronDown :size="14" /></button><div v-if="moreOpen" class="more-menu"><button v-for="item in moreNavItems" :key="item.path" @click="goTo(item.path); moreOpen = false">{{ item.label }}</button></div></div>
+      </nav>
+      <div class="account-actions"><button class="login-btn" @click="openAuth('login')">登录</button></div>
+    </header>
 
-      <section class="hero glass">
-        <p class="eyebrow"><Sparkles class="title-icon" aria-hidden="true" />跨境电商发布前智能评估</p>
-        <h2>发布前一站式完成检测、评估与决策</h2>
-        <p class="sub">覆盖标题、卖点、详情页、广告语和图片素材，输出风险等级、优化建议与发布决策。</p>
-      </section>
-
-      <AppGlassSurface as="section" class="main-panel" :radius="28">
-        <section class="panel-section">
-          <h3 class="section-title"><ScanSearch class="card-icon" aria-hidden="true" />核心能力</h3>
-          <div class="grid-2">
-            <article class="plain-item">
-              <div class="item-head"><FileSearch :size="16" class="mini-icon" aria-hidden="true" /><h4>素材检测</h4></div>
-              <p>文本解析与图片识别结合，定位素材问题。</p>
-            </article>
-            <article class="plain-item">
-              <div class="item-head"><ShieldAlert :size="16" class="mini-icon" aria-hidden="true" /><h4>风险评估</h4></div>
-              <p>输出综合分、维度分、风险等级与解释依据。</p>
-            </article>
-            <article class="plain-item">
-              <div class="item-head"><WandSparkles :size="16" class="mini-icon" aria-hidden="true" /><h4>优化建议</h4></div>
-              <p>生成结构化改写建议与本土化表达方向。</p>
-            </article>
-            <article class="plain-item">
-              <div class="item-head"><FileCheck2 :size="16" class="mini-icon" aria-hidden="true" /><h4>报告追踪</h4></div>
-              <p>支持报告归档导出与操作留痕审计。</p>
-            </article>
-          </div>
-        </section>
-
-        <section class="panel-section">
-          <h3 class="section-title"><Archive class="card-icon" aria-hidden="true" />业务流程</h3>
-          <div class="steps">
-            <div class="step">
-              <div class="step-head"><Upload :size="16" class="mini-icon" aria-hidden="true" /><span>01</span></div>
-              <strong>上传素材</strong>
-              <p>录入标题、卖点、详情与图片素材</p>
-            </div>
-            <div class="step">
-              <div class="step-head"><Bot :size="16" class="mini-icon" aria-hidden="true" /><span>02</span></div>
-              <strong>智能检测</strong>
-              <p>自动识别风险点并输出结构化评分</p>
-            </div>
-            <div class="step">
-              <div class="step-head"><UserCheck :size="16" class="mini-icon" aria-hidden="true" /><span>03</span></div>
-              <strong>复核决策</strong>
-              <p>结合建议修订内容并确认发布动作</p>
-            </div>
-            <div class="step">
-              <div class="step-head"><FolderArchive :size="16" class="mini-icon" aria-hidden="true" /><span>04</span></div>
-              <strong>报告归档</strong>
-              <p>生成报告并在报告中心追踪历史版本</p>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel-section two-col">
-          <div>
-            <h3 class="section-title"><Store class="card-icon" aria-hidden="true" />平台适配</h3>
-            <p class="platform-copy">
-              覆盖主流跨境平台与区域市场，支持按平台规则、目标市场和商品品类扩展检测策略。
-            </p>
-            <div class="chip-wrap">
-              <span class="chip"><Globe :size="14" aria-hidden="true" />Amazon / eBay / Walmart</span>
-              <span class="chip"><Globe :size="14" aria-hidden="true" />Shopee / Lazada / TikTok Shop</span>
-              <span class="chip"><Globe :size="14" aria-hidden="true" />独立站 / 社媒广告 / ERP渠道</span>
-              <span class="chip"><Globe :size="14" aria-hidden="true" />欧美 / 中东 / 东南亚等市场</span>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel-section">
-          <h3 class="section-title"><MessageCircleQuestion class="card-icon" aria-hidden="true" />常见问题</h3>
-          <div class="faq-list faq">
-            <details>
-              <summary><CircleHelp :size="14" class="mini-icon" aria-hidden="true" />是否支持图片检测与文案检测？</summary>
-              <p>支持，文本解析与图片识别可组合评估并输出定位结果。</p>
-            </details>
-            <details>
-              <summary><CircleHelp :size="14" class="mini-icon" aria-hidden="true" />是否支持多角色协作？</summary>
-              <p>支持，包含运营、设计、复核和管理角色的权限控制。</p>
-            </details>
-            <details>
-              <summary><CircleHelp :size="14" class="mini-icon" aria-hidden="true" />是否可接入真实模型？</summary>
-              <p>可以，系统连接真实业务 API，所有业务数据按企业账号保存。</p>
-            </details>
-          </div>
-        </section>
-
-        <footer class="panel-footer">
-          <p class="footer-main">© 2026 智选优发团队。保留所有权利。</p>
-          <p class="footer-contact">
-            联系我们：wangbo030127@gmail.com
-            <router-link to="/privacy">隐私说明</router-link>
-            <router-link to="/terms">服务条款</router-link>
-          </p>
-        </footer>
-      </AppGlassSurface>
+    <section id="top" class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">跨境商品发布前检查</p>
+        <h1>把检查放在<br />发布之前。</h1>
+        <p>围绕平台规则与目标市场要求，帮助团队在商品上架前整理素材、完成检查并获得可执行的修改方向。</p>
+        <div class="hero-actions"><button class="text-link" @click="scrollTo('how-it-works')">了解如何使用 <ArrowRight :size="16" /></button></div>
+      </div>
+      <aside class="hero-context" aria-label="发布前准备框架"><p>发布前准备</p><h2>让团队先对齐<br />发布所需信息</h2><div><span><Store :size="19" /><b>平台规则</b><small>确认发布渠道与政策要求</small></span><span><Globe2 :size="19" /><b>目标市场</b><small>匹配站点与本地化要求</small></span><span><FilePenLine :size="19" /><b>商品素材</b><small>集中整理文案、图片和详情页</small></span></div></aside>
+      <div class="hero-trust"><span><Globe2 :size="17" /> 覆盖主流平台规则</span><span><Users :size="17" /> 团队协作与记录</span><span><LockKeyhole :size="17" /> 企业级安全</span></div>
     </section>
 
-    <div v-if="authModalOpen" class="auth-modal-mask" @click.self="closeAuth">
-      <AppGlassSurface as="section" class="auth-modal fade-up" :radius="24" role="dialog" aria-modal="true">
-        <div class="auth-head">
-          <div class="brand-mini"><div class="logo">智</div><strong>智选优发</strong></div>
-          <button type="button" class="btn btn-secondary" @click="closeAuth">关闭</button>
-        </div>
-        <template v-if="authMode === 'login'">
-          <h3>登录系统</h3>
-          <p class="auth-sub">使用企业账号进入智能检测工作台</p>
-          <form class="form-grid" @submit.prevent="submitLogin">
-            <input class="input" v-model="loginForm.email" placeholder="邮箱" />
-            <input class="input" type="password" v-model="loginForm.password" placeholder="密码" />
-            <p v-if="authError" class="err">{{ authError }}</p>
-            <button class="btn btn-primary submit-btn" :disabled="loading">{{ loading ? '登录中...' : '确认登录' }}</button>
-          </form>
-          <p class="switch-line"><span>还没有账号？</span><button class="link-btn" type="button" @click="switchMode('register')">申请企业账号</button></p>
-        </template>
-        <template v-else>
-          <h3>申请企业账号</h3>
-          <p class="auth-sub">提交企业信息，平台审核后联系开通</p>
-          <form class="form-grid" @submit.prevent="submitRegister">
-            <input class="input" v-model="registerForm.companyName" placeholder="企业名称" />
-            <input class="input" v-model="registerForm.contactName" placeholder="联系人" />
-            <input class="input" v-model="registerForm.email" placeholder="邮箱" />
-            <input class="input" v-model="registerForm.phone" placeholder="联系电话（选填）" />
-            <textarea class="input" v-model="registerForm.note" rows="3" placeholder="业务需求（选填）"></textarea>
-            <p v-if="authError" class="err">{{ authError }}</p>
-            <button class="btn btn-primary submit-btn" :disabled="loading">{{ loading ? '提交中...' : '提交申请' }}</button>
-          </form>
-          <p class="switch-line"><span>已有账号？</span><button class="link-btn" type="button" @click="switchMode('login')">返回登录</button></p>
-        </template>
-      </AppGlassSurface>
-    </div>
-    <div v-if="comingSoon.open" class="auth-modal-mask" @click.self="comingSoon.open=false">
-      <AppGlassSurface as="section" class="auth-modal fade-up" :radius="24" role="dialog" aria-modal="true">
-        <h3 style="font-size:32px;line-height:1.2;">提示</h3>
-        <p class="auth-sub">{{ comingSoon.message }}</p>
-        <button class="btn btn-primary submit-btn" @click="comingSoon.open=false">我知道了</button>
-      </AppGlassSurface>
-    </div>
+    <section id="how-it-works" class="workflow-section">
+      <div class="section-intro"><p class="eyebrow">如何开始</p><h2>从素材准备，到发布前检查</h2><p>一次任务围绕一个商品、一个目标平台与市场展开，过程清楚，团队可以直接接手。</p></div>
+      <div class="steps"><article><span>01</span><h3>选择平台与市场</h3><p>选择目标平台、站点和商品类目，让检查规则匹配实际发布场景。</p><div class="mini-select"><small>平台</small><b>亚马逊 Amazon <ChevronDown :size="15" /></b><small>市场</small><b>美国站（US） <ChevronDown :size="15" /></b></div></article><i><ArrowRight :size="24" /></i><article><span>02</span><h3>导入商品素材</h3><p>上传文案和图片，或粘贴详情页链接；可按团队现有的工作方式准备。</p><div class="mini-upload"><b><Upload :size="17" /> 上传文案文件</b><b><Image :size="17" /> 上传图片</b><b><Link :size="17" /> 粘贴详情页链接</b></div></article><i><ArrowRight :size="24" /></i><article><span>03</span><h3>获得可执行建议</h3><p>检查完成后，在任务内查看每一项修改方向并继续处理发布准备。</p><div class="mini-advice"><b><FilePenLine :size="18" /> 商品文案</b><b><Image :size="18" /> 商品图片</b><b><PanelTop :size="18" /> 详情页内容</b></div></article></div>
+    </section>
+
+    <section class="materials-section"><div class="material-photo"><img src="/assets/kettle-product.png" alt="商品素材示例：电热水壶" /></div><div class="materials-copy"><p class="eyebrow">检查范围</p><h2>为每个发布环节准备</h2><p>不改变团队已有的素材生产方式，只把需要发布的内容集中到一次检查任务中。</p><ul><li><span><Type :size="22" /></span><div><b>商品文案</b><small>标题、卖点、属性与描述文案</small></div></li><li><span><Image :size="22" /></span><div><b>商品图片</b><small>主图、场景图、细节图与图文信息</small></div></li><li><span><PanelTop :size="22" /></span><div><b>详情页内容</b><small>模块结构、素材引用与完整页面内容</small></div></li></ul></div></section>
+
+    <section class="rules-section"><div><p class="eyebrow">规则如何维护</p><h2>规则与发布场景一起配置</h2><p>平台、市场与商品类目共同决定检查范围。团队只需选择真实的发布目的地，无需手动翻找规则。</p><button class="text-link" @click="goTo('/rule-library')">了解规则体系 <ArrowRight :size="16" /></button></div><div class="rule-map"><span><Store :size="18" /><b>平台</b><small>平台政策与规则</small></span><span><Globe2 :size="18" /><b>市场</b><small>本地法规与合规要求</small></span><span><Tags :size="18" /><b>商品类目</b><small>类目限制与特殊要求</small></span><i><ArrowRight :size="21" /></i><strong><ShieldCheck :size="25" />检查规则<small>持续维护与更新</small></strong></div></section>
+
+    <footer class="site-footer"><div class="footer-main"><div><div class="footer-brand"><span class="brand-mark">智</span>智选优发</div><p>跨境商品发布前检查，帮助团队把素材、规则与发布动作放在同一条工作流中。</p></div><div><b>产品</b><button @click="goTo('/product-capabilities')">产品能力</button><button @click="goTo('/solutions')">解决方案</button><button @click="goTo('/rule-library')">规则库</button></div><div><b>支持</b><button @click="goTo('/help-center')">帮助中心</button><button @click="openAuth('login')">登录工作台</button><button @click="contactOpen = true">联系团队</button></div></div><div class="footer-bottom"><span>© 2026 智选优发团队。保留所有权利。</span><div><router-link to="/privacy">隐私说明</router-link><router-link to="/terms">服务条款</router-link></div></div></footer>
+
+    <Transition name="fade"><div v-if="taskOpen" class="modal-mask" @click.self="taskOpen = false"><section class="task-modal"><button class="close" @click="taskOpen = false"><X :size="19" /></button><p class="eyebrow">创建检查任务</p><h2>{{ taskCreated ? '任务已创建' : '先选择本次发布场景' }}</h2><p v-if="taskCreated" class="created-copy">已为「{{ taskForm.title }}」保存检查任务。接下来可以继续添加商品文案、图片或详情页内容。</p><form v-else @submit.prevent="createTask"><label>商品名称<input v-model="taskForm.title" required placeholder="例如：鹅颈电热水壶" /></label><div class="select-row"><label>目标平台<select v-model="taskForm.platform"><option>Amazon</option><option>TikTok Shop</option><option>Shopee</option></select></label><label>目标市场<select v-model="taskForm.market"><option>美国站</option><option>英国站</option><option>德国站</option></select></label></div><button class="primary-btn" type="submit">创建任务 <ArrowRight :size="17" /></button></form><button v-if="taskCreated" class="primary-btn" @click="taskOpen = false">继续准备素材 <ArrowRight :size="17" /></button></section></div></Transition>
+    <Transition name="fade"><div v-if="authModalOpen" class="modal-mask" @click.self="closeAuth"><section class="task-modal auth-modal"><button class="close" @click="closeAuth"><X :size="19" /></button><p class="eyebrow">企业账号</p><h2>{{ authMode === 'login' ? '登录系统' : '申请企业账号' }}</h2><form v-if="authMode === 'login'" @submit.prevent="submitLogin"><label>邮箱<input v-model="loginForm.email" type="email" required placeholder="name@company.com" /></label><label>密码<input v-model="loginForm.password" type="password" required placeholder="请输入密码" /></label><p v-if="authError" class="form-error">{{ authError }}</p><button class="primary-btn" type="submit" :disabled="authLoading">{{ authLoading ? '登录中…' : '登录' }}</button></form><form v-else @submit.prevent="submitRegister"><label>企业名称<input v-model="registerForm.companyName" required /></label><label>联系人<input v-model="registerForm.contactName" required /></label><label>邮箱<input v-model="registerForm.email" type="email" required /></label><p v-if="authError" class="form-error">{{ authError }}</p><button class="primary-btn" type="submit" :disabled="authLoading">{{ authLoading ? '提交中…' : '提交申请' }}</button></form><p class="switch-auth">{{ authMode === 'login' ? '还没有账号？' : '已有账号？' }} <button @click="openAuth(authMode === 'login' ? 'register' : 'login')">{{ authMode === 'login' ? '申请企业账号' : '返回登录' }}</button></p></section></div></Transition>
+    <Transition name="fade"><div v-if="contactOpen" class="modal-mask" @click.self="contactOpen = false"><section class="task-modal contact-modal"><button class="close" @click="contactOpen = false"><X :size="19" /></button><p class="eyebrow">联系团队</p><h2>聊聊你的发布场景</h2><p>可留下企业与目标平台信息，我们会在工作日内与你联系。</p><div class="contact-email"><span>服务邮箱</span><b>wangbo030127@gmail.com</b></div><button class="primary-btn" @click="copyContactEmail">{{ emailCopied ? '邮箱已复制' : '复制服务邮箱' }}</button></section></div></Transition>
   </main>
 </template>
 
 <script setup lang="ts">
-import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import {
-  Archive,
-  BarChart3,
-  Globe,
-  LogIn,
-  MessageCircleQuestion,
-  ScanSearch,
-  Sparkles,
-  Store,
-  FileSearch,
-  ShieldAlert,
-  WandSparkles,
-  FileCheck2,
-  Upload,
-  Bot,
-  UserCheck,
-  FolderArchive,
-  CircleHelp,
-} from 'lucide-vue-next';
-import ThemeToggle from '@/components/ThemeToggle.vue';
+import { ArrowRight, ChevronDown, FilePenLine, Globe2, Image, Link, LockKeyhole, PanelTop, ShieldCheck, Store, Tags, Type, Upload, Users, X } from 'lucide-vue-next';
 import { api, getFriendlyError } from '@/lib/api';
 import { useAuthStore } from '@/stores/auth';
 
-const router = useRouter();
-const route = useRoute();
-const authStore = useAuthStore();
-const authModalOpen = ref(false);
-const authMode = ref<'login' | 'register'>('login');
-const loading = ref(false);
-const authError = ref('');
-const loginForm = reactive({ email: '', password: '' });
-const registerForm = reactive({ companyName: '', contactName: '', email: '', phone: '', note: '' });
-const comingSoon = reactive({ open: false, message: '' });
-
-watch(
-  () => route.query.auth,
-  () => {
-    const auth = String(route.query.auth || '').toLowerCase();
-    authModalOpen.value = auth === 'login' || auth === 'register';
-    if (authModalOpen.value) authMode.value = 'login';
-  },
-  { immediate: true },
-);
-
-function openAuth(mode: 'login' | 'register') {
-  router.replace({ path: '/home-public', query: { ...route.query, auth: mode } });
-}
-
-function closeAuth() {
-  const query = { ...route.query } as Record<string, any>;
-  delete query.auth;
-  router.replace({ path: '/home-public', query });
-}
-
-function switchMode(mode: 'login' | 'register') {
-  authError.value = '';
-  openAuth(mode);
-}
-
-function validateRegister() {
-  if (!registerForm.companyName.trim() || !registerForm.contactName.trim() || !registerForm.email.trim()) {
-    authError.value = '请填写企业名称、联系人和邮箱。';
-    return false;
-  }
-  return true;
-}
-
-async function submitLogin() {
-  loading.value = true;
-  authError.value = '';
-  try {
-    await api.login(loginForm);
-    authStore.syncFromStorage();
-    const redirect = typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/') ? route.query.redirect : '/home';
-    router.push(redirect);
-  } catch (error) {
-    authError.value = getFriendlyError(error);
-  } finally {
-    loading.value = false;
-  }
-}
-
-async function submitRegister() {
-  if (!validateRegister()) return;
-  loading.value = true;
-  authError.value = '';
-  try {
-    const result = await api.applyCommercial({
-      type: 'ACCOUNT_OPENING',
-      companyName: registerForm.companyName,
-      contactName: registerForm.contactName,
-      email: registerForm.email,
-      phone: registerForm.phone,
-      note: registerForm.note,
-    });
-    comingSoon.message = (result as any)?.message || '申请已提交，平台将在审核后联系开通账号。';
-    comingSoon.open = true;
-    switchMode('login');
-    loginForm.email = registerForm.email;
-    loginForm.password = '';
-  } catch (error) {
-    authError.value = getFriendlyError(error);
-  } finally {
-    loading.value = false;
-  }
-}
+const router = useRouter(); const route = useRoute(); const authStore = useAuthStore();
+const navItems = [{ label: '产品能力', path: '/product-capabilities' }, { label: '适用平台', path: '/solutions' }, { label: '解决方案', path: '/solutions' }, { label: '帮助中心', path: '/help-center' }, { label: '关于我们', path: '/customer-cases' }];
+const mainNavItems = navItems.slice(0, 3); const moreNavItems = navItems.slice(3);
+const moreOpen = ref(false); const taskOpen = ref(false); const taskCreated = ref(false); const contactOpen = ref(false); const emailCopied = ref(false); const authModalOpen = ref(false); const authMode = ref<'login' | 'register'>('login'); const authLoading = ref(false); const authError = ref('');
+const taskForm = reactive({ title: '', platform: 'Amazon', market: '美国站' }); const loginForm = reactive({ email: '', password: '' }); const registerForm = reactive({ companyName: '', contactName: '', email: '' });
+function scrollTo(id: string) { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+function goTo(path: string) { router.push(path); }
+function openTask() { taskCreated.value = false; taskOpen.value = true; }
+function createTask() { taskCreated.value = true; }
+async function copyContactEmail() { try { await navigator.clipboard.writeText('wangbo030127@gmail.com'); } finally { emailCopied.value = true; } }
+function openAuth(mode: 'login' | 'register') { router.push({ path: '/home-public', query: { ...route.query, auth: mode } }); }
+function closeAuth() { const query = { ...route.query } as Record<string, string>; delete query.auth; router.replace({ path: '/home-public', query }); }
+watch(() => route.query.auth, () => { const mode = String(route.query.auth || ''); authModalOpen.value = mode === 'login' || mode === 'register'; if (authModalOpen.value) { authMode.value = mode as 'login' | 'register'; authError.value = ''; } }, { immediate: true });
+async function submitLogin() { authLoading.value = true; authError.value = ''; try { await api.login(loginForm); authStore.syncFromStorage(); router.push('/home'); } catch (error) { authError.value = getFriendlyError(error); } finally { authLoading.value = false; } }
+async function submitRegister() { authLoading.value = true; authError.value = ''; try { await api.applyCommercial({ type: 'ACCOUNT_OPENING', companyName: registerForm.companyName, contactName: registerForm.contactName, email: registerForm.email }); authMode.value = 'login'; loginForm.email = registerForm.email; authError.value = '申请已提交，请使用获批账号登录。'; } catch (error) { authError.value = getFriendlyError(error); } finally { authLoading.value = false; } }
 </script>
 
 <style scoped>
-.public-home { min-height: 100vh; position: relative; padding: 12px; overflow-x: hidden; }
-.public-bg {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 0% 10%, rgba(106, 206, 255, 0.22), transparent 36%),
-    radial-gradient(circle at 100% 0%, rgba(145, 133, 255, 0.2), transparent 40%),
-    linear-gradient(160deg, var(--bg-0), var(--bg-1) 58%, var(--bg-2));
-}
-.landing { position: relative; z-index: 1; width: 100%; max-width: 1680px; margin: 0 auto; display: grid; gap: 14px; box-sizing: border-box; }
-.nav { padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; border-radius: 18px; }
-.brand, .nav-actions, .icon-btn, .section-title, .chip { display: inline-flex; align-items: center; gap: 8px; }
-.logo { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; font-weight: 800; font-size: 28px; color: #fff; background: linear-gradient(135deg, var(--brand-0), var(--brand-1)); }
-.brand h1 { margin: 0; font-size: 24px; line-height: 1.1; }
-.brand p, .sub { color: color-mix(in srgb, var(--text) 76%, #5b77a7 24%); font-size: 15px; }
-.hero { border-radius: 18px; padding: 16px; }
-.eyebrow { margin: 0 0 8px; color: var(--brand-1); font-weight: 700; display: inline-flex; align-items: center; gap: 8px; }
-.title-icon { width: 21px; height: 21px; color: var(--brand-1); }
-.hero h2 { margin: 0; font-size: clamp(26px, 2.5vw, 34px); line-height: 1.12; letter-spacing: 0; color: color-mix(in srgb, var(--text) 92%, #0f2b5d 8%); }
-.sub { margin: 10px 0 0; max-width: 980px; font-size: 18px; line-height: 1.45; }
-
-.main-panel { border-radius: 18px; padding: 18px; }
-.panel-section { padding-top: 18px; margin-top: 18px; border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent); }
-.panel-section:first-child { margin-top: 0; padding-top: 0; border-top: none; }
-.grid-2, .steps, .chip-wrap, .two-col, .faq-list { display: grid; gap: 12px; }
-.grid-2, .steps, .chip-wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.two-col { grid-template-columns: 1fr 1fr; }
-.plain-item {
-  border: 1px dashed var(--border);
-  border-radius: 12px;
-  padding: 14px;
-  display: grid;
-  gap: 8px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
-}
-.item-head { display: inline-flex; align-items: center; gap: 8px; }
-.plain-item h4 { margin: 0; font-size: 22px; line-height: 1.16; color: color-mix(in srgb, var(--text) 92%, #123774 8%); }
-.plain-item p { margin: 0; color: color-mix(in srgb, var(--text) 78%, #5d79a9 22%); font-size: 16px; }
-.section-title { margin: 0 0 12px; font-size: clamp(22px, 1.8vw, 30px); line-height: 1.15; color: color-mix(in srgb, var(--text) 92%, #133971 8%); }
-.card-icon { width: 19px; height: 19px; color: var(--brand-1); }
-.mini-icon { color: var(--brand-1); flex: 0 0 auto; }
-.step { border: 1px dashed var(--border); border-radius: 12px; padding: 14px; display: grid; gap: 8px; }
-.step-head { display: inline-flex; align-items: center; gap: 8px; }
-.step span { color: var(--brand-1); font-weight: 800; font-size: 38px; line-height: 1; }
-.step strong { font-size: 22px; line-height: 1.1; letter-spacing: 0; color: color-mix(in srgb, var(--text) 92%, #123c7e 8%); }
-.step p { margin: 4px 0 0; color: color-mix(in srgb, var(--text) 76%, #6180ad 24%); font-size: 15px; line-height: 1.42; }
-.chip { border: 1px dashed var(--border); border-radius: 999px; padding: 10px 14px; justify-content: center; font-size: 16px; font-weight: 700; }
-.platform-copy { margin: 0 0 10px; color: color-mix(in srgb, var(--text) 76%, #5e7ba8 24%); font-size: 16px; line-height: 1.55; }
-.faq-list { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
-.faq details { border: 1px dashed var(--border); border-radius: 12px; padding: 10px 12px; }
-.faq summary { cursor: pointer; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; font-size: 18px; }
-.faq details p { margin: 8px 0 0; color: color-mix(in srgb, var(--text) 76%, #5e7ba8 24%); font-size: 15px; }
-.panel-footer { padding-top: 18px; margin-top: 18px; border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-.footer-main { margin: 0 auto !important; text-align: center; width: 100%; }
-.footer-contact { margin: 0 auto !important; text-align: center; width: 100%; font-size: 14px; }
-.panel-footer p { margin: 0; color: color-mix(in srgb, var(--text) 60%, #7f98be 40%); }
-
-.auth-modal-mask { position: fixed; inset: 0; z-index: 40; background: rgba(15,23,42,.44); display: grid; place-items: center; padding: 20px; }
-.auth-modal { width: min(760px, calc(100vw - 40px)); border-radius: 24px; padding: 20px; display: grid; gap: 12px; }
-.auth-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.brand-mini { display: inline-flex; align-items: center; gap: 10px; }
-.brand-mini strong { font-size: 32px; line-height: 1; }
-.auth-modal h3 { margin: 0; font-size: clamp(28px, 2.8vw, 40px); line-height: 1.1; }
-.auth-sub, .switch-line { margin: 0; color: color-mix(in srgb, var(--text) 70%, #5e7da9 30%); font-size: 17px; }
-.form-grid { display: grid; gap: 10px; }
-.submit-btn { min-height: 48px; }
-.switch-line { display: flex; justify-content: space-between; align-items: center; }
-.link-btn { color: var(--brand-1); font-weight: 700; background: transparent; border: 0; cursor: pointer; padding: 0; }
-.err { margin: 0; color: #d12e2e; font-weight: 700; }
-
-html.dark .title-icon, html.dark .card-icon, html.dark .mini-icon { color: #60a5fa; }
-html.dark .auth-modal-mask { background: rgba(2, 8, 23, .6); }
-
-@media (max-width: 1200px) { .two-col { grid-template-columns: 1fr; } }
-@media (max-width: 760px) {
-  .brand h1 { font-size: 24px; }
-  .grid-2, .steps, .chip-wrap, .faq-list { grid-template-columns: 1fr; }
-  .section-title { font-size: 34px; }
-  .hero h2 { font-size: 36px; }
-  .plain-item h4 { font-size: 24px; }
-  .plain-item p { font-size: 15px; }
-  .step span { font-size: 30px; }
-  .step strong { font-size: 34px; }
-  .faq summary { font-size: 18px; }
-  .faq details p { font-size: 14px; }
-  .auth-modal { width: min(560px, calc(100vw - 24px)); padding: 16px; }
-  .brand-mini strong { font-size: 24px; }
-}
+.landing-page{--ink:#0a1d40;--muted:#5f6c82;--blue:#1358df;--line:#e4e8f0;background:#fff;color:var(--ink);font-family:"PingFang SC","Microsoft YaHei",sans-serif}.topbar{height:68px;padding:0 clamp(24px,5vw,74px);display:flex;align-items:center;border-bottom:1px solid var(--line);gap:34px;background:#fff;position:sticky;top:0;z-index:10}.brand,.footer-brand{border:0;background:none;padding:0;display:flex;align-items:center;gap:9px;font-size:21px;font-weight:800;color:var(--ink);cursor:pointer}.brand-mark{display:grid;place-items:center;width:31px;height:31px;border-radius:7px;background:var(--blue);color:#fff}.nav-links{margin-left:auto;display:flex;align-items:center;gap:31px}.nav-links button,.login-btn,.text-link,.site-footer button{border:0;background:none;font:inherit;color:#263653;cursor:pointer;font-size:14px;font-weight:650}.nav-links button:hover,.login-btn:hover,.text-link:hover{color:var(--blue)}.more-nav{position:relative}.more-nav>button{display:flex;align-items:center;gap:4px}.more-menu{position:absolute;right:0;top:28px;background:#fff;border:1px solid var(--line);box-shadow:0 12px 28px #1728581f;padding:7px;display:grid;gap:3px;min-width:110px}.more-menu button{text-align:left;padding:7px}.account-actions{display:flex;align-items:center;gap:22px}.outline-btn,.primary-btn{border:1px solid var(--blue);background:var(--blue);color:#fff;min-height:44px;padding:0 17px;font:inherit;font-size:14px;font-weight:750;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;border-radius:4px;transition:.18s}.outline-btn{background:#fff;color:var(--blue)}.primary-btn:hover{background:#0d49bf;transform:translateY(-1px)}.outline-btn:hover{background:#f4f7ff}.hero{max-width:1280px;margin:auto;padding:86px 28px 0;display:grid;grid-template-columns:.7fr 1.3fr;gap:58px;align-items:center}.eyebrow{margin:0 0 14px;color:var(--blue);font-weight:750;font-size:14px;letter-spacing:.02em}.hero-copy h1{font-size:clamp(48px,5.2vw,75px);letter-spacing:-.07em;line-height:1.1;margin:0 0 22px}.hero-copy>p:not(.eyebrow){max-width:445px;color:var(--muted);font-size:17px;line-height:1.75;margin:0}.hero-actions{display:flex;align-items:center;gap:24px;margin-top:30px}.text-link{color:var(--blue);display:inline-flex;gap:7px;align-items:center}.task-preview{border:1px solid #d7dde8;border-radius:10px;display:grid;grid-template-columns:146px 1fr;overflow:hidden;background:#fff;box-shadow:0 16px 36px #243c7712;min-height:435px}.task-preview aside{border-right:1px solid var(--line);padding:22px 12px}.preview-logo{font-size:14px;font-weight:800;display:flex;gap:6px;align-items:center}.task-preview ol{padding:23px 0;margin:0;list-style:none;display:grid;gap:20px;font-size:12px;color:#748095}.task-preview li{display:flex;align-items:center;gap:8px}.task-preview li b{border:1px solid #cbd3e1;border-radius:50%;width:19px;height:19px;display:grid;place-items:center;font-size:11px}.task-preview li.active{color:var(--blue);font-weight:750}.task-preview li.active b{border-color:var(--blue);background:var(--blue);color:#fff}.preview-main{padding:30px 38px;position:relative}.preview-main h2{font-size:25px;margin:0 0 7px}.preview-main>p{font-size:13px;color:var(--muted);margin:0 0 23px}.preview-main label,.task-modal label{font-size:12px;font-weight:700;display:grid;gap:7px;color:#34435e}.preview-main input,.preview-main select,.task-modal input,.task-modal select{border:1px solid #d7deea;padding:10px 11px;border-radius:4px;font:inherit;color:#647189;background:#fff}.field-title{display:block;font-size:12px;font-weight:700;margin:18px 0 8px}.source-options{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.source-options button{background:#fff;border:1px solid #dfe4ec;border-radius:4px;text-align:left;padding:10px;color:#506079;display:grid;gap:5px;cursor:pointer}.source-options button.selected{border-color:#8db1ff;background:#f8fbff;color:var(--blue)}.source-options b{font-size:14px}.source-options small{font-size:10px;line-height:1.35}.select-row{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:18px}.next-btn{position:absolute;bottom:20px;right:38px;border:0;background:var(--blue);color:#fff;border-radius:4px;padding:8px 18px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}.hero-trust{grid-column:1/-1;display:flex;gap:29px;padding:29px 0;border-top:1px solid var(--line);margin-top:62px;color:#617087;font-size:13px}.hero-trust span{display:flex;align-items:center;gap:7px}.workflow-section{max-width:1280px;margin:auto;padding:92px 28px}.section-intro{text-align:center;max-width:650px;margin:0 auto 52px}.section-intro h2,.materials-copy h2,.rules-section h2,.final-cta h2{font-size:clamp(30px,3.3vw,45px);letter-spacing:-.055em;line-height:1.18;margin:0 0 16px}.section-intro>p:last-child,.materials-copy>p:not(.eyebrow),.rules-section p{color:var(--muted);line-height:1.75;margin:0}.steps{display:grid;grid-template-columns:1fr 55px 1fr 55px 1fr;align-items:center}.steps article{min-height:321px;border:1px solid #dfe5ef;border-radius:8px;padding:25px;background:#fff}.steps>i{display:grid;place-items:center;color:#536988;font-style:normal}.steps article>span{font-size:26px;font-weight:800;color:var(--blue)}.steps h3{font-size:20px;margin:16px 0 8px}.steps article>p{margin:0;color:var(--muted);line-height:1.65;font-size:14px;min-height:68px}.mini-select,.mini-upload,.mini-advice{margin-top:18px;background:#f7faff;border:1px solid #e4eafa;padding:11px;display:grid;gap:7px;border-radius:5px}.mini-select small{font-size:10px;color:#67758c}.mini-select b{display:flex;justify-content:space-between;padding:8px;border:1px solid #dce3ef;background:#fff;font-size:12px}.mini-upload b,.mini-advice b{display:flex;align-items:center;gap:8px;border-bottom:1px solid #e5eaf3;padding:7px 0;font-size:12px;color:#40506b}.mini-upload b:last-child,.mini-advice b:last-child{border:0}.materials-section{max-width:1170px;margin:auto;padding:34px 28px 94px;display:grid;grid-template-columns:1fr .92fr;gap:80px;align-items:center}.material-photo{background:#f3f5f2;padding:0 0 14px;border-radius:7px;overflow:hidden}.material-photo img{width:100%;aspect-ratio:1.05;object-fit:cover;display:block}.thumb-row{padding:12px 17px 0;display:flex;gap:8px}.thumb-row span{width:35px;height:35px;background:#e2e6e4;border-radius:3px}.thumb-row .active{outline:2px solid var(--blue);outline-offset:2px}.materials-copy>p:not(.eyebrow){max-width:440px}.materials-copy ul{padding:0;margin:27px 0 0;list-style:none;display:grid;gap:20px}.materials-copy li{display:flex;gap:13px;align-items:center}.materials-copy li>span{display:grid;place-items:center;width:43px;height:43px;color:var(--blue);border:1px solid #bcd0ff;border-radius:6px}.materials-copy li b,.materials-copy li small{display:block}.materials-copy li b{font-size:16px;margin-bottom:4px}.materials-copy li small{color:var(--muted);font-size:13px}.rules-section{background:#f4f8ff;padding:78px max(28px,calc((100vw - 1170px)/2));display:grid;grid-template-columns:.85fr 1.15fr;gap:90px;align-items:center}.rules-section .text-link{margin-top:23px}.rule-map{display:grid;grid-template-columns:1fr 1fr;gap:11px;align-items:center}.rule-map>span{background:#fff;border:1px solid #dce5f4;padding:13px 16px;display:grid;grid-template-columns:25px 1fr;column-gap:8px;border-radius:6px}.rule-map span svg{color:var(--blue);grid-row:1/3}.rule-map b{font-size:14px}.rule-map small,.rule-map strong small{color:var(--muted);font-size:11px}.rule-map>i{grid-row:1/3;grid-column:2;justify-self:end;transform:translateX(28px);color:#7d96c3;font-style:normal}.rule-map>strong{grid-column:2;grid-row:1/3;transform:translateX(72px);border:1px solid #bcd0ff;background:#fff;border-radius:50%;width:130px;height:130px;display:grid;place-content:center;text-align:center;gap:4px;color:var(--ink)}.rule-map>strong svg{color:var(--blue);justify-self:center}.final-cta{max-width:1170px;margin:0 auto;padding:61px 28px;display:flex;align-items:center;justify-content:center;gap:17px;text-align:left}.final-cta>svg{color:var(--blue)}.final-cta h2{font-size:26px;margin:0 0 6px}.final-cta p{margin:0;color:var(--muted);font-size:14px}.final-cta .primary-btn{margin-left:34px}.site-footer{background:#091b3e;color:#aebbd1}.footer-main{max-width:1170px;margin:auto;padding:47px 28px 40px;display:grid;grid-template-columns:1.45fr .65fr .65fr;gap:65px}.footer-brand{color:#fff;font-size:20px}.footer-main>div>p{max-width:340px;font-size:13px;line-height:1.75}.footer-main>div:not(:first-child){display:grid;align-content:start;gap:12px}.footer-main b{color:#fff;font-size:14px}.site-footer button,.site-footer a{color:#aebbd1;text-align:left;text-decoration:none;font-size:13px}.site-footer button:hover,.site-footer a:hover{color:#fff}.footer-bottom{max-width:1170px;margin:auto;border-top:1px solid #ffffff20;padding:17px 28px;display:flex;justify-content:space-between;font-size:12px}.footer-bottom div{display:flex;gap:18px}.modal-mask{position:fixed;inset:0;background:#07173199;z-index:20;display:grid;place-items:center;padding:20px}.task-modal{width:min(480px,100%);position:relative;background:#fff;border-radius:8px;padding:33px;box-shadow:0 24px 70px #0717315c}.task-modal h2{font-size:29px;margin:0 0 10px}.task-modal form{display:grid;gap:15px;margin-top:22px}.task-modal .primary-btn{width:100%;margin-top:5px}.close{position:absolute;top:14px;right:14px;border:0;background:none;color:#6a7688;cursor:pointer}.created-copy{color:var(--muted);line-height:1.7}.auth-modal label{font-size:13px}.form-error{margin:0;color:#b33838;background:#fff3f2;padding:10px;font-size:13px}.switch-auth{color:var(--muted);font-size:13px;text-align:center;margin:19px 0 0}.switch-auth button{border:0;background:none;color:var(--blue);font:inherit;font-weight:700;cursor:pointer}.fade-enter-active,.fade-leave-active{transition:opacity .18s}.fade-enter-from,.fade-leave-to{opacity:0}@media(max-width:960px){.hero{grid-template-columns:1fr;padding-top:58px}.hero-copy{text-align:center}.hero-copy>p:not(.eyebrow){margin:auto}.hero-actions{justify-content:center}.task-preview{max-width:720px;width:100%;justify-self:center}.steps{grid-template-columns:1fr;gap:15px}.steps>i{transform:rotate(90deg)}.materials-section,.rules-section{grid-template-columns:1fr;gap:45px}.rule-map>strong{transform:none;justify-self:center}.rule-map>i{display:none}.final-cta{flex-wrap:wrap;text-align:center}.final-cta .primary-btn{margin:9px 0 0}.footer-main{grid-template-columns:1.4fr 1fr 1fr;gap:28px}}@media(max-width:650px){.topbar{padding:0 18px}.nav-links,.login-btn{display:none}.account-actions{margin-left:auto}.hero{padding:48px 18px 0}.hero-copy h1{font-size:48px}.task-preview{grid-template-columns:1fr}.task-preview aside{display:none}.preview-main{padding:25px 20px 65px}.source-options{grid-template-columns:1fr}.select-row{grid-template-columns:1fr}.next-btn{right:20px}.hero-trust{margin-top:42px;display:grid;gap:12px}.workflow-section,.materials-section{padding:62px 20px}.materials-section{gap:34px}.rules-section{padding:62px 20px}.footer-main{grid-template-columns:1fr 1fr;padding:36px 20px}.footer-main>div:first-child{grid-column:1/-1}.footer-bottom{padding:17px 20px;display:grid;gap:10px}.final-cta{padding:52px 20px}.final-cta>svg{display:none}}
+.contact-modal>p:not(.eyebrow){color:var(--muted);line-height:1.7}.contact-email{display:grid;gap:5px;background:#f4f7fd;border:1px solid #e0e6f0;padding:13px 15px;margin:21px 0}.contact-email span{font-size:13px;color:var(--muted)}.contact-email b{font-size:15px}.brand-mark{font-size:20px;font-weight:850;line-height:1}.nav-links button,.login-btn,.text-link,.site-footer button{font-size:15px}.hero{max-width:1170px;display:grid;grid-template-columns:minmax(0,.95fr) minmax(330px,.75fr);column-gap:clamp(62px,10vw,142px);align-items:center;padding-top:98px}.hero-copy{max-width:560px}.hero-copy h1{font-size:clamp(52px,5.65vw,78px)}.hero-copy>p:not(.eyebrow){max-width:490px;font-size:18px}.hero-context{border-left:1px solid var(--line);padding:10px 0 10px 48px}.hero-context>p{margin:0 0 11px;color:var(--blue);font-size:14px;font-weight:750}.hero-context h2{font-size:32px;letter-spacing:-.05em;line-height:1.22;margin:0 0 30px}.hero-context>div{display:grid;gap:0}.hero-context span{display:grid;grid-template-columns:28px 1fr;column-gap:11px;align-items:center;padding:16px 0;border-top:1px solid var(--line)}.hero-context span svg{grid-row:1/3;color:var(--blue)}.hero-context b{font-size:16px}.hero-context small{color:var(--muted);font-size:13px;margin-top:3px}.hero-trust{grid-column:1/-1;margin-top:72px;font-size:14px}.material-photo{padding:0}.thumb-row{display:none}@media(max-width:960px){.hero{display:block;padding-top:82px}.hero-copy{text-align:left}.hero-copy>p:not(.eyebrow){margin:0}.hero-actions{justify-content:flex-start}.hero-context{margin-top:54px;padding-left:30px;max-width:560px}.hero-trust{margin-top:54px}}@media(max-width:650px){.hero{padding:70px 18px 0}.hero-context{padding-left:21px;margin-top:43px}.hero-context h2{font-size:28px}.hero-trust{margin-top:45px}}
 </style>

@@ -4,6 +4,7 @@
       <AppGlassSurface as="section" class="card block">
         <h2 class="section-title">创建检测任务</h2>
         <p class="tip-text">当前套餐：{{ quotaInfo.planName || '-' }}，剩余额度：{{ quotaInfo.quotaRemaining ?? 0 }}</p>
+        <p v-if="quotaLoadError" class="quota-error">{{ quotaLoadError }}</p>
         <div class="grid-3">
           <div><label>SKU *</label><input class="input" v-model.trim="form.sku" /></div>
           <div><label>商品名称 *</label><input class="input" v-model.trim="form.productName" /></div>
@@ -115,6 +116,7 @@ const taskId = ref('');
 const localMainImages = ref<string[]>([]);
 const localSceneImages = ref<string[]>([]);
 const quotaInfo = ref<any>({ quotaRemaining: 0, planName: '-' });
+const quotaLoadError = ref('');
 
 const platforms = [
   'Amazon',
@@ -325,7 +327,9 @@ async function submitReview() {
 }
 
 {
-  api.quotaCheck().then((q) => { quotaInfo.value = q; }).catch(() => {});
+  api.quotaCheck()
+    .then((q) => { quotaInfo.value = q; })
+    .catch((error) => { quotaLoadError.value = `额度信息暂不可用：${getFriendlyError(error)}`; });
 }
 </script>
 
@@ -338,6 +342,7 @@ async function submitReview() {
 .img-preview { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
 .actions-row { display: flex; gap: 10px; flex-wrap: wrap; }
 .tip-text { margin: 6px 0 0; color: var(--brand-1); }
+.quota-error { margin: 0; color: #dc2626; font-size: 14px; }
 .detect-loading { margin: 0; text-align: center; border: none; background: transparent; }
 .detect-title { margin: 0 0 6px; font-weight: 700; color: var(--text); }
 .detect-step { margin: 0; color: var(--muted); }

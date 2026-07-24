@@ -409,6 +409,9 @@ export class DetectionService {
     const hasHigh = issues.some((i) => i.riskLevel === '高风险');
 
     if (totalScore < 50 || hasSevere) return '严重风险';
+    // A concrete high-risk hit must never be downgraded by otherwise complete
+    // material. It needs the review workflow even when the aggregate score is high.
+    if (hasHigh) return '高风险';
     if (totalScore >= 85 && !hasHigh) return '低风险';
     if (totalScore >= 70) return '中风险';
     return '高风险';

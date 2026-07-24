@@ -76,7 +76,8 @@
       </AppGlassSurface>
     </section>
 
-    <AppGlassSurface as="section" v-else class="card state">复核任务不存在或已删除。</AppGlassSurface>
+    <AppGlassSurface v-else-if="loadError" as="section" class="card state">{{ loadError }}</AppGlassSurface>
+    <AppGlassSurface v-else as="section" class="card state">复核任务不存在或已删除。</AppGlassSurface>
   </AppShell>
 </template>
 
@@ -92,6 +93,7 @@ import { notify } from '@/lib/dialog';
 const route = useRoute();
 const router = useRouter();
 const detail = ref<any>(null);
+const loadError = ref('');
 const submitting = ref(false);
 const currentUser = getUserProfile() as any;
 const canReview = currentUser?.role === 'REVIEWER' || currentUser?.role === 'ADMIN' || currentUser?.role === 'SYSTEM_ADMIN';
@@ -115,10 +117,23 @@ function formatAsLine(value: unknown) {
 }
 
 async function load() {
+  loadError.value = '';
   if (canReview) {
-    try { await api.startReview(String(route.params.id || '')); } catch {}
+    try {
+      await api.startReview(String(route.params.id || ''));
+    } catch (error) {
+      // The detail remains readable if a review was claimed elsewhere; the
+      // subsequent detail request is still authoritative for the screen.
+      loadError.value = getFriendlyError(error);
+    }
   }
-  detail.value = await api.getReviewDetail(String(route.params.id || ''));
+  try {
+    detail.value = await api.getReviewDetail(String(route.params.id || ''));
+    loadError.value = '';
+  } catch (error) {
+    detail.value = null;
+    loadError.value = getFriendlyError(error);
+  }
 }
 
 function back() {

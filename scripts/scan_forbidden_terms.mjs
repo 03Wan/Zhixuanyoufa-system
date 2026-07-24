@@ -1,7 +1,11 @@
 import { readdir, readFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const roots = ['frontend+/dist', 'backend/dist'];
+// Resolve from this script instead of process.cwd(), so the release check is
+// reliable from the repository root, frontend directory, or CI workspace.
+const projectRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
+const roots = [join(projectRoot, 'frontend+', 'dist'), join(projectRoot, 'backend', 'dist')];
 const terms = ['MVP', '测试', '演示', 'Mock', 'mock-token', '占位', '暂未开放', '敬请期待', '试点', 'demo', 'DEMO'];
 const extensions = new Set(['.html', '.js', '.css', '.json', '.txt', '.xml', '.svg']);
 

@@ -6,13 +6,13 @@
           <div class="title-block">
             <h2 class="section-title">大模型服务配置</h2>
             <p class="text-muted">
-              先选择供应商预设，再点击“测试连通性”确认地址与 Key 可用，最后再保存配置。
+              先选择供应商预设，再点击“验证连接”确认地址与 Key 可用，最后再保存配置。
             </p>
           </div>
           <div class="actions">
             <button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button>
             <button class="btn btn-secondary" :disabled="testing || loading" @click="testConnection">
-              {{ testing ? '测试中...' : '测试连通性' }}
+              {{ testing ? '验证中...' : '验证连接' }}
             </button>
             <button class="btn btn-primary" :disabled="saving || loading" @click="save">
               {{ saving ? '保存中...' : '保存配置' }}
@@ -75,7 +75,7 @@
         </div>
 
         <div v-if="hasApiKey" class="state success glass-state">
-          当前账号已保存 API Key。测试连通性时会优先使用当前表单里的密钥。
+          当前账号已保存 API Key。验证连接时会优先使用当前表单里的密钥。
         </div>
 
         <div v-if="testResult" class="state glass-state" :class="testResult.success ? 'success' : 'error'">

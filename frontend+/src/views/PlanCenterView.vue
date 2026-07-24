@@ -32,7 +32,7 @@
           </div>
           <div class="actions">
             <button class="btn btn-primary" @click="choose(plan)">{{ primaryAction(plan.name) }}</button>
-            <button class="btn btn-secondary" @click="openCommercial(plan, 'API试点')">申请API试点</button>
+            <button class="btn btn-secondary" @click="openCommercial(plan, 'API服务')">申请API服务</button>
             <button class="btn btn-secondary" @click="openCommercial(plan, '联系定制')">联系定制</button>
           </div>
         </AppGlassSurface>
@@ -66,7 +66,7 @@ const error = ref('');
 function yesNo(v: boolean) { return v ? '支持' : '不支持/受限'; }
 function primaryAction(name: string) {
   if (name.includes('定制版')) return '联系定制';
-  if (name.includes('API接口版')) return '申请API试点';
+  if (name.includes('API接口版')) return '申请API服务';
   if (name.includes('体验包') || name.includes('基础版')) return '立即选择';
   return '升级套餐';
 }

@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+﻿import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -27,12 +27,12 @@ export class ReportTemplatesService {
     if (rows.length > 0) return rows;
     return [
       {
-        id: 'demo-template',
-        name: '标准审核报告模板',
+        id: 'standard-template',
+        name: '鏍囧噯瀹℃牳鎶ュ憡妯℃澘',
         code: 'STANDARD',
         scope: 'SYSTEM',
         versionNo: 1,
-        schema: { sections: ['封面', '基础信息', '评分', '风险', '建议', '复核', '留痕'] },
+        schema: { sections: ['灏侀潰', '鍩虹淇℃伅', '璇勫垎', '椋庨櫓', '寤鸿', '澶嶆牳', '鐣欑棔'] },
         isActive: true,
       },
     ];
@@ -59,7 +59,7 @@ export class ReportTemplatesService {
     const item = await this.prisma.reportTemplate.findUnique({ where: { id } });
     if (!item) return { id, updated: false };
     if (me?.role !== 'SYSTEM_ADMIN' && item.scope !== (me?.companyName || '')) {
-      throw new ForbiddenException('无权修改其他企业模板');
+      throw new ForbiddenException('鏃犳潈淇敼鍏朵粬浼佷笟妯℃澘');
     }
 
     return this.prisma.reportTemplate.update({
@@ -79,7 +79,7 @@ export class ReportTemplatesService {
     const item = await this.prisma.reportTemplate.findUnique({ where: { id } });
     if (!item) return { id, deleted: false };
     if (me?.role !== 'SYSTEM_ADMIN' && item.scope !== (me?.companyName || '')) {
-      throw new ForbiddenException('无权删除其他企业模板');
+      throw new ForbiddenException('鏃犳潈鍒犻櫎鍏朵粬浼佷笟妯℃澘');
     }
     return this.prisma.reportTemplate.update({ where: { id }, data: { isActive: false } });
   }

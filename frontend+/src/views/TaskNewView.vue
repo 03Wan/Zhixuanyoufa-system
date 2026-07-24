@@ -49,7 +49,7 @@
         <div class="grid-2">
           <div class="field">
             <label>上传主图（本地）</label>
-            <p class="tip-text">当前MVP采用本地存储（local），商业化阶段可切换对象存储（OSS/COS/S3）。</p>
+            <p class="tip-text">图片将保存至受控对象存储，并与当前任务关联。</p>
             <input class="input" type="file" accept="image/*" multiple @change="onMainImagesChange" />
             <div v-if="localMainImages.length" class="img-preview-list">
               <img v-for="(url, idx) in localMainImages" :key="`main-${idx}`" :src="url" alt="main preview" class="img-preview" />
@@ -280,7 +280,7 @@ async function startDetect() {
   try {
     quotaInfo.value = await api.quotaCheck();
     if ((quotaInfo.value?.quotaRemaining ?? 0) <= 0) {
-      showErrorModal('当前套餐检测额度不足，请升级套餐或联系团队开通试点额度');
+      showErrorModal('当前套餐检测额度不足，请升级套餐或联系团队开通额度');
       return;
     }
     const id = await ensureTaskSaved();
@@ -363,4 +363,3 @@ async function submitReview() {
 @media (max-width: 1100px) { .grid-3, .grid-2 { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 760px) { .grid-3, .grid-2 { grid-template-columns: 1fr; } }
 </style>
-

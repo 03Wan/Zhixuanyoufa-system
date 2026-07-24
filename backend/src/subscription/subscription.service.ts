@@ -3,7 +3,6 @@ import { PrismaService } from '../prisma/prisma.service';
 import { PlansService } from '../plans/plans.service';
 import { SelectSubscriptionDto } from './dto/select-subscription.dto';
 import { UpgradeSubscriptionDto } from './dto/upgrade-subscription.dto';
-import { DEMO_NOTICE } from '../plans/plan.constants';
 
 @Injectable()
 export class SubscriptionService {
@@ -19,7 +18,7 @@ export class SubscriptionService {
     return role === 'SYSTEM_ADMIN' || role === 'ADMIN';
   }
 
-  async ensureDemoSubscription(userId: string) {
+  async ensureActiveSubscription(userId: string) {
     await this.plansService.list();
     const user = await this.getUser(userId);
     const companyName = user.companyName || '个人账号';
@@ -54,10 +53,10 @@ export class SubscriptionService {
 
   async getMe(userId: string) {
     const user = await this.getUser(userId);
-    const sub = await this.ensureDemoSubscription(userId);
+    const sub = await this.ensureActiveSubscription(userId);
 
     return {
-      notice: '当前套餐状态来自真实数据库记录。增购、升级和接口试点将以申请审批结果为准。',
+      notice: '当前套餐状态来自真实数据库记录。增购、升级和接口服务将以申请审批结果为准。',
       companyName: sub.companyName,
       isUnlimited: this.isUnlimitedRole(user.role),
       subscription: sub,
@@ -129,7 +128,7 @@ export class SubscriptionService {
     if (this.isUnlimitedRole(user.role)) return { ok: true, bypass: true, me };
 
     if (me.quotaRemaining < amount) {
-      throw new ForbiddenException('当前套餐检测额度不足，请升级套餐或联系团队开通试点额度');
+      throw new ForbiddenException('当前套餐检测额度不足，请升级套餐或联系团队开通额度');
     }
 
     return { ok: true, bypass: false, me };
@@ -139,9 +138,9 @@ export class SubscriptionService {
     const user = await this.getUser(userId);
     if (this.isUnlimitedRole(user.role)) return;
 
-    const active = await this.ensureDemoSubscription(userId);
+    const active = await this.ensureActiveSubscription(userId);
     if (active.quotaRemaining < amount) {
-      throw new ForbiddenException('当前套餐检测额度不足，请升级套餐或联系团队开通试点额度');
+      throw new ForbiddenException('当前套餐检测额度不足，请升级套餐或联系团队开通额度');
     }
 
     await this.prisma.$transaction(async (tx) => {
@@ -170,7 +169,7 @@ export class SubscriptionService {
     const user = await this.getUser(userId);
     if (this.isUnlimitedRole(user.role)) return { ok: true };
 
-    const sub = await this.ensureDemoSubscription(userId);
+    const sub = await this.ensureActiveSubscription(userId);
     if (!sub.plan.canExportReport) {
       throw new ForbiddenException('当前套餐仅支持在线查看报告，导出请升级套餐');
     }

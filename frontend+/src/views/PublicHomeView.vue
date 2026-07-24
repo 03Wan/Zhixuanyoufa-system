@@ -102,14 +102,18 @@
             </details>
             <details>
               <summary><CircleHelp :size="14" class="mini-icon" aria-hidden="true" />是否可接入真实模型？</summary>
-              <p>可以，当前 MVP 默认 Mock，可平滑切换到真实 API。</p>
+              <p>可以，系统连接真实业务 API，所有业务数据按企业账号保存。</p>
             </details>
           </div>
         </section>
 
         <footer class="panel-footer">
-          <p class="footer-main">版权归智选优发团队所有@2026</p>
-          <p class="footer-contact">联系我们：wangbo030127@gmail.com</p>
+          <p class="footer-main">© 2026 智选优发团队。保留所有权利。</p>
+          <p class="footer-contact">
+            联系我们：wangbo030127@gmail.com
+            <router-link to="/privacy">隐私说明</router-link>
+            <router-link to="/terms">服务条款</router-link>
+          </p>
         </footer>
       </AppGlassSurface>
     </section>
@@ -126,28 +130,22 @@
           <form class="form-grid" @submit.prevent="submitLogin">
             <input class="input" v-model="loginForm.email" placeholder="邮箱" />
             <input class="input" type="password" v-model="loginForm.password" placeholder="密码" />
-            <select class="input" v-model="selectedRole">
-              <option v-for="item in roleOptions" :key="item.value" :value="item.value">
-                {{ item.label }}
-              </option>
-            </select>
             <p v-if="authError" class="err">{{ authError }}</p>
             <button class="btn btn-primary submit-btn" :disabled="loading">{{ loading ? '登录中...' : '确认登录' }}</button>
           </form>
-          <button class="btn btn-secondary" type="button" :disabled="loading" @click="useDemoAccount">使用演示账号进入</button>
-          <p class="switch-line"><span>还没有账号？</span><button class="link-btn" type="button" @click="openRegisterComingSoon">立即注册</button></p>
+          <p class="switch-line"><span>还没有账号？</span><button class="link-btn" type="button" @click="switchMode('register')">申请企业账号</button></p>
         </template>
         <template v-else>
-          <h3>注册账号</h3>
-          <p class="auth-sub">创建企业账号并开始使用</p>
+          <h3>申请企业账号</h3>
+          <p class="auth-sub">提交企业信息，平台审核后联系开通</p>
           <form class="form-grid" @submit.prevent="submitRegister">
             <input class="input" v-model="registerForm.companyName" placeholder="企业名称" />
-            <input class="input" v-model="registerForm.username" placeholder="用户姓名" />
+            <input class="input" v-model="registerForm.contactName" placeholder="联系人" />
             <input class="input" v-model="registerForm.email" placeholder="邮箱" />
-            <input class="input" type="password" v-model="registerForm.password" placeholder="密码（至少 6 位）" />
-            <input class="input" type="password" v-model="confirmPassword" placeholder="确认密码" />
+            <input class="input" v-model="registerForm.phone" placeholder="联系电话（选填）" />
+            <textarea class="input" v-model="registerForm.note" rows="3" placeholder="业务需求（选填）"></textarea>
             <p v-if="authError" class="err">{{ authError }}</p>
-            <button class="btn btn-primary submit-btn" :disabled="loading">{{ loading ? '注册中...' : '确认注册' }}</button>
+            <button class="btn btn-primary submit-btn" :disabled="loading">{{ loading ? '提交中...' : '提交申请' }}</button>
           </form>
           <p class="switch-line"><span>已有账号？</span><button class="link-btn" type="button" @click="switchMode('login')">返回登录</button></p>
         </template>
@@ -189,7 +187,6 @@ import {
 import ThemeToggle from '@/components/ThemeToggle.vue';
 import { api, getFriendlyError } from '@/lib/api';
 import { useAuthStore } from '@/stores/auth';
-import { normalizeRole, ROLE_LABELS, type UserRole } from '@/lib/permissions';
 
 const router = useRouter();
 const route = useRoute();
@@ -199,11 +196,8 @@ const authMode = ref<'login' | 'register'>('login');
 const loading = ref(false);
 const authError = ref('');
 const loginForm = reactive({ email: '', password: '' });
-const registerForm = reactive({ companyName: '', username: '', email: '', password: '' });
-const confirmPassword = ref('');
+const registerForm = reactive({ companyName: '', contactName: '', email: '', phone: '', note: '' });
 const comingSoon = reactive({ open: false, message: '' });
-const selectedRole = ref<UserRole>('OPERATOR');
-const roleOptions = (Object.keys(ROLE_LABELS) as UserRole[]).map((role) => ({ value: role, label: ROLE_LABELS[role] }));
 
 watch(
   () => route.query.auth,
@@ -230,27 +224,9 @@ function switchMode(mode: 'login' | 'register') {
   openAuth(mode);
 }
 
-function useDemoAccount() {
-  loginForm.email = 'sysadmin@example.com';
-  loginForm.password = '123456';
-}
-
-function openRegisterComingSoon() {
-  comingSoon.message = '功能暂未开放，敬请期待~';
-  comingSoon.open = true;
-}
-
 function validateRegister() {
-  if (!registerForm.companyName.trim() || !registerForm.username.trim() || !registerForm.email.trim() || !registerForm.password.trim()) {
-    authError.value = '请完整填写注册信息。';
-    return false;
-  }
-  if (registerForm.password.length < 6) {
-    authError.value = '密码长度不能少于 6 位。';
-    return false;
-  }
-  if (registerForm.password !== confirmPassword.value) {
-    authError.value = '两次输入的密码不一致。';
+  if (!registerForm.companyName.trim() || !registerForm.contactName.trim() || !registerForm.email.trim()) {
+    authError.value = '请填写企业名称、联系人和邮箱。';
     return false;
   }
   return true;
@@ -262,12 +238,6 @@ async function submitLogin() {
   try {
     await api.login(loginForm);
     authStore.syncFromStorage();
-    const currentRole = normalizeRole(authStore.state.user?.role);
-    if (currentRole !== selectedRole.value) {
-      authStore.logout();
-      authError.value = `无权限：当前账号角色为「${ROLE_LABELS[currentRole]}」，你选择的是「${ROLE_LABELS[selectedRole.value]}」。`;
-      return;
-    }
     const redirect = typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/') ? route.query.redirect : '/home';
     router.push(redirect);
   } catch (error) {
@@ -282,7 +252,16 @@ async function submitRegister() {
   loading.value = true;
   authError.value = '';
   try {
-    await api.register(registerForm);
+    const result = await api.applyCommercial({
+      type: 'ACCOUNT_OPENING',
+      companyName: registerForm.companyName,
+      contactName: registerForm.contactName,
+      email: registerForm.email,
+      phone: registerForm.phone,
+      note: registerForm.note,
+    });
+    comingSoon.message = (result as any)?.message || '申请已提交，平台将在审核后联系开通账号。';
+    comingSoon.open = true;
     switchMode('login');
     loginForm.email = registerForm.email;
     loginForm.password = '';

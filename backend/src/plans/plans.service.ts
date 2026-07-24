@@ -1,6 +1,6 @@
 ﻿import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { DEMO_NOTICE, DEMO_PLAN_SEEDS } from './plan.constants';
+import { SERVICE_NOTICE, PLAN_SEEDS } from './plan.constants';
 
 @Injectable()
 export class PlansService {
@@ -11,7 +11,7 @@ export class PlansService {
     if (count > 0) return;
 
     await this.prisma.plan.createMany({
-      data: DEMO_PLAN_SEEDS.map((item) => ({
+      data: PLAN_SEEDS.map((item) => ({
         name: item.name,
         customerType: item.customerType,
         priceText: item.priceText,
@@ -35,7 +35,7 @@ export class PlansService {
     await this.ensureSeeded();
     const plans = await this.prisma.plan.findMany({ where: { isActive: true }, orderBy: { sortOrder: 'asc' } });
     return {
-      notice: DEMO_NOTICE,
+      notice: SERVICE_NOTICE,
       plans,
     };
   }

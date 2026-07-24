@@ -178,9 +178,9 @@ const descByPath: Record<string, string> = {
   "/dashboard": "通过图表分析近7天检测趋势与风险结构",
   "/plans": "查看当前套餐能力、额度与升级申请入口",
   "/my-plan": "查看当前套餐、额度使用与升级建议",
-  "/batch": "MVP批量检测：支持表格批量录入与批量创建任务",
+  "/batch": "批量检测：支持表格批量录入与批量创建任务",
   "/companies": "企业组织管理：企业信息、成员、任务与报告关联",
-  "/customers": "客户档案管理：试点客户信息与服务状态跟踪",
+  "/customers": "客户档案管理：企业客户信息与服务状态跟踪",
   "/tasks/new": "创建、编辑并跟踪检测任务",
   "/results": "查看评分、风险、建议与发布决策",
   "/reviews": "处理高风险与需人工确认任务",
@@ -189,8 +189,8 @@ const descByPath: Record<string, string> = {
   "/users": "管理账号角色、状态与访问权限",
   "/logs": "追踪关键操作与系统审计记录",
   "/model-config": "配置大模型 API 与检测策略",
-  "/api-open": "API接口版试点：开放能力清单与申请入口",
-  "/report-templates": "正式报告模板管理（MVP版）",
+  "/api-open": "API接口服务：开放能力清单与申请入口",
+  "/report-templates": "正式报告模板管理（版）",
 };
 
 const currentUser = computed(() => (getUserProfile() || {}) as any);

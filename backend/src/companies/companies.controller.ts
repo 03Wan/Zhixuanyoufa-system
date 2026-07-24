@@ -1,9 +1,10 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { Roles } from '../common/decorators/roles.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
-import { RolesGuard } from '../common/guards/roles.guard';
-import { Roles } from '../common/decorators/roles.decorator';
 
 @Controller('companies')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -12,23 +13,32 @@ export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 
   @Get()
-  list() { return this.companiesService.list(); }
+  list(@CurrentUser('id') userId: string) {
+    return this.companiesService.list(userId);
+  }
 
   @Post()
-  create(@Body() dto: CreateCompanyDto) { return this.companiesService.create(dto); }
+  create(@CurrentUser('id') userId: string, @Body() dto: CreateCompanyDto) {
+    return this.companiesService.create(userId, dto);
+  }
 
   @Get(':id')
-  detail(@Param('id') id: string) { return this.companiesService.detail(id); }
+  detail(@CurrentUser('id') userId: string, @Param('id') id: string) {
+    return this.companiesService.detail(userId, id);
+  }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: Partial<CreateCompanyDto>) { return this.companiesService.update(id, dto); }
+  update(@CurrentUser('id') userId: string, @Param('id') id: string, @Body() dto: Partial<CreateCompanyDto>) {
+    return this.companiesService.update(userId, id, dto);
+  }
 
   @Post(':id/members')
-  addMember(@Param('id') id: string, @Body() body: { userId: string; role: string }) {
-    return this.companiesService.addMember(id, body.userId, body.role);
+  addMember(@CurrentUser('id') currentUserId: string, @Param('id') id: string, @Body() body: { userId: string; role: string }) {
+    return this.companiesService.addMember(currentUserId, id, body.userId, body.role);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) { return this.companiesService.remove(id); }
+  remove(@CurrentUser('id') userId: string, @Param('id') id: string) {
+    return this.companiesService.remove(userId, id);
+  }
 }
-

@@ -11,7 +11,7 @@
           <tbody><tr v-for="a in data.apis || []" :key="a.path"><td>{{ a.name }}</td><td>{{ a.path }}</td><td>{{ a.status }}</td></tr></tbody>
         </table>
         <div class="actions" style="margin-top:8px;">
-          <button class="btn btn-primary" :disabled="saving" @click="apply">{{ saving ? '提交中' : '提交API试点申请' }}</button>
+          <button class="btn btn-primary" :disabled="saving" @click="apply">{{ saving ? '提交中' : '提交API服务申请' }}</button>
         </div>
         </template>
       </AppGlassSurface>
@@ -34,8 +34,8 @@ const saving = ref(false);
 async function apply() {
   saving.value = true;
   try {
-    await api.applyCommercial({ type: 'API接口版试点', note: 'API页面提交' });
-    await notify('已提交API试点申请。');
+    await api.applyCommercial({ type: 'API接口服务', note: 'API页面提交' });
+    await notify('已提交API服务申请。');
   } finally {
     saving.value = false;
   }

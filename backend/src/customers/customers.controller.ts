@@ -13,8 +13,8 @@ export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}
 
   @Get()
-  list(@Query('keyword') keyword?: string, @Query('serviceStatus') serviceStatus?: string) {
-    return this.customersService.list({ keyword, serviceStatus });
+  list(@CurrentUser('id') userId: string, @Query('keyword') keyword?: string, @Query('serviceStatus') serviceStatus?: string) {
+    return this.customersService.list(userId, { keyword, serviceStatus });
   }
 
   @Post()
@@ -23,7 +23,7 @@ export class CustomersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: Partial<CreateCustomerDto>) {
-    return this.customersService.update(id, dto);
+  update(@CurrentUser('id') userId: string, @Param('id') id: string, @Body() dto: Partial<CreateCustomerDto>) {
+    return this.customersService.update(userId, id, dto);
   }
 }

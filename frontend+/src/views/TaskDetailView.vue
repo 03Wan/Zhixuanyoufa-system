@@ -241,7 +241,7 @@ async function generateReport() {
   try {
     const report = await api.generateReport(id) as any;
     await api.updateTaskStatus(id, "REPORTED");
-    router.push(`/reports/${report.id || "demo-report-1"}`);
+    router.push(`/reports/${report.id || "report-pending"}`);
   } catch (e) {
     error.value = getFriendlyError(e);
   } finally {

@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Roles } from '../common/decorators/roles.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
-import { Roles } from '../common/decorators/roles.decorator';
 
 @Controller('api-open')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -10,13 +10,12 @@ export class ApiOpenController {
   @Get('catalog')
   catalog() {
     return {
-      notice: '当前为真实试点接口目录。API Key 管理和调用配额将在当前账号获批后开通。',
+      notice: '当前为真实接口目录。API Key 管理和调用配额将在当前账号获批后开通。',
       apis: [
         { name: '素材检测接口', path: '/api/tasks/:taskId/detect', status: '内部可用' },
-        { name: '规则检测接口', path: '/api/rules', status: '内部可用' },
+        { name: '规则管理接口', path: '/api/rules', status: '内部可用' },
         { name: '报告结果接口', path: '/api/reports/:id', status: '内部可用' },
         { name: '额度查询接口', path: '/api/subscription/usage', status: '内部可用' },
-        { name: '调用记录接口', path: '/api/api-open/calls', status: '待开通' },
       ],
     };
   }

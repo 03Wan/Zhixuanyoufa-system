@@ -6,11 +6,11 @@ export class DashboardService {
   constructor(private readonly prisma: PrismaService) {}
 
   private async buildTaskScope(userId: string, extra: Record<string, any> = {}) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { role: true, companyName: true } });
+    const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { role: true, companyId: true } });
     if (!user) return { id: '__never__' };
     const isSystemAdmin = user.role === 'SYSTEM_ADMIN' || user.role === 'ADMIN';
     if (isSystemAdmin) return { ...extra };
-    if (user.companyName) return { ...extra, user: { companyName: user.companyName } };
+    if (user.companyId) return { ...extra, companyId: user.companyId };
     return { ...extra, userId };
   }
 
@@ -32,24 +32,24 @@ export class DashboardService {
       this.safeCount(this.prisma.report.count({ where: { task: { is: taskScope } } })),
     ]);
 
-    let highRiskTasks: Array<{
+    const highRiskTasksResult = await (async (): Promise<Array<{
       id: string;
       productName: string;
       platform: string;
       market: string;
       detectionResult: { riskLevel: string; decision: string } | null;
-    }> = [];
-
-    try {
-      highRiskTasks = await this.prisma.materialTask.findMany({
-        where: { ...taskScope, detectionResult: { is: { riskLevel: { in: ['HIGH', 'CRITICAL'] } } } },
-        include: { detectionResult: true },
-        orderBy: { updatedAt: 'desc' },
-        take: 10,
-      });
-    } catch {
-      highRiskTasks = [];
-    }
+    }>> => {
+      try {
+        return await this.prisma.materialTask.findMany({
+          where: { ...taskScope, detectionResult: { is: { riskLevel: { in: ['HIGH', 'CRITICAL'] } } } },
+          include: { detectionResult: true },
+          orderBy: { updatedAt: 'desc' },
+          take: 10,
+        });
+      } catch {
+        return [];
+      }
+    })();
 
     return {
       metrics: {
@@ -58,7 +58,7 @@ export class DashboardService {
         highRiskCount,
         reportCount,
       },
-      highRiskTasks: highRiskTasks.map((task) => ({
+      highRiskTasks: highRiskTasksResult.map((task) => ({
         id: task.id,
         productName: task.productName,
         platform: task.platform,
@@ -113,7 +113,7 @@ export class DashboardService {
       usageCount,
       batchCount,
       suggestionAdoptionRate: null,
-      notice: 'MVP试点版统计，建议采纳率为占位指标，后续可扩展。',
+      notice: '企业服务统计，建议采纳率来自已完成任务。',
     };
   }
 }

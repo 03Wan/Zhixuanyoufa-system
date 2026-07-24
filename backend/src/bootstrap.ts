@@ -3,8 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
-import { join } from 'path';
-import { existsSync, mkdirSync } from 'fs';
+import helmet from 'helmet';
 
 const allowedOrigins = new Set([
   'https://www.paperhelper.fun',
@@ -22,16 +21,9 @@ const extraAllowedOrigins = new Set(
     .filter(Boolean),
 );
 
-const FALLBACK_DATABASE_URL =
-  'postgresql://postgres.wnnkwjlrqvczdleqngyu:%40Wb15262578750@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1';
-const FALLBACK_DIRECT_URL =
-  'postgresql://postgres.wnnkwjlrqvczdleqngyu:%40Wb15262578750@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres';
-const TARGET_SUPABASE_HOST = 'aws-1-ap-southeast-1.pooler.supabase.com';
-const TARGET_SUPABASE_REF = 'wnnkwjlrqvczdleqngyu';
-
-function normalizeSupabaseUrl(value?: string, fallback?: string) {
-  if (!value) return fallback;
-  if (value.startsWith('mysql://')) return fallback;
+function normalizeSupabaseUrl(value?: string) {
+  if (!value) return value;
+  if (value.startsWith('mysql://')) return value;
   if (value.includes('pooler.supabase.com') && value.includes(':6543/') && !value.includes('pgbouncer=true')) {
     const hasQuery = value.includes('?');
     return `${value}${hasQuery ? '&' : '?'}pgbouncer=true&connection_limit=1`;
@@ -54,7 +46,7 @@ function isPrivateIpHostname(hostname: string) {
 
 function isAllowedOrigin(origin?: string) {
   if (!origin) return true;
-  if (allowedOrigins.has(origin) || extraAllowedOrigins.has(origin) || origin.endsWith('.vercel.app')) {
+  if (allowedOrigins.has(origin) || extraAllowedOrigins.has(origin)) {
     return true;
   }
 
@@ -70,21 +62,20 @@ function isAllowedOrigin(origin?: string) {
   return false;
 }
 
-function shouldUseFallbackInVercel(value: string | undefined) {
-  if (!process.env.VERCEL) return false;
-  if (!value) return true;
-  return !value.includes(TARGET_SUPABASE_HOST) || !value.includes(TARGET_SUPABASE_REF);
+function requireProductionEnv(name: string) {
+  const value = process.env[name]?.trim();
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+  return value;
 }
 
-process.env.DATABASE_URL = shouldUseFallbackInVercel(process.env.DATABASE_URL)
-  ? FALLBACK_DATABASE_URL
-  : normalizeSupabaseUrl(process.env.DATABASE_URL, FALLBACK_DATABASE_URL);
-process.env.DIRECT_URL = shouldUseFallbackInVercel(process.env.DIRECT_URL)
-  ? FALLBACK_DIRECT_URL
-  : normalizeSupabaseUrl(process.env.DIRECT_URL, FALLBACK_DIRECT_URL);
-
-if (process.env.VERCEL && process.env.DATABASE_URL === FALLBACK_DATABASE_URL) {
-  process.env.DIRECT_URL = FALLBACK_DIRECT_URL;
+if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
+  process.env.DATABASE_URL = normalizeSupabaseUrl(requireProductionEnv('DATABASE_URL'));
+  process.env.JWT_SECRET = requireProductionEnv('JWT_SECRET');
+  process.env.CONFIG_ENCRYPTION_KEY = requireProductionEnv('CONFIG_ENCRYPTION_KEY');
+} else {
+  process.env.DATABASE_URL = normalizeSupabaseUrl(process.env.DATABASE_URL);
 }
 
 export async function createNestApp(adapterOrOptions?: unknown) {
@@ -93,7 +84,7 @@ export async function createNestApp(adapterOrOptions?: unknown) {
     : await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin(origin, callback) {
+    origin(origin: string | undefined, callback: (error: Error | null, allow?: boolean) => void) {
       if (isAllowedOrigin(origin)) {
         callback(null, true);
         return;
@@ -104,16 +95,14 @@ export async function createNestApp(adapterOrOptions?: unknown) {
   });
 
   app.setGlobalPrefix('api');
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    }),
+  );
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalFilters(new PrismaExceptionFilter());
-  const uploadDir = process.env.VERCEL ? join('/tmp', 'uploads') : join(process.cwd(), 'uploads');
-  try {
-    if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
-    (app as any).useStaticAssets(uploadDir, { prefix: '/uploads/' });
-  } catch {
-    // Vercel serverless runtime is read-only outside /tmp; skip static asset mounting if unavailable.
-  }
 
   return app;
 }

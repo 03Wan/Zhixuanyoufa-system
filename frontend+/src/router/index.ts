@@ -19,6 +19,8 @@ import CompaniesView from "@/views/CompaniesView.vue";
 import CustomersView from "@/views/CustomersView.vue";
 import ApiOpenView from "@/views/ApiOpenView.vue";
 import ReportTemplatesView from "@/views/ReportTemplatesView.vue";
+import PrivacyView from "@/views/PrivacyView.vue";
+import TermsView from "@/views/TermsView.vue";
 import ForbiddenView from "@/views/ForbiddenView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
 import { getToken, getUserProfile } from "@/lib/api";
@@ -31,6 +33,8 @@ const router = createRouter({
   routes: [
     { path: "/", redirect: "/home-public" },
     { path: "/home-public", component: PublicHomeView },
+    { path: "/privacy", component: PrivacyView },
+    { path: "/terms", component: TermsView },
     { path: "/home", component: HomeView, meta: { auth: true } },
     { path: "/plans", component: PlanCenterView, meta: { auth: true } },
     { path: "/my-plan", component: MyPlanView, meta: { auth: true } },

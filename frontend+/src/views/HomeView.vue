@@ -45,11 +45,11 @@
             <AppGlassSurface as="article" class="card kpi-card"><p>剩余检测次数</p><h3>{{ usageInfo.quotaRemaining ?? 0 }}</h3></AppGlassSurface>
             <AppGlassSurface as="article" class="card kpi-card"><p>报告导出权限</p><h3>{{ usageInfo.privileges?.canExportReport ? "支持" : "受限" }}</h3></AppGlassSurface>
             <AppGlassSurface as="article" class="card kpi-card"><p>批量检测</p><h3>{{ usageInfo.privileges?.canBatchDetect ? "支持" : "受限" }}</h3></AppGlassSurface>
-            <AppGlassSurface as="article" class="card kpi-card"><p>API接口状态</p><h3>{{ usageInfo.privileges?.canUseApi ? "试点可申请" : "未开通" }}</h3></AppGlassSurface>
+            <AppGlassSurface as="article" class="card kpi-card"><p>API接口状态</p><h3>{{ usageInfo.privileges?.canUseApi ? "可申请" : "未开通" }}</h3></AppGlassSurface>
           </div>
           <div v-if="loading.usage" class="inline-state">套餐数据同步中</div>
           <p class="text-muted" style="margin-top: 8px;">
-            企业版/定制版能力（批量检测、API接口、私有化部署）当前为商业化阶段规划，可提交试点申请。
+            企业版/定制版能力（批量检测、API接口、私有化部署）按企业审核结果开通。
           </p>
         </AppGlassSurface>
 

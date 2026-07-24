@@ -1,6 +1,6 @@
 ﻿import { PrismaClient, DecisionType, RiskLevel, RuleType, TaskStatus, UserRole } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
-import { DEMO_PLAN_SEEDS } from '../src/plans/plan.constants';
+import { PLAN_SEEDS } from '../src/plans/plan.constants';
 
 const prisma = new PrismaClient();
 
@@ -20,7 +20,7 @@ async function resetData() {
 
 async function seedPlansAndSubscription(adminId: string, companyName: string) {
   await prisma.plan.createMany({
-    data: DEMO_PLAN_SEEDS.map((item) => ({
+    data: PLAN_SEEDS.map((item) => ({
       name: item.name,
       customerType: item.customerType,
       priceText: item.priceText,
@@ -65,12 +65,12 @@ async function main() {
       username: 'admin',
       email: 'admin@zyuf.com',
       passwordHash,
-      companyName: '智选优发演示企业',
+      companyName: '智选优发企业账号',
       role: UserRole.SYSTEM_ADMIN,
     },
   });
 
-  await seedPlansAndSubscription(admin.id, admin.companyName || '智选优发演示企业');
+  await seedPlansAndSubscription(admin.id, admin.companyName || '智选优发企业账号');
 
   await prisma.rule.createMany({
     data: [
@@ -119,7 +119,7 @@ async function main() {
       sellingPoints: ['轻量便携', '合规材质', '售后保障'] as unknown as object,
       detailText: '适用于中东市场，强调品质、细节与售后。',
       adText: '高品质体验，欢迎了解更多产品参数。',
-      imageUrls: ['https://demo.zyuf.com/img/main-01.jpg', 'https://demo.zyuf.com/img/detail-02.jpg'] as unknown as object,
+      imageUrls: ['https://assets.paperhelper.fun/img/main-01.jpg', 'https://assets.paperhelper.fun/img/detail-02.jpg'] as unknown as object,
     },
   });
 
@@ -160,7 +160,7 @@ async function main() {
     },
   });
 
-  console.log('Seed completed: demo account admin@zyuf.com / 123456');
+  console.log('Seed completed: initial account admin@zyuf.com / 123456');
 }
 
 main()

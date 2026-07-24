@@ -61,32 +61,34 @@ enum ReviewStatus {
 }
 
 model User {
-  id           String       @id @default(cuid())
-  username     String       @unique
-  email        String       @unique
+  id           String   @id @default(cuid())
+  username     String   @unique
+  email        String   @unique
   passwordHash String
   companyName  String?
-  role         UserRole     @default(OPERATOR)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  companyId    String?
+  role         UserRole @default(OPERATOR)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  tasks MaterialTask[]
-  logs  OperationLog[]
-  reviews ReviewTask[] @relation("reviewer")
-  createdReviews ReviewTask[] @relation("creator")
-  subscriptions Subscription[]
-  usageRecords   UsageRecord[]
-  fileAssets     FileAsset[]
-  teamMemberships TeamMember[]
-  customers       Customer[]      @relation("customerOwner")
-  batchTasks      BatchTask[]
-  apiCallLogs     ApiCallLog[]
-  modelConfig     ModelConfig?
+  company                Company?                @relation("CompanyUsers", fields: [companyId], references: [id], onDelete: SetNull)
+  tasks                  MaterialTask[]
+  logs                   OperationLog[]
+  reviews                ReviewTask[]            @relation("reviewer")
+  createdReviews         ReviewTask[]            @relation("creator")
+  subscriptions          Subscription[]
+  usageRecords           UsageRecord[]
+  fileAssets             FileAsset[]
+  teamMemberships        TeamMember[]
+  customers              Customer[]              @relation("customerOwner")
+  batchTasks             BatchTask[]
+  apiCallLogs            ApiCallLog[]
+  modelConfig            ModelConfig?
   commercialApplications CommercialApplication[]
 }
 
 model MaterialTask {
-  id          String       @id @default(cuid())
+  id          String     @id @default(cuid())
   userId      String
   sku         String?
   productName String
@@ -94,35 +96,35 @@ model MaterialTask {
   platform    String
   market      String
   purpose     String
-  status      TaskStatus   @default(DRAFT)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  status      TaskStatus @default(DRAFT)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  materialContent MaterialContent?
-  detectionResult DetectionResult?
-  report          Report?
-  reviewTask      ReviewTask?
-  files           FileAsset[]
-  usageRecords    UsageRecord[]
-  companyId       String?
-  company         Company?        @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  materialContent  MaterialContent?
+  detectionResult  DetectionResult?
+  report           Report?
+  reviewTask       ReviewTask?
+  files            FileAsset[]
+  usageRecords     UsageRecord[]
+  companyId        String?
+  company          Company?          @relation(fields: [companyId], references: [id], onDelete: SetNull)
   materialVersions MaterialVersion[]
-  batchItems      BatchTaskItem[]
-  customerId      String?
-  customer        Customer?       @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  batchItems       BatchTaskItem[]
+  customerId       String?
+  customer         Customer?         @relation(fields: [customerId], references: [id], onDelete: SetNull)
 }
 
 model MaterialContent {
-  id            String       @id @default(cuid())
-  taskId        String       @unique
+  id            String   @id @default(cuid())
+  taskId        String   @unique
   title         String?
   sellingPoints Json?
-  detailText    String?      @db.Text
-  adText        String?      @db.Text
+  detailText    String?  @db.Text
+  adText        String?  @db.Text
   imageUrls     Json?
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   task MaterialTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
@@ -164,18 +166,18 @@ model Rule {
 }
 
 model Report {
-  id        String       @id @default(cuid())
-  taskId    String       @unique
-  reportNo  String       @unique
+  id        String   @id @default(cuid())
+  taskId    String   @unique
+  reportNo  String   @unique
   title     String
-  summary   String       @db.Text
+  summary   String   @db.Text
   content   Json
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  task MaterialTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  task       MaterialTask    @relation(fields: [taskId], references: [id], onDelete: Cascade)
   templateId String?
-  template ReportTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  template   ReportTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
 }
 
 model OperationLog {
@@ -193,18 +195,18 @@ model OperationLog {
 }
 
 model ReviewTask {
-  id         String       @id @default(cuid())
-  taskId      String      @unique
-  status      ReviewStatus @default(PENDING)
+  id             String        @id @default(cuid())
+  taskId         String        @unique
+  status         ReviewStatus  @default(PENDING)
   systemDecision DecisionType?
   finalDecision  DecisionType?
-  reason      String?
-  comment     String?      @db.Text
-  history     Json?
-  createdBy   String
-  reviewerId  String?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  reason         String?
+  comment        String?       @db.Text
+  history        Json?
+  createdBy      String
+  reviewerId     String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   task     MaterialTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
   creator  User         @relation("creator", fields: [createdBy], references: [id], onDelete: Cascade)
@@ -212,58 +214,61 @@ model ReviewTask {
 }
 
 model Plan {
-  id                           String   @id @default(cuid())
-  name                         String   @unique
-  customerType                 String
-  priceText                    String
-  billingCycle                 String
-  quota                        Int?
-  supportedMarkets             Int?
-  canExportReport              Boolean  @default(false)
-  canBatchDetect               Boolean  @default(false)
-  canUseApi                    Boolean  @default(false)
-  canPrivateDeploy             Boolean  @default(false)
-  canUseCustomRules            Boolean  @default(false)
-  canUseCustomReportTemplate   Boolean  @default(false)
-  features                     Json?
-  sortOrder                    Int      @default(0)
-  isActive                     Boolean  @default(true)
-  createdAt                    DateTime @default(now())
-  updatedAt                    DateTime @updatedAt
+  id                         String   @id @default(cuid())
+  name                       String   @unique
+  customerType               String
+  priceText                  String
+  billingCycle               String
+  quota                      Int?
+  supportedMarkets           Int?
+  canExportReport            Boolean  @default(false)
+  canBatchDetect             Boolean  @default(false)
+  canUseApi                  Boolean  @default(false)
+  canPrivateDeploy           Boolean  @default(false)
+  canUseCustomRules          Boolean  @default(false)
+  canUseCustomReportTemplate Boolean  @default(false)
+  features                   Json?
+  sortOrder                  Int      @default(0)
+  isActive                   Boolean  @default(true)
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
 
   subscriptions Subscription[]
 }
 
 model Subscription {
-  id             String   @id @default(cuid())
+  id             String    @id @default(cuid())
   userId         String?
   companyName    String
+  companyId      String?
   planId         String
   status         String
   startAt        DateTime
   endAt          DateTime?
-  quotaTotal     Int      @default(0)
-  quotaUsed      Int      @default(0)
-  quotaRemaining Int      @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  quotaTotal     Int       @default(0)
+  quotaUsed      Int       @default(0)
+  quotaRemaining Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   user         User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  company      Company?      @relation(fields: [companyId], references: [id], onDelete: SetNull)
   plan         Plan          @relation(fields: [planId], references: [id], onDelete: Restrict)
   usageRecords UsageRecord[]
 
   @@index([companyName])
+  @@index([companyId])
 }
 
 model UsageRecord {
-  id            String   @id @default(cuid())
-  userId        String
-  taskId        String?
+  id             String   @id @default(cuid())
+  userId         String
+  taskId         String?
   subscriptionId String?
-  usageType     String
-  amount        Int      @default(1)
-  description   String?
-  createdAt     DateTime @default(now())
+  usageType      String
+  amount         Int      @default(1)
+  description    String?
+  createdAt      DateTime @default(now())
 
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   task         MaterialTask? @relation(fields: [taskId], references: [id], onDelete: SetNull)
@@ -274,6 +279,7 @@ model FileAsset {
   id              String   @id @default(cuid())
   userId          String
   taskId          String?
+  companyId       String?
   originalName    String
   fileName        String
   mimeType        String
@@ -283,8 +289,11 @@ model FileAsset {
   url             String
   createdAt       DateTime @default(now())
 
-  user User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  task MaterialTask? @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  user    User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task    MaterialTask? @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  company Company?      @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+  @@index([companyId])
 }
 
 model Company {
@@ -295,14 +304,17 @@ model Company {
   contactPhone  String?
   targetMarkets Json?
   planType      String?
-  serviceStatus String?  @default("试点中")
+  serviceStatus String?  @default("OPENING")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  members   TeamMember[]
-  tasks     MaterialTask[]
-  customers Customer[]
-  batchTasks BatchTask[]
+  users         User[]         @relation("CompanyUsers")
+  members       TeamMember[]
+  tasks         MaterialTask[]
+  customers     Customer[]
+  batchTasks    BatchTask[]
+  fileAssets    FileAsset[]
+  subscriptions Subscription[]
 }
 
 model TeamMember {
@@ -321,51 +333,51 @@ model TeamMember {
 }
 
 model Customer {
-  id            String   @id @default(cuid())
-  companyId     String?
-  ownerUserId   String?
-  name          String
-  customerType  String?
-  contactPerson String?
-  contactPhone  String?
-  industry      String?
+  id             String   @id @default(cuid())
+  companyId      String?
+  ownerUserId    String?
+  name           String
+  customerType   String?
+  contactPerson  String?
+  contactPhone   String?
+  industry       String?
   targetPlatform String?
-  targetMarket  String?
-  planType      String?
-  serviceStatus String?  @default("试点中")
-  remark        String?  @db.Text
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  targetMarket   String?
+  planType       String?
+  serviceStatus  String?  @default("OPENING")
+  remark         String?  @db.Text
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  company Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
-  owner   User?    @relation("customerOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+  company Company?       @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  owner   User?          @relation("customerOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
   tasks   MaterialTask[]
 }
 
 model RuleVersion {
-  id          String   @id @default(cuid())
-  ruleId      String
-  versionNo   String
-  snapshot    Json
-  createdBy   String?
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  ruleId    String
+  versionNo String
+  snapshot  Json
+  createdBy String?
+  createdAt DateTime @default(now())
 
   rule Rule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
 }
 
 model MaterialVersion {
-  id          String   @id @default(cuid())
-  taskId       String
-  versionNo    Int
-  title        String?
+  id            String   @id @default(cuid())
+  taskId        String
+  versionNo     Int
+  title         String?
   sellingPoints Json?
-  detailText   String?  @db.Text
-  adText       String?  @db.Text
-  imageUrls    Json?
+  detailText    String?  @db.Text
+  adText        String?  @db.Text
+  imageUrls     Json?
   scoreSnapshot Json?
   riskSnapshot  Json?
-  createdBy    String?
-  createdAt    DateTime @default(now())
+  createdBy     String?
+  createdAt     DateTime @default(now())
 
   task MaterialTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
@@ -388,19 +400,19 @@ model ReportTemplate {
 }
 
 model BatchTask {
-  id            String   @id @default(cuid())
-  companyId     String?
-  userId        String
-  name          String
-  status        String   @default("PENDING")
-  totalCount    Int      @default(0)
-  successCount  Int      @default(0)
-  failedCount   Int      @default(0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           String   @id @default(cuid())
+  companyId    String?
+  userId       String
+  name         String
+  status       String   @default("PENDING")
+  totalCount   Int      @default(0)
+  successCount Int      @default(0)
+  failedCount  Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  company Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company Company?        @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   items   BatchTaskItem[]
 }
 
@@ -415,7 +427,7 @@ model BatchTaskItem {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  batchTask BatchTask    @relation(fields: [batchTaskId], references: [id], onDelete: Cascade)
+  batchTask BatchTask     @relation(fields: [batchTaskId], references: [id], onDelete: Cascade)
   task      MaterialTask? @relation(fields: [taskId], references: [id], onDelete: SetNull)
 }
 
@@ -448,18 +460,22 @@ model ModelConfig {
 
 model CommercialApplication {
   id          String   @id @default(cuid())
-  userId      String
+  userId      String?
   type        String
   companyName String?
   contact     String?
+  contactName String?
+  email       String?
+  phone       String?
   status      String   @default("PENDING")
   note        String?  @db.Text
   reviewNote  String?  @db.Text
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([userId, createdAt])
+  @@index([email, createdAt])
   @@index([status, createdAt])
 }

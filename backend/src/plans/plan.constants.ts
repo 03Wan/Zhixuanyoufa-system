@@ -16,7 +16,7 @@
   cta: string;
 };
 
-export const DEMO_PLAN_SEEDS: PlanSeed[] = [
+export const PLAN_SEEDS: PlanSeed[] = [
   {
     name: '体验包/按次检测',
     customerType: '新客户、低频客户、试用客户',
@@ -65,7 +65,7 @@ export const DEMO_PLAN_SEEDS: PlanSeed[] = [
     canUseCustomRules: true,
     canUseCustomReportTemplate: false,
     sortOrder: 3,
-    features: ['完整报告导出', '增强看板', '批量检测', 'API试点权益'],
+    features: ['完整报告导出', '增强看板', '批量检测', 'API服务权益'],
     cta: '升级套餐',
   },
   {
@@ -117,8 +117,8 @@ export const DEMO_PLAN_SEEDS: PlanSeed[] = [
     canUseCustomReportTemplate: false,
     sortOrder: 6,
     features: ['API Key', '调用额度', '接口调用统计', '规则检测接口与结果返回'],
-    cta: '申请API试点',
+    cta: '申请API服务',
   },
 ];
 
-export const DEMO_NOTICE = '套餐能力来自真实数据库配置；付费、合同和试点开通仍通过人工审批流程执行。';
+export const SERVICE_NOTICE = '套餐能力来自真实数据库配置；付费、合同和服务开通仍通过人工审批流程执行。';

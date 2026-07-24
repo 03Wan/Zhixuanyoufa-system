@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@wxperia/liquid-glass-vue": "^1.0.9",
-    "echarts": "^6.0.0",
+    "echarts": "^6.1.0",
     "lucide-vue-next": "^0.525.0",
     "vue": "^3.5.18",
     "vue-router": "^4.5.1"

@@ -115,7 +115,7 @@ function sections(schema: any) {
   return (schema?.sections || []).join('、') || '-';
 }
 function codeText(code?: string) {
-  const map: Record<string, string> = { MVP_STANDARD: '标准审核模板' };
+  const map: Record<string, string> = { STANDARD_REPORT: '标准审核模板' };
   return map[String(code || '')] || code || '-';
 }
 function scopeText(scope?: string) {

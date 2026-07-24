@@ -37,7 +37,7 @@ export type CreateTaskPayload = {
 export type UpdateTaskPayload = Partial<CreateTaskPayload>;
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.paperhelper.fun/api';
-export const USE_MOCK = String(import.meta.env.VITE_USE_MOCK || 'false').toLowerCase() === 'true';
+export const USE_MOCK = import.meta.env.DEV && String(import.meta.env.VITE_USE_MOCK || 'false').toLowerCase() === 'true';
 const TOKEN_KEY = 'zyyf_token';
 const USER_KEY = 'zyyf_user';
 const LOADING_DELAY_MS = 150;
@@ -92,13 +92,13 @@ function nowIso() {
 let mockRuntimeClockMs = Date.now() - 1000 * 60 * 30;
 let mockSerial = 1000;
 
-function nextMockIso(stepMs?: number) {
+function nextLocalDataIso(stepMs?: number) {
   const delta = stepMs ?? (45_000 + Math.floor(Math.random() * 210_000));
   mockRuntimeClockMs += Math.max(1000, delta);
   return new Date(mockRuntimeClockMs).toISOString();
 }
 
-function nextMockNo(prefix: string) {
+function nextLocalDataNo(prefix: string) {
   mockSerial += 1;
   return `${prefix}-${Date.now()}-${String(mockSerial).padStart(4, '0')}`;
 }
@@ -122,11 +122,11 @@ function decisionByRisk(risk: string) {
 }
 
 const mockUsers: any[] = [
-  { id: 'u1', username: '企业管理员A', email: 'enterprise_admin@example.com', role: 'ENTERPRISE_ADMIN', companyName: '智选优发演示企业', status: '启用', lastLoginAt: nowIso() },
-  { id: 'u2', username: '运营人员A', email: 'operator@example.com', role: 'OPERATOR', companyName: '智选优发演示企业', status: '启用', lastLoginAt: nowIso() },
-  { id: 'u3', username: '设计人员A', email: 'designer@example.com', role: 'DESIGNER', companyName: '智选优发演示企业', status: '启用', lastLoginAt: nowIso() },
-  { id: 'u4', username: '复核人员A', email: 'reviewer@example.com', role: 'REVIEWER', companyName: '智选优发演示企业', status: '启用', lastLoginAt: nowIso() },
-  { id: 'u5', username: '管理人员A', email: 'manager@example.com', role: 'MANAGER', companyName: '智选优发演示企业', status: '启用', lastLoginAt: nowIso() },
+  { id: 'u1', username: '企业管理员A', email: 'enterprise_admin@example.com', role: 'ENTERPRISE_ADMIN', companyName: '智选优发企业账号', status: '启用', lastLoginAt: nowIso() },
+  { id: 'u2', username: '运营人员A', email: 'operator@example.com', role: 'OPERATOR', companyName: '智选优发企业账号', status: '启用', lastLoginAt: nowIso() },
+  { id: 'u3', username: '设计人员A', email: 'designer@example.com', role: 'DESIGNER', companyName: '智选优发企业账号', status: '启用', lastLoginAt: nowIso() },
+  { id: 'u4', username: '复核人员A', email: 'reviewer@example.com', role: 'REVIEWER', companyName: '智选优发企业账号', status: '启用', lastLoginAt: nowIso() },
+  { id: 'u5', username: '管理人员A', email: 'manager@example.com', role: 'MANAGER', companyName: '智选优发企业账号', status: '启用', lastLoginAt: nowIso() },
   { id: 'u6', username: '系统管理员A', email: 'sysadmin@example.com', role: 'SYSTEM_ADMIN', companyName: '平台方', status: '启用', lastLoginAt: nowIso() },
 ];
 
@@ -149,10 +149,10 @@ let mockBatchTasks: any[] = [];
 let mockMaterialVersions: any[] = [];
 let mockReportTemplates: any[] = [];
 
-type MockRiskLevel = '低风险' | '中风险' | '高风险' | '严重风险';
-type MockDecision = '可发布' | '优化后发布' | '人工复核' | '暂缓发布';
+type LocalDataRiskLevel = '低风险' | '中风险' | '高风险' | '严重风险';
+type LocalDataDecision = '可发布' | '优化后发布' | '人工复核' | '暂缓发布';
 
-function seedDetection(score: number, riskLevel: MockRiskLevel, decision: MockDecision) {
+function seedDetection(score: number, riskLevel: LocalDataRiskLevel, decision: LocalDataDecision) {
   const explanation = `综合分${score}，主要基于素材完整性、准确性、规范性、吸引力、市场适配5个维度评估。`;
   return {
     score,
@@ -227,7 +227,7 @@ function seedDetection(score: number, riskLevel: MockRiskLevel, decision: MockDe
   };
 }
 
-type MockSeedConfig = {
+type LocalDataSeedConfig = {
   seed: number;
   days: number;
   taskCount: number;
@@ -241,7 +241,7 @@ type MockSeedConfig = {
 
 type TimelinePoint = { dayIndex: number; date: Date; weight: number };
 
-const MOCK_SEED_CONFIG: MockSeedConfig = {
+const MOCK_SEED_CONFIG: LocalDataSeedConfig = {
   seed: 20260530,
   days: 90,
   taskCount: 54,
@@ -293,7 +293,7 @@ function weightedPickIndex(weights: number[], random: () => number) {
   return weights.length - 1;
 }
 
-function buildMockTimeline(config: MockSeedConfig, random: () => number): TimelinePoint[] {
+function buildLocalDataTimeline(config: LocalDataSeedConfig, random: () => number): TimelinePoint[] {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const start = new Date(today);
@@ -316,7 +316,7 @@ function buildMockTimeline(config: MockSeedConfig, random: () => number): Timeli
   return points;
 }
 
-function buildMockTasks(config: MockSeedConfig, timeline: TimelinePoint[], random: () => number) {
+function buildLocalDataTasks(config: LocalDataSeedConfig, timeline: TimelinePoint[], random: () => number) {
   const statusCounts = {
     DRAFT: 6,
     PENDING_DETECTION: 7,
@@ -353,7 +353,7 @@ function buildMockTasks(config: MockSeedConfig, timeline: TimelinePoint[], rando
   const categories = ['家居用品', '3C电子', '美妆个护', '运动户外', '母婴用品', '宠物用品', '食品饮料', '服饰配件'];
   const purposes = ['上架前审核', '广告投放前审核', '活动素材审核', '新品发布前审核'];
   const productBase = ['便携榨汁杯', '蓝牙降噪耳机', '防晒喷雾', '瑜伽弹力带', '婴儿湿巾', '宠物牵引绳', '速食燕麦杯', '防水登山包', '磁吸充电宝', '保温运动水壶'];
-  const riskMap: Record<MockRiskLevel, { min: number; max: number; decision: MockDecision }> = {
+  const riskMap: Record<LocalDataRiskLevel, { min: number; max: number; decision: LocalDataDecision }> = {
     低风险: { min: 86, max: 96, decision: '可发布' },
     中风险: { min: 72, max: 84, decision: '优化后发布' },
     高风险: { min: 56, max: 69, decision: '人工复核' },
@@ -389,8 +389,8 @@ function buildMockTasks(config: MockSeedConfig, timeline: TimelinePoint[], rando
     const materialKeyword = ['高转速', '食品级', '轻量化', '多场景', '快充', '低延迟', '防泼水', '高回弹'][i % 8];
     const task: any = {
       id: `task-seed-90d-${String(i + 1).padStart(3, '0')}`,
-      taskNo: `TSK-DEMO-${String(1001 + i).padStart(4, '0')}`,
-      sku: `SKU-DEMO-${String(1001 + i).padStart(4, '0')}`,
+      taskNo: `TSK-LOCAL-${String(1001 + i).padStart(4, '0')}`,
+      sku: `SKU-LOCAL-${String(1001 + i).padStart(4, '0')}`,
       productName,
       category,
       platform,
@@ -404,7 +404,7 @@ function buildMockTasks(config: MockSeedConfig, timeline: TimelinePoint[], rando
         sellingPoints: [`${materialKeyword}核心卖点`, '本土化表达优化', '多平台合规表达'],
         detailText: `面向${market}市场，突出${materialKeyword}与使用场景，适配${platform}素材规范。`,
         adText: `围绕${productName}的核心卖点进行合规传播，避免夸张承诺。`,
-        imageUrls: [`mock://img/${1001 + i}-main.jpg`, `mock://img/${1001 + i}-scene.jpg`],
+        imageUrls: [`local://img/${1001 + i}-main.jpg`, `local://img/${1001 + i}-scene.jpg`],
       },
     };
 
@@ -444,7 +444,7 @@ function buildMockTasks(config: MockSeedConfig, timeline: TimelinePoint[], rando
       detection.suggestions = [
         {
           before: '全网最佳效果，立即见效',
-          after: '经内部测试表现稳定，适配常见使用场景',
+          after: '经内部验证表现稳定，适配常见使用场景',
           reason: '降低违规风险，提升可信度',
         },
       ];
@@ -458,7 +458,7 @@ function buildMockTasks(config: MockSeedConfig, timeline: TimelinePoint[], rando
   return tasks;
 }
 
-function buildMockReports(tasks: any[], config: MockSeedConfig, random: () => number) {
+function buildLocalDataReports(tasks: any[], config: LocalDataSeedConfig, random: () => number) {
   const candidates = tasks.filter((t) => ['COMPLETED', 'REPORTED'].includes(t.status) && t.detectionResult);
   const picked = candidates.slice(0, config.reportCount);
   return picked.map((task, idx) => {
@@ -467,7 +467,7 @@ function buildMockReports(tasks: any[], config: MockSeedConfig, random: () => nu
     const report = {
       id: `report-seed-90d-${String(idx + 1).padStart(3, '0')}`,
       taskId: task.id,
-      reportNo: `RPT-DEMO-${String(3001 + idx).padStart(4, '0')}`,
+      reportNo: `RPT-LOCAL-${String(3001 + idx).padStart(4, '0')}`,
       title: `${task.productName} 审核报告`,
       summary: `综合评分 ${task.detectionResult.totalScore}，建议 ${task.detectionResult.decision}`,
       createdAt: createdAt.toISOString(),
@@ -491,7 +491,7 @@ function buildMockReports(tasks: any[], config: MockSeedConfig, random: () => nu
   });
 }
 
-function buildMockReviews(tasks: any[], config: MockSeedConfig, random: () => number) {
+function buildLocalDataReviews(tasks: any[], config: LocalDataSeedConfig, random: () => number) {
   const highRiskTasks = tasks.filter((t) => ['高风险', '严重风险'].includes(t.detectionResult?.riskLevel || ''));
   const mediumTasks = tasks.filter((t) => (t.detectionResult?.riskLevel || '') === '中风险');
   const reviewCandidates = [...highRiskTasks, ...mediumTasks].slice(0, config.reviewCount);
@@ -541,7 +541,7 @@ function buildMockReviews(tasks: any[], config: MockSeedConfig, random: () => nu
   });
 }
 
-function buildMockUsageRecords(tasks: any[], random: () => number) {
+function buildLocalDataUsageRecords(tasks: any[], random: () => number) {
   const records: any[] = [];
   const detectedTasks = tasks.filter((t) => t.detectionResult);
   detectedTasks.forEach((task, idx) => {
@@ -552,7 +552,7 @@ function buildMockUsageRecords(tasks: any[], random: () => number) {
       usageType: 'DETECT',
       amount: 1,
       taskId: task.id,
-      companyName: '智选优发演示企业',
+      companyName: '智选优发企业账号',
       planName: '专业版',
       createdAt: createdAt.toISOString(),
     });
@@ -560,7 +560,7 @@ function buildMockUsageRecords(tasks: any[], random: () => number) {
   return records.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
 }
 
-function buildMockBatchTasks(config: MockSeedConfig, timeline: TimelinePoint[], random: () => number) {
+function buildLocalDataBatchTasks(config: LocalDataSeedConfig, timeline: TimelinePoint[], random: () => number) {
   const records: any[] = [];
   for (let i = 0; i < config.batchCount; i += 1) {
     const totalCount = 8 + Math.floor(random() * 13);
@@ -585,7 +585,7 @@ function buildMockBatchTasks(config: MockSeedConfig, timeline: TimelinePoint[], 
           market: ['欧美', '东南亚', '中东'][row % 3],
           title: `批量任务素材 ${row + 1}`,
           sellingPoints: '稳定合规\n本土化优化\n多场景适配',
-          detailText: '用于评委演示的批量检测样本',
+          detailText: '用于批量检测的业务样本',
           adText: '突出卖点并避免违规表达',
         },
         status: shouldFail ? 'FAILED' : 'DONE',
@@ -608,7 +608,7 @@ function buildMockBatchTasks(config: MockSeedConfig, timeline: TimelinePoint[], 
   return records.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
 }
 
-function buildMockMaterialVersions(tasks: any[], config: MockSeedConfig, random: () => number) {
+function buildLocalDataMaterialVersions(tasks: any[], config: LocalDataSeedConfig, random: () => number) {
   const candidates = tasks.filter((t) => t.materialContent).slice(0, 20);
   const records: any[] = [];
   const versionCounter: Record<string, number> = {};
@@ -636,12 +636,12 @@ function buildMockMaterialVersions(tasks: any[], config: MockSeedConfig, random:
   return records.slice(0, config.materialVersionCount).sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
 }
 
-function buildMockLogs(
+function buildLocalDataLogs(
   tasks: any[],
   reports: any[],
   reviews: any[],
   timeline: TimelinePoint[],
-  config: MockSeedConfig,
+  config: LocalDataSeedConfig,
   random: () => number,
 ) {
   const logs: any[] = [];
@@ -734,7 +734,7 @@ function buildMockLogs(
       role: actor.role,
       action,
       target: action === '下载报告' ? reports[Math.floor(random() * reports.length)]?.reportNo || '-' : `OBJ-${1000 + logs.length}`,
-      note: '演示环境运营记录',
+      note: '业务环境运营记录',
       createdAt: createdAt.toISOString(),
     });
   }
@@ -744,18 +744,18 @@ function buildMockLogs(
     .slice(0, config.logCount);
 }
 
-function initMockData() {
+function initLocalDataData() {
   if (mockTasks.length > 0) return;
 
   const random = createSeededRandom(MOCK_SEED_CONFIG.seed);
-  const timeline = buildMockTimeline(MOCK_SEED_CONFIG, random);
-  mockTasks = buildMockTasks(MOCK_SEED_CONFIG, timeline, random);
-  mockReports = buildMockReports(mockTasks, MOCK_SEED_CONFIG, random);
-  mockReviews = buildMockReviews(mockTasks, MOCK_SEED_CONFIG, random);
-  mockUsageRecords = buildMockUsageRecords(mockTasks, random);
-  mockBatchTasks = buildMockBatchTasks(MOCK_SEED_CONFIG, timeline, random);
-  mockMaterialVersions = buildMockMaterialVersions(mockTasks, MOCK_SEED_CONFIG, random);
-  mockLogs = buildMockLogs(mockTasks, mockReports, mockReviews, timeline, MOCK_SEED_CONFIG, random);
+  const timeline = buildLocalDataTimeline(MOCK_SEED_CONFIG, random);
+  mockTasks = buildLocalDataTasks(MOCK_SEED_CONFIG, timeline, random);
+  mockReports = buildLocalDataReports(mockTasks, MOCK_SEED_CONFIG, random);
+  mockReviews = buildLocalDataReviews(mockTasks, MOCK_SEED_CONFIG, random);
+  mockUsageRecords = buildLocalDataUsageRecords(mockTasks, random);
+  mockBatchTasks = buildLocalDataBatchTasks(MOCK_SEED_CONFIG, timeline, random);
+  mockMaterialVersions = buildLocalDataMaterialVersions(mockTasks, MOCK_SEED_CONFIG, random);
+  mockLogs = buildLocalDataLogs(mockTasks, mockReports, mockReviews, timeline, MOCK_SEED_CONFIG, random);
 
   mockRuleVersions = mockRules.map((r) => ({
     id: makeId('rv'),
@@ -782,7 +782,7 @@ function initMockData() {
   mockCustomers = [
     {
       id: 'cust-1',
-      name: '智选优发演示企业',
+      name: '智选优发企业账号',
       plan: '企业版',
       quotaTotal: 5000,
       quotaUsed: 1260,
@@ -814,7 +814,7 @@ function initMockData() {
   mockSubscriptions = [
     {
       id: 'sub-1',
-      companyName: '智选优发演示企业',
+      companyName: '智选优发企业账号',
       planId: pro?.id,
       status: 'ACTIVE',
       startAt: nowIso(),
@@ -825,14 +825,14 @@ function initMockData() {
     },
   ];
   mockCompanies = [
-    { id: 'comp-1', name: '智选优发演示企业', industryType: '跨境电商', contactPerson: '张三', contactPhone: '13800000000', targetMarkets: ['欧美', '中东'], planType: '专业版', serviceStatus: '试点中', createdAt: nowIso(), members: 6 },
+    { id: 'comp-1', name: '智选优发企业账号', industryType: '跨境电商', contactPerson: '张三', contactPhone: '13800000000', targetMarkets: ['欧美', '中东'], planType: '专业版', serviceStatus: '开通中', createdAt: nowIso(), members: 6 },
   ];
   mockReportTemplates = [
-    { id: 'tpl-1', name: '标准审核报告模板', code: 'MVP_STANDARD', scope: 'SYSTEM', versionNo: 1, schema: { sections: ['封面', '基础信息', '评分', '风险', '建议', '复核'] } },
+    { id: 'tpl-1', name: '标准审核报告模板', code: 'STANDARD_REPORT', scope: 'SYSTEM', versionNo: 1, schema: { sections: ['封面', '基础信息', '评分', '风险', '建议', '复核'] } },
   ];
 }
 
-initMockData();
+initLocalDataData();
 
 function appendLog(action: string, target: string, remark?: string) {
   const user = getUserProfile() as any;
@@ -848,16 +848,16 @@ function appendLog(action: string, target: string, remark?: string) {
     result: '成功',
     ip: '127.0.0.1',
     note: remark || '',
-    createdAt: nextMockIso(),
+    createdAt: nextLocalDataIso(),
   });
 }
 
 function currentCompanyName() {
   const user = getUserProfile() as any;
-  return user?.companyName || '智选优发演示企业';
+  return user?.companyName || '智选优发企业账号';
 }
 
-function getCurrentSubscriptionMock() {
+function getCurrentSubscriptionLocalData() {
   const companyName = currentCompanyName();
   let sub = mockSubscriptions.find((s) => s.companyName === companyName && s.status === 'ACTIVE');
   if (!sub) {
@@ -879,7 +879,7 @@ function getCurrentSubscriptionMock() {
   return { sub, plan };
 }
 
-function resolveMockRoleByEmail(email: string) {
+function resolveLocalDataRoleByEmail(email: string) {
   const v = (email || '').toLowerCase();
   if (v.includes('sysadmin')) return 'SYSTEM_ADMIN';
   if (v.includes('enterprise')) return 'ENTERPRISE_ADMIN';
@@ -896,27 +896,27 @@ function isServiceUnavailableError(error: unknown) {
   return /数据库服务暂不可用|数据库连接超时|网络异常|请求超时|Failed to fetch|NetworkError/i.test(error.message);
 }
 
-function createMockLoginResult(payload: LoginPayload) {
+function createLocalDataLoginResult(payload: LoginPayload) {
   const email = (payload.email || '').trim();
-  const role = resolveMockRoleByEmail(email);
+  const role = resolveLocalDataRoleByEmail(email);
   const user =
     mockUsers.find((u) => u.email === email) || {
       id: makeId('user'),
-      username: email.split('@')[0] || 'demo-user',
+      username: email.split('@')[0] || 'local-user',
       email,
       role,
-      companyName: '智选优发演示企业',
+      companyName: '智选优发企业账号',
     };
-  const result = { accessToken: 'mock-token', user };
+  const result = { accessToken: 'local-token', user };
   setToken(result.accessToken);
   setUserProfile(result.user);
-  appendLog('用户登录', email, '后端不可用，已切换演示登录');
+  appendLog('用户登录', email, '后端不可用，已切换本地登录');
   return result;
 }
 
-function shouldFallbackToMock(error: unknown) {
-  if (error instanceof ApiError && [401, 403].includes(error.status || 0)) return true;
-  return isServiceUnavailableError(error);
+function shouldFallbackToLocalData(error: unknown) {
+  void error;
+  return false;
 }
 
 function downloadBlobFromText(payload: string, filename: string, mimeType: string) {
@@ -985,12 +985,7 @@ async function run<T>(live: () => Promise<T>, mock: () => T | Promise<T>): Promi
   startGlobalLoading();
   try {
     if (USE_MOCK) return await mock();
-    try {
-      return await live();
-    } catch (error) {
-      if (shouldFallbackToMock(error)) return await mock();
-      throw error;
-    }
+    return await live();
   } finally {
     endGlobalLoading();
   }
@@ -1223,7 +1218,7 @@ export const api = {
     return run(
       () => request('/auth/register', 'POST', payload),
       () => {
-        const user = { id: makeId('user'), username: payload.username, email: payload.email, role: 'OPERATOR', companyName: payload.companyName || '智选优发演示企业' };
+        const user = { id: makeId('user'), username: payload.username, email: payload.email, role: 'OPERATOR', companyName: payload.companyName || '智选优发企业账号' };
         mockUsers.push(user);
         return user;
       },
@@ -1233,17 +1228,10 @@ export const api = {
   login(payload: LoginPayload) {
     return run(
       async () => {
-        try {
-          const result = await request<{ accessToken: string; user: unknown }>('/auth/login', 'POST', payload);
-          setToken(result.accessToken);
-          setUserProfile(result.user);
-          return result;
-        } catch (error) {
-          if (isServiceUnavailableError(error)) {
-            return createMockLoginResult(payload);
-          }
-          throw error;
-        }
+        const result = await request<{ accessToken: string; user: unknown }>('/auth/login', 'POST', payload);
+        setToken(result.accessToken);
+        setUserProfile(result.user);
+        return result;
       },
       async () => {
         const password = (payload.password || '').trim();
@@ -1254,7 +1242,7 @@ export const api = {
         if (password !== '123456') {
           throw new ApiError('账号或密码错误');
         }
-        return createMockLoginResult(payload);
+        return createLocalDataLoginResult(payload);
       },
     );
   },
@@ -1262,14 +1250,14 @@ export const api = {
   forgotPassword(payload: ForgotPasswordPayload) {
     return run(
       () => request('/auth/forgot-password', 'POST', payload),
-      () => ({ success: true, message: '重置口令已生成（演示）', resetToken: 'DEMO2026' }),
+      () => ({ success: true, message: '请联系企业管理员重置密码', resetToken: 'RESET2026' }),
     );
   },
 
   resetPassword(payload: ResetPasswordPayload) {
     return run(
       () => request('/auth/reset-password', 'POST', payload),
-      () => ({ success: true, message: '密码重置成功（演示）' }),
+      () => ({ success: true, message: '密码处理完成' }),
     );
   },
 
@@ -1297,15 +1285,15 @@ export const api = {
       () => {
         const user = getUserProfile() as any;
         const bypass = user?.role === 'SYSTEM_ADMIN' || user?.role === 'ADMIN';
-        const { sub } = getCurrentSubscriptionMock();
+        const { sub } = getCurrentSubscriptionLocalData();
         if (!bypass && sub.quotaRemaining <= 0) {
-          throw new ApiError('当前套餐检测额度不足，请升级套餐或联系团队开通试点额度');
+          throw new ApiError('当前套餐检测额度不足，请升级套餐或联系团队开通额度');
         }
-        const createdAt = nextMockIso();
-        const updatedAt = nextMockIso(30_000 + Math.floor(Math.random() * 90_000));
+        const createdAt = nextLocalDataIso();
+        const updatedAt = nextLocalDataIso(30_000 + Math.floor(Math.random() * 90_000));
         const task = {
           id: makeId('task'),
-          taskNo: nextMockNo('TSK'),
+          taskNo: nextLocalDataNo('TSK'),
           status: 'DRAFT',
           createdAt,
           updatedAt,
@@ -1381,12 +1369,12 @@ export const api = {
         if (!task) throw new ApiError('任务不存在');
         const user = getUserProfile() as any;
         const bypass = user?.role === 'SYSTEM_ADMIN' || user?.role === 'ADMIN';
-        const { sub, plan } = getCurrentSubscriptionMock();
+        const { sub, plan } = getCurrentSubscriptionLocalData();
         if (!bypass && sub.quotaRemaining <= 0) {
-          throw new ApiError('当前套餐检测额度不足，请升级套餐或联系团队开通试点额度');
+          throw new ApiError('当前套餐检测额度不足，请升级套餐或联系团队开通额度');
         }
         const result = ensureDetection(task);
-        const detectAt = nextMockIso(40_000 + Math.floor(Math.random() * 140_000));
+        const detectAt = nextLocalDataIso(40_000 + Math.floor(Math.random() * 140_000));
         result.detectedAt = detectAt;
         task.detectionResult = result;
         task.status = 'COMPLETED';
@@ -1401,11 +1389,11 @@ export const api = {
             taskId,
             companyName: sub.companyName,
             planName: plan?.name || '-',
-            createdAt: nextMockIso(20_000 + Math.floor(Math.random() * 70_000)),
+            createdAt: nextLocalDataIso(20_000 + Math.floor(Math.random() * 70_000)),
           });
         }
         if (result.decision === '人工复核') {
-          const reviewSubmitAt = nextMockIso(30_000 + Math.floor(Math.random() * 120_000));
+          const reviewSubmitAt = nextLocalDataIso(30_000 + Math.floor(Math.random() * 120_000));
           const review = {
             id: makeId('review'),
             reviewId: makeId('review'),
@@ -1447,7 +1435,7 @@ export const api = {
         const task = mockTasks.find((t) => t.id === taskId);
         if (!task) throw new ApiError('任务不存在');
         task.status = 'REVIEW_REQUIRED';
-        const submittedAt = nextMockIso(35_000 + Math.floor(Math.random() * 110_000));
+        const submittedAt = nextLocalDataIso(35_000 + Math.floor(Math.random() * 110_000));
         if (!mockReviews.some((r) => r.taskId === taskId)) {
           mockReviews.unshift({
             id: makeId('review'),
@@ -1477,11 +1465,11 @@ export const api = {
         const task = mockTasks.find((t) => t.id === taskId);
         if (!task) throw new ApiError('任务不存在');
         const result = await api.getDetectionResult(taskId);
-        const reportCreatedAt = nextMockIso(40_000 + Math.floor(Math.random() * 130_000));
+        const reportCreatedAt = nextLocalDataIso(40_000 + Math.floor(Math.random() * 130_000));
         const report = {
           id: makeId('report'),
           taskId,
-          reportNo: nextMockNo('RPT'),
+          reportNo: nextLocalDataNo('RPT'),
           title: `${task.productName} 审核报告`,
           summary: `综合评分 ${result.totalScore}，建议 ${result.decision}`,
           createdAt: reportCreatedAt,
@@ -1536,12 +1524,12 @@ export const api = {
   },
 
   async downloadReport(reportId: string, format: 'pdf' | 'docx' | 'json' = 'pdf') {
-    const downloadMockReport = () => {
+    const downloadLocalDataReport = () => {
       const report = mockReports.find((r) => r.id === reportId);
       if (!report) throw new ApiError('报告不存在');
       const user = getUserProfile() as any;
       const bypass = user?.role === 'SYSTEM_ADMIN' || user?.role === 'ADMIN';
-      const { plan } = getCurrentSubscriptionMock();
+      const { plan } = getCurrentSubscriptionLocalData();
       if (!bypass && plan?.name?.includes('体验包')) {
         throw new ApiError('当前套餐仅支持在线查看报告，导出请升级套餐');
       }
@@ -1556,7 +1544,7 @@ export const api = {
     };
 
     if (USE_MOCK) {
-      downloadMockReport();
+      downloadLocalDataReport();
       return;
     }
 
@@ -1582,8 +1570,8 @@ export const api = {
       link.remove();
       URL.revokeObjectURL(url);
     } catch (error) {
-      if (!shouldFallbackToMock(error)) throw error;
-      downloadMockReport();
+      if (!shouldFallbackToLocalData(error)) throw error;
+      downloadLocalDataReport();
     }
   },
 
@@ -1721,7 +1709,7 @@ export const api = {
   getPlans() {
     return run(
       () => request('/plans', 'GET'),
-      () => ({ notice: '当前为演示版套餐体系，真实支付、合同开通和企业定制将在商业化阶段接入。', plans: mockPlans }),
+      () => ({ notice: '套餐能力以后台配置为准，升级和企业定制通过人工审核开通。', plans: mockPlans }),
     );
   },
 
@@ -1729,13 +1717,13 @@ export const api = {
     return run(
       () => request('/subscription/me', 'GET'),
       () => {
-        const { sub, plan } = getCurrentSubscriptionMock();
+        const { sub, plan } = getCurrentSubscriptionLocalData();
         const planName = plan?.name || '';
         let suggestion = '如需API接口或私有化部署，可申请API接口版或定制版服务。';
         if (planName.includes('体验包') || planName.includes('基础版')) suggestion = '升级专业版可获得批量检测、完整报告导出和增强数据看板。';
         else if (planName.includes('专业版')) suggestion = '升级企业版可获得多账号团队、人工复核流转和客户报告归档。';
         return {
-          notice: '当前为演示版套餐体系，真实支付、合同开通和企业定制将在商业化阶段接入。',
+          notice: '套餐能力以后台配置为准，升级和企业定制通过人工审核开通。',
           companyName: currentCompanyName(),
           isUnlimited: ['SYSTEM_ADMIN', 'ADMIN'].includes(String((getUserProfile() as any)?.role || '')),
           subscription: { ...sub, plan },
@@ -1749,7 +1737,7 @@ export const api = {
     return run(
       () => request('/subscription/usage', 'GET'),
       () => {
-        const { sub, plan } = getCurrentSubscriptionMock();
+        const { sub, plan } = getCurrentSubscriptionLocalData();
         const currentMonth = nowIso().slice(0, 7);
         const monthlyUsed = mockUsageRecords.filter((x) => String(x.createdAt || '').startsWith(currentMonth)).length;
         return {
@@ -1777,7 +1765,7 @@ export const api = {
       () => {
         const plan = mockPlans.find((p) => p.name === planName);
         if (!plan) throw new ApiError('套餐不存在');
-        const { sub } = getCurrentSubscriptionMock();
+        const { sub } = getCurrentSubscriptionLocalData();
         sub.planId = plan.id;
         sub.quotaTotal = plan.quota || 0;
         sub.quotaUsed = 0;
@@ -1805,7 +1793,7 @@ export const api = {
           quotaUsed: usage.quotaUsed,
           quotaRemaining: usage.quotaRemaining,
           planName: usage.subscription?.plan?.name || '-',
-          message: usage.quotaRemaining > 0 ? '额度充足' : '当前套餐检测额度不足，请升级套餐或联系团队开通试点额度',
+          message: usage.quotaRemaining > 0 ? '额度充足' : '当前套餐检测额度不足，请升级套餐或联系团队开通额度',
         };
       },
     );
@@ -1846,7 +1834,7 @@ export const api = {
         if (!response.ok || raw?.code !== 0) throw new ApiError(raw?.message || '上传失败', response.status);
         return raw.data;
       } catch (error) {
-        if (!shouldFallbackToMock(error)) throw error;
+        if (!shouldFallbackToLocalData(error)) throw error;
         const rec = {
           id: makeId('file'),
           userId: (getUserProfile() as any)?.id || 'mock-user',
@@ -1876,10 +1864,10 @@ export const api = {
     );
   },
 
-  applyCommercial(payload: { type: string; contact?: string; companyName?: string; note?: string }) {
+  applyCommercial(payload: { type: string; contact?: string; companyName?: string; contactName?: string; email?: string; phone?: string; note?: string }) {
     return run(
       () => request('/commercial/apply', 'POST', payload),
-      () => ({ submitted: true, message: '已提交试点申请。当前功能属于商业化阶段规划，团队会线下联系开通。' }),
+      () => ({ submitted: true, message: '已提交开通申请。当前功能属于商业化阶段规划，团队会线下联系开通。' }),
     );
   },
 
@@ -2117,13 +2105,13 @@ export const api = {
     return run(
       () => request('/api-open/catalog', 'GET'),
       () => ({
-        notice: 'MVP试点版：接口服务规划/试点开放，后续接入API Key与签名校验。',
+        notice: '企业服务版：接口服务按审核结果开通，后续接入API Key与签名校验。',
         apis: [
           { name: '素材检测接口', path: '/api/tasks/:taskId/detect', status: '可开放' },
           { name: '规则检测接口', path: '/api/rules', status: '可开放' },
           { name: '报告结果接口', path: '/api/reports/:id', status: '可开放' },
           { name: '额度查询接口', path: '/api/subscription/usage', status: '可开放' },
-          { name: '调用记录接口', path: '/api/api-open/calls', status: 'MVP占位' },
+          { name: '调用记录接口', path: '/api/api-open/calls', status: '待开通' },
         ],
       }),
     );
@@ -2231,7 +2219,7 @@ export const api = {
         if (!review) throw new ApiError('复核任务不存在');
         const task = mockTasks.find((t) => t.id === review.taskId);
         const statusMap: Record<string, string> = { 通过发布: '复核通过', 退回优化: '退回优化', 暂缓发布: '暂缓发布' };
-        const decisionMap: Record<string, MockDecision> = { 通过发布: '可发布', 退回优化: '优化后发布', 暂缓发布: '暂缓发布' };
+        const decisionMap: Record<string, LocalDataDecision> = { 通过发布: '可发布', 退回优化: '优化后发布', 暂缓发布: '暂缓发布' };
         const taskStatusMap: Record<string, string> = { 通过发布: 'COMPLETED', 退回优化: 'PENDING_DETECTION', 暂缓发布: 'HOLD' };
 
         review.status = statusMap[payload.decision];
@@ -2374,7 +2362,7 @@ export const api = {
             usageCount: mockUsageRecords.length,
             batchCount: mockBatchTasks.length,
             suggestionAdoptionRate: null,
-            notice: 'MVP试点版统计：建议采纳率为占位指标。',
+            notice: '企业服务版统计：建议采纳率为统计指标。',
           },
         };
       },
@@ -2394,4 +2382,3 @@ export function getFriendlyError(error: unknown) {
   }
   return '操作失败，请稍后重试';
 }
-

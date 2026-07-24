@@ -1,6 +1,15 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { LogsService } from '../logs/logs.service';
+
+type ApplicationInput = {
+  type?: string;
+  companyName?: string;
+  contactName?: string;
+  email?: string;
+  phone?: string;
+  note?: string;
+};
 
 @Injectable()
 export class CommercialService {
@@ -9,46 +18,67 @@ export class CommercialService {
     private readonly logsService: LogsService,
   ) {}
 
+  private normalizeEmail(value?: string) {
+    return value?.trim().toLowerCase() || '';
+  }
+
   private async currentUser(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, role: true, companyName: true, email: true, username: true },
+      select: { id: true, role: true, companyName: true, companyId: true, email: true, username: true },
     });
     if (!user) throw new NotFoundException('用户不存在');
     return user;
   }
 
-  async apply(
-    userId: string,
-    body: { type?: string; contact?: string; companyName?: string; note?: string },
-  ) {
-    const me = await this.currentUser(userId);
+  async applyPublic(body: ApplicationInput) {
+    const companyName = body.companyName?.trim();
+    const contactName = body.contactName?.trim();
+    const email = this.normalizeEmail(body.email);
+    const phone = body.phone?.trim() || null;
+    const note = body.note?.trim() || null;
+
+    if (!companyName || !contactName || !email) {
+      throw new BadRequestException('请填写企业名称、联系人和邮箱');
+    }
+
+    const recent = await this.prisma.commercialApplication.findFirst({
+      where: {
+        email,
+        companyName,
+        status: { in: ['PENDING', 'IN_REVIEW'] },
+        createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+      },
+      select: { id: true },
+    });
+    if (recent) throw new ConflictException('申请已提交，请等待平台审核');
+
     const application = await this.prisma.commercialApplication.create({
       data: {
-        userId,
-        type: body.type?.trim() || 'GENERAL',
-        contact: body.contact?.trim() || me.email,
-        companyName: body.companyName?.trim() || me.companyName || null,
-        note: body.note?.trim() || null,
+        type: body.type?.trim() || 'ACCOUNT_OPENING',
+        companyName,
+        contactName,
+        contact: email,
+        email,
+        phone,
+        note,
       },
-    });
-
-    await this.logsService.createLog({
-      userId,
-      action: 'COMMERCIAL_APPLY',
-      targetType: 'COMMERCIAL',
-      targetId: application.id,
-      detail: {
-        type: application.type,
-        companyName: application.companyName,
-        contact: application.contact,
+      select: {
+        id: true,
+        type: true,
+        companyName: true,
+        contactName: true,
+        email: true,
+        phone: true,
+        status: true,
+        createdAt: true,
       },
     });
 
     return {
       submitted: true,
       application,
-      message: '申请已提交，管理员审核后会开通对应试点能力。',
+      message: '申请已提交，平台将在审核后联系开通账号',
     };
   }
 
@@ -70,7 +100,7 @@ export class CommercialService {
   async approve(userId: string, applicationId: string, body: { status: string; reviewNote?: string }) {
     const me = await this.currentUser(userId);
     if (me.role !== 'SYSTEM_ADMIN' && me.role !== 'ADMIN') {
-      throw new ForbiddenException('仅系统管理员可以审批商业申请');
+      throw new ForbiddenException('仅平台管理员可以审核企业申请');
     }
 
     const item = await this.prisma.commercialApplication.findUnique({ where: { id: applicationId } });

@@ -15,19 +15,21 @@ export class TasksService {
   ) {}
 
   private async buildTaskScope(userId: string, extra: Record<string, any> = {}) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { role: true, companyName: true } });
+    const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { role: true, companyId: true } });
     if (!user) return { id: '__never__' };
     const isSystemAdmin = user.role === 'SYSTEM_ADMIN' || user.role === 'ADMIN';
     if (isSystemAdmin) return { ...extra };
-    if (user.companyName) return { ...extra, user: { companyName: user.companyName } };
+    if (user.companyId) return { ...extra, companyId: user.companyId };
     return { ...extra, userId };
   }
 
   async create(userId: string, dto: CreateTaskDto) {
     await this.subscriptionService.assertCanDetect(userId, 1);
+    const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { companyId: true } });
     const task = await this.prisma.materialTask.create({
       data: {
         userId,
+        companyId: user?.companyId || undefined,
         sku: dto.sku,
         productName: dto.productName,
         category: dto.category,
@@ -58,7 +60,7 @@ export class TasksService {
       quotaUsed: usage.quotaUsed,
       quotaRemaining: usage.quotaRemaining,
       planName: usage.subscription.plan.name,
-      message: usage.quotaRemaining > 0 ? '额度充足' : '当前套餐检测额度不足，请升级套餐或联系团队开通试点额度',
+      message: usage.quotaRemaining > 0 ? '额度充足' : '当前套餐检测额度不足，请升级套餐或联系团队开通额度',
     };
   }
 

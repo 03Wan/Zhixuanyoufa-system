@@ -13,7 +13,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_SECRET', 'dev_secret'),
+      secretOrKey: configService.getOrThrow<string>('JWT_SECRET'),
     });
   }
 
@@ -26,9 +26,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         username: true,
         role: true,
         companyName: true,
+        companyId: true,
       },
     });
-    if (!user) throw new UnauthorizedException('用户不存在或登录状态已失效');
+    if (!user) throw new UnauthorizedException('登录状态已失效，请重新登录');
     return user;
   }
 }

@@ -9,8 +9,8 @@
       <AppGlassSurface as="section" v-else-if="error" class="card state error">{{ error }}</AppGlassSurface>
       <section v-else class="plan-grid">
         <AppGlassSurface as="article" class="card plan-card" v-for="plan in plans" :key="plan.id">
-          <div class="plan-head">
-            <h3>{{ plan.name }}</h3>
+          <div :class="['plan-head', { 'is-current': selectedPlan === plan.name }]">
+            <div><h3>{{ plan.name }}</h3><span v-if="selectedPlan === plan.name" class="selected-plan">当前套餐</span></div>
             <strong>{{ plan.priceText }}</strong>
           </div>
           <p class="plan-desc">{{ plan.customerType }}</p>
@@ -30,19 +30,31 @@
           <div class="feature-tags">
             <span v-for="(f, idx) in plan.features?.list || []" :key="idx">{{ f }}</span>
           </div>
-          <div class="actions">
-            <button class="btn btn-primary" @click="choose(plan)">{{ primaryAction(plan.name) }}</button>
-            <button class="btn btn-secondary" @click="openCommercial(plan, 'API服务')">申请API服务</button>
-            <button class="btn btn-secondary" @click="openCommercial(plan, '联系定制')">联系定制</button>
+          <div class="plan-actions">
+            <button class="btn btn-primary plan-primary-action" :disabled="submitting || selectedPlan === plan.name" @click="choose(plan)">{{ submitting ? '正在提交…' : selectedPlan === plan.name ? '当前套餐' : primaryAction(plan.name) }}</button>
+            <div v-if="selectedPlan !== plan.name" class="plan-secondary-actions">
+              <button :disabled="submitting" @click="submitCommercial(plan, 'API服务')">申请 API 服务</button>
+              <span aria-hidden="true"></span>
+              <button :disabled="submitting" @click="submitCommercial(plan, '联系定制')">咨询定制方案</button>
+            </div>
           </div>
         </AppGlassSurface>
       </section>
 
       <div v-if="modal.open" class="modal-mask" @click.self="modal.open=false">
         <AppGlassSurface as="section" class="card modal-panel">
-          <h3 class="section-title">商业化阶段能力说明</h3>
+          <h3 class="section-title">{{ modal.type === 'subscription' ? '套餐已更新' : '服务申请已提交' }}</h3>
           <p>{{ modal.message }}</p>
+          <div v-if="modal.type === 'application' && !modal.submitted" class="application-form">
+            <label>企业名称<input v-model.trim="applicationForm.companyName" placeholder="请输入企业名称" /></label>
+            <label>联系人<input v-model.trim="applicationForm.contactName" placeholder="请输入联系人姓名" /></label>
+            <label>邮箱<input v-model.trim="applicationForm.email" type="email" placeholder="name@company.com" /></label>
+          </div>
+          <div v-if="modal.planName" class="result-summary"><b>{{ modal.planName }}</b><span>{{ modal.type === 'subscription' ? '已成为当前套餐，权益和额度已同步更新。' : '申请已进入企业申请列表，系统管理员会收到通知。' }}</span></div>
           <div class="actions" style="justify-content:flex-end;">
+            <button v-if="modal.type === 'subscription'" class="btn btn-primary" @click="goMyPlan">查看我的套餐</button>
+            <button v-else-if="modal.submitted" class="btn btn-primary" @click="goApplications">查看申请进度</button>
+            <button v-else class="btn btn-primary" :disabled="submitting" @click="submitApplication">{{ submitting ? '提交中…' : '提交申请' }}</button>
             <button class="btn btn-secondary" @click="modal.open=false">关闭</button>
           </div>
         </AppGlassSurface>
@@ -55,13 +67,19 @@
 
 import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import AppShell from '@/layouts/AppShell.vue';
-import { api, getFriendlyError } from '@/lib/api';
+import { api, getFriendlyError, getUserProfile } from '@/lib/api';
 
 const plans = ref<any[]>([]);
-const modal = ref({ open: false, message: '' });
+const modal = ref({ open: false, message: '', planName: '', type: 'subscription' as 'subscription' | 'application', submitted: false });
 const loading = ref(true);
 const error = ref('');
+const selectedPlan = ref('');
+const submitting = ref(false);
+const router = useRouter();
+const applicationForm = ref({ companyName: '', contactName: '', email: '' });
+const applicationType = ref('');
 
 function yesNo(v: boolean) { return v ? '支持' : '不支持/受限'; }
 function primaryAction(name: string) {
@@ -72,18 +90,35 @@ function primaryAction(name: string) {
 }
 
 async function choose(plan: any) {
-  if (plan.name.includes('定制版') || plan.name.includes('API接口版')) {
-    await openCommercial(plan, primaryAction(plan.name));
-    return;
-  }
-  const result: any = await api.selectSubscription(plan.name);
-  modal.value = { open: true, message: result?.notice || `已提交 ${plan.name} 的套餐变更申请。` };
+  submitting.value = true;
+  try {
+    if (plan.name.includes('定制版') || plan.name.includes('API接口版')) return await openCommercial(plan, primaryAction(plan.name));
+    const result: any = await api.selectSubscription(plan.name);
+    selectedPlan.value = plan.name;
+    modal.value = { open: true, planName: plan.name, type: 'subscription', submitted: true, message: result?.notice || `已选择 ${plan.name}，当前套餐权益已刷新。` };
+  } catch (e) { modal.value = { open: true, planName: '', type: 'subscription', submitted: false, message: getFriendlyError(e) }; } finally { submitting.value = false; }
 }
 
-async function openCommercial(plan: any, type: string) {
-  await api.applyCommercial({ type, note: `${plan.name} - ${type}` });
-  modal.value = { open: true, message: `已提交 ${plan.name} 的${type}申请。当前为商业化阶段规划能力，团队将线下联系。` };
+function openCommercial(plan: any, type: string) {
+  const user = getUserProfile() as any;
+  applicationForm.value = { companyName: user?.companyName || '', contactName: user?.username || '', email: user?.email || '' };
+  applicationType.value = type;
+  modal.value = { open: true, planName: plan.name, type: 'application', submitted: false, message: `请填写申请 ${plan.name}${type} 所需的联系人信息。` };
 }
+async function submitCommercial(plan: any, type: string) {
+  openCommercial(plan, type);
+}
+async function submitApplication() {
+  const { companyName, contactName, email } = applicationForm.value;
+  if (!companyName || !contactName || !email) { modal.value.message = '请填写企业名称、联系人和邮箱。'; return; }
+  submitting.value = true;
+  try {
+    const result: any = await api.applyCommercial({ type: applicationType.value, companyName, contactName, email, note: `${modal.value.planName} - ${applicationType.value}` });
+    modal.value = { ...modal.value, submitted: true, message: result?.message || '申请已提交，系统管理员会收到通知。' };
+  } catch (e) { modal.value.message = getFriendlyError(e); } finally { submitting.value = false; }
+}
+function goMyPlan() { modal.value.open = false; router.push('/my-plan'); }
+function goApplications() { modal.value.open = false; router.push('/applications'); }
 
 onMounted(async () => {
   loading.value = true;
@@ -91,6 +126,8 @@ onMounted(async () => {
   try {
     const res: any = await api.getPlans();
     plans.value = res.plans || [];
+    const usage: any = await api.getSubscriptionUsage();
+    selectedPlan.value = usage?.subscription?.plan?.name || '';
   } catch (e) {
     error.value = getFriendlyError(e);
   } finally {
@@ -103,8 +140,15 @@ onMounted(async () => {
 .plan-grid { display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .plan-card { display: grid; gap: 10px; }
 .plan-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+.plan-head.is-current { padding-bottom: 8px; border-bottom: 1px solid rgba(16, 185, 129, .28); }
 .plan-head h3 { margin: 0; font-size: 20px; }
 .plan-head strong { color: var(--brand-1); text-align: right; }
+.selected-plan { display: inline-flex; margin-top: 6px; padding: 2px 7px; border-radius: 999px; color: #047857; background: rgba(16, 185, 129, .12); font-size: 12px; font-weight: 700; }
+.result-summary { display: grid; gap: 4px; margin: 16px 0; padding: 12px; border-radius: 12px; color: var(--text); background: rgba(58, 121, 255, .09); border: 1px solid rgba(58, 121, 255, .2); }
+.result-summary span { color: var(--muted); font-size: 13px; }
+.application-form { display: grid; gap: 12px; margin: 18px 0; }
+.application-form label { display: grid; gap: 6px; color: var(--text); font-size: 13px; font-weight: 700; }
+.application-form input { width: 100%; border: 1px solid var(--input-border); border-radius: 10px; padding: 10px 12px; color: var(--text); background: var(--input); font: inherit; }
 .plan-desc { margin: 0; color: var(--muted); min-height: 42px; }
 .plan-meta, .feature-tags { display: flex; gap: 6px; flex-wrap: wrap; }
 .plan-meta span, .feature-tags span, .rights-grid span {
@@ -120,6 +164,13 @@ onMounted(async () => {
 .center-loading { min-height: 360px; }
 .notice { color: #b45309; margin: 6px 0 0; }
 .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.plan-actions { display: grid; gap: 8px; margin-top: 4px; }
+.plan-primary-action { width: 100%; min-height: 44px; }
+.plan-secondary-actions { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.plan-secondary-actions button { padding: 3px 0; border: 0; background: transparent; color: var(--brand-1); font: inherit; font-size: 13px; cursor: pointer; }
+.plan-secondary-actions button:hover { color: var(--brand-0); text-decoration: underline; }
+.plan-secondary-actions button:disabled { opacity: .55; cursor: wait; text-decoration: none; }
+.plan-secondary-actions span { width: 1px; height: 13px; background: var(--border); }
 .modal-mask { position: fixed; inset: 0; background: rgba(15,23,42,.36); display: grid; place-items: center; z-index: 100; }
 .modal-panel { width: fit-content; min-width: min(360px, calc(100vw - 32px)); max-width: min(680px, calc(100vw - 32px)); }
 @media (max-width: 1200px) { .plan-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

@@ -20,7 +20,7 @@ export const PLAN_SEEDS: PlanSeed[] = [
   {
     name: '体验包/按次检测',
     customerType: '新客户、低频客户、试用客户',
-    priceText: '99元/次 或 299元/10次',
+    priceText: '19元/次 或 99元/10次',
     billingCycle: '按次',
     quota: 10,
     supportedMarkets: 1,
@@ -37,7 +37,7 @@ export const PLAN_SEEDS: PlanSeed[] = [
   {
     name: '基础版',
     customerType: '成长型中小卖家、学生实训店铺',
-    priceText: '499元/月 或 4999元/年',
+    priceText: '99元/月 或 999元/年',
     billingCycle: '月/年',
     quota: 200,
     supportedMarkets: 3,
@@ -54,7 +54,7 @@ export const PLAN_SEEDS: PlanSeed[] = [
   {
     name: '专业版',
     customerType: '高频上新卖家、精品店铺、内容运营团队',
-    priceText: '1999元/月 或 19999元/年',
+    priceText: '399元/月 或 3999元/年',
     billingCycle: '月/年',
     quota: 1000,
     supportedMarkets: 8,
@@ -71,7 +71,7 @@ export const PLAN_SEEDS: PlanSeed[] = [
   {
     name: '企业版',
     customerType: '代运营机构、大型卖家、多店铺团队',
-    priceText: '5万—8万元/年',
+    priceText: '9999—19999元/年',
     billingCycle: '年',
     quota: 20000,
     supportedMarkets: 20,
@@ -88,7 +88,7 @@ export const PLAN_SEEDS: PlanSeed[] = [
   {
     name: '定制版',
     customerType: '品牌企业、产业带机构、外贸服务机构',
-    priceText: '10万—30万元/项目',
+    priceText: '3万—10万元/项目',
     billingCycle: '项目制',
     quota: null,
     supportedMarkets: null,
@@ -105,7 +105,7 @@ export const PLAN_SEEDS: PlanSeed[] = [
   {
     name: 'API接口版',
     customerType: 'ERP、服务商平台、跨境工具平台',
-    priceText: '5万—10万元/年 或 按调用量',
+    priceText: '9999元/年起 或 按调用量',
     billingCycle: '年/调用量',
     quota: null,
     supportedMarkets: null,

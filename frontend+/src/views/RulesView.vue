@@ -6,18 +6,27 @@
           <h2 class="section-title">规则列表</h2>
           <div class="actions">
             <button class="btn btn-secondary" @click="openCreateModal">新增规则</button>
+            <button class="btn btn-secondary" @click="triggerImport">一键导入规则</button>
             <button class="btn btn-secondary" :disabled="loading" @click="loadAll">{{ loading ? '刷新中' : '刷新' }}</button>
           </div>
+        </div>
+
+        <input ref="importInput" class="hidden-input" type="file" accept="application/json,.json" @change="importRules" />
+        <div v-if="rules.length" class="rule-filters">
+          <button :class="['filter-chip', { active: filters.type === '' }]" @click="filters.type = ''">全部 {{ rules.length }}</button>
+          <button v-for="item in categories" :key="item.value" :class="['filter-chip', { active: filters.type === item.value }]" @click="filters.type = item.value">{{ item.label }} {{ item.count }}</button>
+          <select v-model="filters.platform" aria-label="按平台筛选"><option value="">全部平台</option><option v-for="item in platforms" :key="item" :value="item">{{ item }}</option></select>
+          <select v-model="filters.risk" aria-label="按风险筛选"><option value="">全部风险</option><option value="LOW">低风险</option><option value="MEDIUM">中风险</option><option value="HIGH">高风险</option></select>
         </div>
 
         <section v-if="loading" class="state loading">规则加载中</section>
         <p v-else-if="error" class="state error">{{ error }}</p>
 
-        <div class="table-wrap" v-else-if="rules.length">
+        <div class="table-wrap" v-else-if="filteredRules.length">
           <table class="table rules-table">
             <thead><tr><th>名称</th><th>类型</th><th>平台</th><th>市场</th><th>风险</th><th>规则内容</th><th>版本</th><th>状态</th><th class="actions-col">操作</th></tr></thead>
             <tbody>
-              <tr v-for="r in rules" :key="r.id">
+              <tr v-for="r in filteredRules" :key="r.id">
                 <td>{{ r.name }}</td>
                 <td>{{ typeText(r.type) }}</td>
                 <td>{{ r.platform || '-' }}</td>
@@ -36,7 +45,7 @@
             </tbody>
           </table>
         </div>
-        <p v-else class="empty">暂无规则数据</p>
+        <p v-else class="empty">没有符合筛选条件的规则</p>
       </AppGlassSurface>
     </section>
 
@@ -90,7 +99,7 @@
 <script setup lang="ts">
 
 import AppGlassSurface from "@/components/AppGlassSurface.vue";
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
 import { api, getFriendlyError } from '@/lib/api';
 import { notify } from '@/lib/dialog';
@@ -100,8 +109,20 @@ const selectedRule = ref<any>(null);
 const versions = ref<any[]>([]);
 const loading = ref(false);
 const error = ref('');
+const filters = ref({ type: '', platform: '', risk: '' });
+const importInput = ref<HTMLInputElement | null>(null);
 const modal = ref<{ type: '' | 'create' | 'edit' | 'detail' | 'version' }>({ type: '' });
 const editing = ref<any>({ mode: 'create', ruleId: '', form: emptyForm() });
+
+const categories = computed(() => ['PLATFORM', 'MARKET_CULTURE', 'CATEGORY']
+  .map((value) => ({ value, label: typeText(value), count: rules.value.filter((rule) => String(rule.type).toUpperCase() === value).length }))
+  .filter((item) => item.count));
+const platforms = computed(() => [...new Set(rules.value.map((rule) => rule.platform).filter(Boolean))].sort());
+const filteredRules = computed(() => rules.value.filter((rule) =>
+  (!filters.value.type || String(rule.type).toUpperCase() === filters.value.type)
+  && (!filters.value.platform || rule.platform === filters.value.platform)
+  && (!filters.value.risk || String(rule.riskLevel).toUpperCase() === filters.value.risk),
+));
 
 function emptyForm() { return { name: '', type: '', platform: '', market: '', riskLevel: 'MEDIUM', status: '启用', keywordsText: '', suggestion: '' }; }
 function time(v?: string) { if (!v) return '-'; const d = new Date(v); if (Number.isNaN(d.getTime())) return '-'; return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; }
@@ -110,6 +131,30 @@ function riskText(v?: string) { const map: Record<string, string> = { LOW: '低�
 function statusText(status?: string, enabled?: boolean) { if (status === '启用' || status === '停用') return status; if (enabled === false) return '停用'; return '启用'; }
 function asText(value: unknown) { if (Array.isArray(value)) return value.length ? value.join('、') : '-'; if (typeof value === 'string') return value || '-'; if (value && typeof value === 'object') return JSON.stringify(value); return '-'; }
 function summarizeRule(rule: any) { const keyword = Array.isArray(rule.keywords) && rule.keywords.length ? `关键词：${rule.keywords.join('、')}` : ''; return keyword || asText(rule.suggestion || rule.description); }
+function triggerImport() { importInput.value?.click(); }
+async function importRules(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
+  try {
+    const parsed = JSON.parse(await file.text());
+    const items = Array.isArray(parsed) ? parsed : parsed.rules;
+    if (!Array.isArray(items) || !items.length) throw new Error('导入文件须为规则数组，或包含 rules 数组。');
+    const payloads = items.map((item: any) => ({
+      name: String(item.name || '').trim(), type: String(item.type || '').trim(), platform: item.platform || null,
+      market: item.market || null, riskLevel: String(item.riskLevel || 'MEDIUM').toUpperCase(),
+      enabled: item.enabled !== false, status: item.status || (item.enabled === false ? '停用' : '启用'),
+      keywords: Array.isArray(item.keywords) ? item.keywords : String(item.keywords || '').split(',').map((value) => value.trim()).filter(Boolean),
+      suggestion: item.suggestion || item.description || '',
+    }));
+    if (payloads.some((item) => !item.name || !item.type)) throw new Error('每条规则都必须包含 name 和 type。');
+    await Promise.all(payloads.map((item) => api.createRule(item)));
+    await loadAll();
+    await notify(`已成功导入 ${payloads.length} 条规则。`);
+  } catch (error) {
+    await notify(error instanceof Error ? error.message : '规则导入失败，请检查 JSON 格式。');
+  } finally { input.value = ''; }
+}
 
 async function loadAll() { loading.value = true; error.value = ''; try { rules.value = await api.getRules(); } catch (e) { error.value = getFriendlyError(e); } finally { loading.value = false; } }
 function closeModal() { modal.value.type = ''; }
@@ -134,6 +179,11 @@ onMounted(loadAll);
 <style scoped>
 .block { display: grid; gap: 10px; }
 .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.hidden-input { display: none; }
+.rule-filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; padding: 10px; border: 1px solid var(--border); border-radius: 14px; background: var(--card-strong); }
+.filter-chip { border: 1px solid var(--border); border-radius: 999px; padding: 6px 10px; background: transparent; color: var(--muted); cursor: pointer; }
+.filter-chip.active { color: #fff; border-color: var(--brand-1); background: var(--brand-1); }
+.rule-filters select { width: auto; min-width: 116px; padding: 7px 10px; }
 .empty { color: var(--muted); padding: 8px 2px; }
 .table-wrap { overflow-x: auto; }
 .rules-table { min-width: 1350px; }

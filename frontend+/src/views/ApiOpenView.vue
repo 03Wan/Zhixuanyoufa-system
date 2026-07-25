@@ -24,7 +24,7 @@
 import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { onMounted, ref } from 'vue';
 import AppShell from '@/layouts/AppShell.vue';
-import { api } from '@/lib/api';
+import { api, getFriendlyError, getUserProfile } from '@/lib/api';
 import { notify } from '@/lib/dialog';
 
 const data = ref<any>({ apis: [] });
@@ -34,8 +34,17 @@ const saving = ref(false);
 async function apply() {
   saving.value = true;
   try {
-    await api.applyCommercial({ type: 'API接口服务', note: 'API页面提交' });
-    await notify('已提交API服务申请。');
+    const user = getUserProfile() as any;
+    const result: any = await api.applyCommercial({
+      type: 'API接口服务',
+      companyName: user?.companyName || '待确认企业',
+      contactName: user?.username || '当前账号',
+      email: user?.email || '',
+      note: 'API页面提交',
+    });
+    await notify(result?.message || '已提交API服务申请，管理员会收到通知。');
+  } catch (error) {
+    await notify(getFriendlyError(error));
   } finally {
     saving.value = false;
   }

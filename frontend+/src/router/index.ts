@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import PublicHomeView from "@/views/PublicHomeView.vue";
 import PublicInfoView from "@/views/PublicInfoView.vue";
+import PlatformsView from "@/views/PlatformsView.vue";
+import AboutProjectView from "@/views/AboutProjectView.vue";
 import TaskNewView from "@/views/TaskNewView.vue";
 import TaskDetailView from "@/views/TaskDetailView.vue";
 import TaskResultView from "@/views/TaskResultView.vue";
@@ -36,6 +38,8 @@ const router = createRouter({
     { path: "/", redirect: "/home-public" },
     { path: "/home-public", component: PublicHomeView },
     { path: "/product-capabilities", component: PublicInfoView },
+    { path: "/platforms", component: PlatformsView },
+    { path: "/about-project", component: AboutProjectView },
     { path: "/solutions", component: PublicInfoView },
     { path: "/rule-library", component: PublicInfoView },
     { path: "/customer-cases", component: PublicInfoView },

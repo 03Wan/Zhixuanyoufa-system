@@ -27,14 +27,14 @@
             </thead>
             <tbody>
               <tr v-for="item in rows" :key="item.reviewId || item.id">
-                <td>{{ item.taskNo || '-' }}</td>
+                <td>{{ taskNumber(item) }}</td>
                 <td>{{ item.productName || '-' }}</td>
                 <td>{{ item.platform || '-' }}</td>
                 <td>{{ item.market || '-' }}</td>
-                <td><span :class="['tag', riskClass(item.riskLevel)]">{{ item.riskLevel || '-' }}</span></td>
-                <td>{{ item.systemDecision || '-' }}</td>
+                <td><span :class="['tag', riskClass(item.riskLevel)]">{{ riskLabel(item.riskLevel) }}</span></td>
+                <td>{{ decisionLabel(item.systemDecision) }}</td>
                 <td>{{ toDateTime(item.submittedAt) }}</td>
-                <td><span :class="['tag', statusClass(item.status)]">{{ item.status || '-' }}</span></td>
+                <td><span :class="['tag', statusClass(item.status)]">{{ statusLabel(item.status) }}</span></td>
                 <td><button class="btn btn-primary" @click="openDetail(item.reviewId || item.id)">进入复核</button></td>
               </tr>
             </tbody>
@@ -77,8 +77,26 @@ function riskClass(level?: string) {
   return 'tag-success';
 }
 
+function taskNumber(item: any) {
+  if (item.taskNo) return item.taskNo;
+  const id = String(item.taskId || item.reviewId || item.id || '');
+  return id ? `复核-${id.slice(-6).toUpperCase()}` : '待生成';
+}
+function riskLabel(value?: string) {
+  const map: Record<string, string> = { LOW: '低风险', MEDIUM: '中风险', HIGH: '高风险', CRITICAL: '严重风险' };
+  return map[String(value || '').toUpperCase()] || value || '待检测';
+}
+function decisionLabel(value?: string) {
+  const map: Record<string, string> = { APPROVE: '可发布', REJECT: '人工复核', OPTIMIZE_AND_REVIEW: '优化后发布', HOLD: '暂缓发布' };
+  return map[String(value || '').toUpperCase()] || value || '待检测';
+}
+function statusLabel(value?: string) {
+  const map: Record<string, string> = { PENDING: '待复核', IN_PROGRESS: '复核中', APPROVED: '已通过', RETURNED: '退回优化', HOLD: '暂缓发布' };
+  return map[String(value || '').toUpperCase()] || value || '待处理';
+}
+
 function statusClass(status?: string) {
-  const v = String(status || '');
+  const v = statusLabel(status);
   if (v.includes('通过')) return 'tag-success';
   if (v.includes('暂缓')) return 'tag-danger';
   if (v.includes('待复核')) return 'tag-warning';

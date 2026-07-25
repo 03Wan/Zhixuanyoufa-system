@@ -68,7 +68,7 @@
                   <td>{{ task.productName }}</td>
                   <td>{{ task.platform }}</td>
                   <td><span :class="['tag', riskClass(task.riskLevel)]">{{ task.riskLevel }}</span></td>
-                  <td>{{ task.decision }}</td>
+                  <td>{{ decisionLabel(task.decision) }}</td>
                   <td><button class="btn btn-secondary" @click="goResult(task.id)">查看结果</button></td>
                 </tr>
               </tbody>
@@ -187,6 +187,16 @@ function riskClass(level?: string) {
   if (value.includes("高")) return "tag-danger";
   if (value.includes("中")) return "tag-warning";
   return "tag-success";
+}
+
+function decisionLabel(value?: string) {
+  const map: Record<string, string> = {
+    APPROVE: '可发布',
+    REJECT: '人工复核',
+    OPTIMIZE_AND_REVIEW: '优化后发布',
+    HOLD: '暂缓发布',
+  };
+  return map[String(value || '').toUpperCase()] || value || '-';
 }
 
 function goTasks() { router.push("/tasks/new"); }

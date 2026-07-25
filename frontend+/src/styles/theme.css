@@ -87,6 +87,17 @@ html.dark .modal-panel textarea {
 html.dark .modal-panel input::placeholder,
 html.dark .modal-panel textarea::placeholder { color: #b8c8e4; opacity: 1; }
 
+/* Public login/application forms retain a light card in dark mode. */
+html.dark .task-modal input,
+html.dark .task-modal select,
+html.dark .task-modal textarea {
+  color: #243653 !important;
+  background: #fff !important;
+  border-color: #ccd8eb !important;
+}
+html.dark .task-modal input::placeholder,
+html.dark .task-modal textarea::placeholder { color: #7b8799 !important; opacity: 1; }
+
 * { box-sizing: border-box; }
 
 body {
@@ -190,6 +201,22 @@ a { color: inherit; text-decoration: none; }
 .input:focus, select:focus, textarea:focus {
   border-color: var(--brand-1);
   box-shadow: 0 0 0 3px rgba(58, 121, 255, 0.18);
+}
+
+/* The public contact dialog is intentionally always a light, readable card. */
+html.dark .landing-page .task-modal.contact-modal {
+  background: #fff !important;
+  color: #0a1d40 !important;
+  border: 1px solid #cfdced !important;
+}
+html.dark .landing-page .task-modal.contact-modal h2,
+html.dark .landing-page .task-modal.contact-modal p,
+html.dark .landing-page .task-modal.contact-modal b { color: #0a1d40 !important; }
+html.dark .landing-page .task-modal.contact-modal .eyebrow,
+html.dark .landing-page .task-modal.contact-modal .contact-email span { color: #1358df !important; }
+html.dark .landing-page .task-modal.contact-modal .contact-email {
+  background: #f4f7fd !important;
+  border-color: #d6e0ef !important;
 }
 
 .row-between { display: flex; justify-content: space-between; align-items: center; gap: 8px; }

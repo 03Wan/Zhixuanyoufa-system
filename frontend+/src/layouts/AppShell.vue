@@ -599,12 +599,11 @@ function toggleGroup(key: string) {
 .logout-btn:hover { border-color: color-mix(in srgb, #ef4444 54%, var(--border) 46%); }
 .toast-stack {
   position: fixed;
-  top: 14px;
-  left: 50%;
-  transform: translateX(-50%);
+  inset: 0;
   z-index: 12000;
   display: grid;
-  gap: 8px;
+  place-content: center;
+  gap: 10px;
   pointer-events: none;
 }
 .toast-item {
@@ -612,10 +611,10 @@ function toggleGroup(key: string) {
   border: 1px solid var(--border);
   background: var(--card-strong);
   color: var(--text);
-  min-width: 180px;
+  min-width: 220px;
   max-width: min(70vw, 560px);
-  padding: 10px 14px;
-  box-shadow: var(--glass-shadow-soft);
+  padding: 14px 20px;
+  box-shadow: 0 18px 46px rgba(12, 31, 66, .24);
   text-align: center;
   font-weight: 700;
   animation: toastFadeIn 0.18s ease-out;

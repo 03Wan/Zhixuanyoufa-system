@@ -6,7 +6,7 @@ set "ROOT_DIR=%~dp0"
 set "BACKEND_DIR=%ROOT_DIR%backend"
 set "FRONTEND_DIR=%ROOT_DIR%frontend+"
 set "LOG_FILE=%ROOT_DIR%startup.log"
-set "FRONTEND_URL=http://localhost:5174/home-public"
+set "FRONTEND_URL=http://localhost:5073/home-public"
 
 call :log "==== START %date% %time% ===="
 call :log "ROOT_DIR=%ROOT_DIR%"
@@ -44,11 +44,11 @@ if not exist "%FRONTEND_DIR%\.env" (
   )
 )
 
-call :step "[1/8] Checking ports 3001/5174..."
-call :check_port 3001
-if errorlevel 1 call :fatal "Port 3001 is already in use. Please free it first."
-call :check_port 5174
-if errorlevel 1 call :fatal "Port 5174 is already in use. Please free it first."
+call :step "[1/8] Checking ports 3000/5073..."
+call :check_port 3000
+if errorlevel 1 call :fatal "Port 3000 is already in use. Please free it first."
+call :check_port 5073
+if errorlevel 1 call :fatal "Port 5073 is already in use. Please free it first."
 
 call :step "[2/8] Installing backend dependencies..."
 cd /d "%BACKEND_DIR%" || call :fatal "Cannot enter backend directory."
@@ -65,13 +65,13 @@ call npm.cmd install --no-audit --no-fund >> "%LOG_FILE%" 2>&1
 if errorlevel 1 call :fatal "Frontend dependency installation failed. See startup.log"
 
 call :step "[5/8] Starting backend service window..."
-start "ZYUF-Backend" cmd /k "cd /d ""%BACKEND_DIR%"" && set PORT=3001 && npm.cmd run start:dev"
+start "ZYUF-Backend" cmd /k "cd /d ""%BACKEND_DIR%"" && set PORT=3000 && npm.cmd run start:dev"
 
 call :step "[6/8] Waiting backend startup..."
 timeout /t 4 /nobreak >nul
 
 call :step "[7/8] Starting frontend service window..."
-start "ZYUF-Frontend" cmd /k "cd /d ""%FRONTEND_DIR%"" && npm.cmd run dev -- --host 0.0.0.0 --port 5174"
+start "ZYUF-Frontend" cmd /k "cd /d ""%FRONTEND_DIR%"" && npm.cmd run dev -- --host 0.0.0.0 --port 5073"
 
 call :step "[8/8] Opening browser..."
 timeout /t 4 /nobreak >nul

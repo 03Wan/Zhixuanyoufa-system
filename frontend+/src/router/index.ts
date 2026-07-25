@@ -20,6 +20,7 @@ import CompaniesView from "@/views/CompaniesView.vue";
 import CustomersView from "@/views/CustomersView.vue";
 import ApiOpenView from "@/views/ApiOpenView.vue";
 import ReportTemplatesView from "@/views/ReportTemplatesView.vue";
+import CommercialApplicationsView from "@/views/CommercialApplicationsView.vue";
 import PrivacyView from "@/views/PrivacyView.vue";
 import TermsView from "@/views/TermsView.vue";
 import ForbiddenView from "@/views/ForbiddenView.vue";
@@ -49,6 +50,7 @@ const router = createRouter({
     { path: "/customers", component: CustomersView, meta: { auth: true, roles: ["ENTERPRISE_ADMIN", "OPERATOR", "MANAGER", "SYSTEM_ADMIN"] as UserRole[] } },
     { path: "/api-open", component: ApiOpenView, meta: { auth: true } },
     { path: "/report-templates", component: ReportTemplatesView, meta: { auth: true, roles: ["ENTERPRISE_ADMIN", "SYSTEM_ADMIN"] as UserRole[] } },
+    { path: "/applications", component: CommercialApplicationsView, meta: { auth: true, roles: ["ENTERPRISE_ADMIN", "MANAGER", "SYSTEM_ADMIN"] as UserRole[] } },
     { path: "/dashboard", component: DashboardView, meta: { auth: true, roles: ["MANAGER", "SYSTEM_ADMIN"] as UserRole[] } },
     { path: "/login", redirect: () => ({ path: "/home-public", query: { auth: "login" } }) },
     { path: "/register", redirect: () => ({ path: "/home-public", query: { auth: "register" } }) },

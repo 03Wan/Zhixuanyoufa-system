@@ -23,6 +23,7 @@ import { ApiOpenModule } from './api-open/api-open.module';
 import { ReportTemplatesModule } from './report-templates/report-templates.module';
 import { ModelConfigModule } from './model-config/model-config.module';
 import { HealthModule } from './health/health.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { HealthModule } from './health/health.module';
     ReportTemplatesModule,
     ModelConfigModule,
     HealthModule,
+    NotificationsModule,
   ],
 })
 export class AppModule {}

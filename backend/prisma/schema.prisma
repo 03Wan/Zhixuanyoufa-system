@@ -85,6 +85,7 @@ model User {
   apiCallLogs            ApiCallLog[]
   modelConfig            ModelConfig?
   commercialApplications CommercialApplication[]
+  notifications          Notification[]
 }
 
 model MaterialTask {
@@ -485,4 +486,21 @@ model CommercialApplication {
   @@index([userId, createdAt])
   @@index([email, createdAt])
   @@index([status, createdAt])
+}
+
+model Notification {
+  id           String   @id @default(cuid())
+  userId       String
+  type         String
+  title        String
+  content      String   @db.Text
+  resourceType String?
+  resourceId   String?
+  readAt       DateTime?
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt, createdAt])
+  @@index([resourceType, resourceId])
 }

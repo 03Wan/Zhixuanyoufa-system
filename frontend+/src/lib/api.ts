@@ -2,7 +2,7 @@
 type RequestMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
 export type RegisterPayload = { username: string; email: string; password: string; companyName?: string };
-export type LoginPayload = { email: string; password: string };
+export type LoginPayload = { email: string; password: string; role: string };
 export type ForgotPasswordPayload = { email: string };
 export type ResetPasswordPayload = { email: string; token: string; newPassword: string };
 export type ModelRuntimeConfig = { enabled?: boolean; apiUrl?: string; apiKey?: string; modelName?: string };
@@ -1245,6 +1245,9 @@ export const api = {
         if (password !== '123456') {
           throw new ApiError('账号或密码错误');
         }
+        if (payload.role !== resolveLocalDataRoleByEmail(email)) {
+          throw new ApiError('所选角色与账号角色不一致');
+        }
         return createLocalDataLoginResult(payload);
       },
     );
@@ -1870,8 +1873,27 @@ export const api = {
   applyCommercial(payload: { type: string; contact?: string; companyName?: string; contactName?: string; email?: string; phone?: string; note?: string }) {
     return run(
       () => request('/commercial/apply', 'POST', payload),
-      () => ({ submitted: true, message: '已提交开通申请。当前功能属于商业化阶段规划，团队会线下联系开通。' }),
+      () => ({ submitted: true, message: '申请已提交，团队将尽快联系开通。' }),
     );
+  },
+
+  getCommercialApplications() {
+    return run(() => request<any[]>('/commercial/applications', 'GET'), () => []);
+  },
+
+  reviewCommercialApplication(applicationId: string, status: 'APPROVED' | 'REJECTED', reviewNote?: string) {
+    return run(
+      () => request(`/commercial/applications/${applicationId}`, 'PATCH', { status, reviewNote }),
+      () => ({ id: applicationId, status, reviewNote }),
+    );
+  },
+
+  getNotifications() {
+    return run(() => request<any[]>('/notifications?unreadOnly=true', 'GET'), () => []);
+  },
+
+  markNotificationsRead() {
+    return run(() => request('/notifications/read-all', 'PATCH'), () => ({ count: 0 }));
   },
 
   getCompanies() {

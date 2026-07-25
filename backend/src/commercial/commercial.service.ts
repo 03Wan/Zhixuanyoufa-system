@@ -1,6 +1,7 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { LogsService } from '../logs/logs.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 type ApplicationInput = {
   type?: string;
@@ -16,6 +17,7 @@ export class CommercialService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly logsService: LogsService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   private normalizeEmail(value?: string) {
@@ -75,9 +77,37 @@ export class CommercialService {
       },
     });
 
+    const admins = await this.prisma.user.findMany({
+      where: { role: 'SYSTEM_ADMIN' },
+      select: { id: true },
+    });
+    await Promise.allSettled(
+      admins.map((admin) =>
+        Promise.all([
+          this.notificationsService.create({
+            userId: admin.id,
+            type: 'COMMERCIAL_APPLY',
+            title: '收到新的企业账号申请',
+            content: `${companyName}（${contactName}，${email}）提交了企业账号申请。`,
+            resourceType: 'COMMERCIAL',
+            resourceId: application.id,
+          }),
+          this.logsService.createLog({
+            userId: admin.id,
+            action: 'COMMERCIAL_APPLY',
+            targetType: 'COMMERCIAL',
+            targetId: application.id,
+            detail: { targetName: companyName, type: application.type, contactName, email, status: application.status },
+            result: '待审核',
+          }),
+        ]),
+      ),
+    );
+
     return {
       submitted: true,
       application,
+      notifiedAdminCount: admins.length,
       message: '申请已提交，平台将在审核后联系开通账号',
     };
   }

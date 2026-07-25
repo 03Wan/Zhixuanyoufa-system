@@ -28,11 +28,11 @@ export class ReportTemplatesService {
     return [
       {
         id: 'standard-template',
-        name: '鏍囧噯瀹℃牳鎶ュ憡妯℃澘',
+        name: '标准审核报告模板',
         code: 'STANDARD',
         scope: 'SYSTEM',
         versionNo: 1,
-        schema: { sections: ['灏侀潰', '鍩虹淇℃伅', '璇勫垎', '椋庨櫓', '寤鸿', '澶嶆牳', '鐣欑棔'] },
+        schema: { sections: ['封面', '基础信息', '评分', '风险', '建议', '复核', '留痕'] },
         isActive: true,
       },
     ];

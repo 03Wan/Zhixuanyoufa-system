@@ -18,12 +18,12 @@ export const ROLE_LABELS: Record<UserRole, string> = {
 };
 
 export const ROLE_MENU: Record<UserRole, string[]> = {
-  ENTERPRISE_ADMIN: ["home", "plans", "myPlan", "batch", "companies", "customers", "tasks", "results", "reports", "rules", "users", "logs", "modelConfig", "apiOpen", "templates"],
+  ENTERPRISE_ADMIN: ["home", "plans", "myPlan", "batch", "companies", "customers", "tasks", "results", "reports", "applications", "rules", "users", "logs", "modelConfig", "apiOpen", "templates"],
   OPERATOR: ["home", "plans", "myPlan", "batch", "customers", "tasks", "results", "reports", "modelConfig"],
   DESIGNER: ["home", "plans", "myPlan", "tasks", "results", "modelConfig"],
   REVIEWER: ["home", "plans", "myPlan", "results", "reviews", "reports", "modelConfig"],
-  MANAGER: ["home", "plans", "myPlan", "dashboard", "companies", "customers", "reports", "logs", "modelConfig", "apiOpen"],
-  SYSTEM_ADMIN: ["home", "plans", "myPlan", "dashboard", "batch", "companies", "customers", "tasks", "results", "reviews", "reports", "rules", "users", "logs", "modelConfig", "apiOpen", "templates"],
+  MANAGER: ["home", "plans", "myPlan", "dashboard", "companies", "customers", "reports", "applications", "logs", "modelConfig", "apiOpen"],
+  SYSTEM_ADMIN: ["home", "plans", "myPlan", "dashboard", "batch", "companies", "customers", "tasks", "results", "reviews", "reports", "applications", "rules", "users", "logs", "modelConfig", "apiOpen", "templates"],
   CUSTOMER_VIEWER: ["home", "myPlan", "reports", "dashboard"],
 };
 
@@ -39,6 +39,7 @@ export const MENU_REGISTRY = {
   results: { key: "results", label: "检测结果", href: "/results" },
   reviews: { key: "reviews", label: "人工复核台", href: "/reviews" },
   reports: { key: "reports", label: "报告中心", href: "/reports" },
+  applications: { key: "applications", label: "企业申请", href: "/applications" },
   rules: { key: "rules", label: "规则库", href: "/rules" },
   users: { key: "users", label: "用户管理", href: "/users" },
   logs: { key: "logs", label: "操作日志", href: "/logs" },

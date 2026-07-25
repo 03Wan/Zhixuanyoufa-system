@@ -1,4 +1,4 @@
-import { GoneException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, GoneException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../prisma/prisma.service';
@@ -13,8 +13,23 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
-    void dto;
-    throw new GoneException('企业账号需提交开通申请，由平台审核后启用');
+    const email = dto.email.trim().toLowerCase();
+    const username = dto.username.trim();
+    const existing = await this.prisma.user.findFirst({
+      where: { OR: [{ email }, { username }] },
+      select: { id: true },
+    });
+    if (existing) throw new ConflictException('该邮箱或用户名已被使用');
+
+    return this.prisma.user.create({
+      data: {
+        username,
+        email,
+        passwordHash: await bcrypt.hash(dto.password, 10),
+        companyName: dto.companyName?.trim() || null,
+      },
+      select: { id: true, username: true, email: true, companyName: true, role: true, createdAt: true },
+    });
   }
 
   async login(dto: LoginDto) {
@@ -23,6 +38,7 @@ export class AuthService {
 
     const ok = await bcrypt.compare(dto.password, user.passwordHash);
     if (!ok) throw new UnauthorizedException('账号或密码错误');
+    if (user.role !== dto.role) throw new UnauthorizedException('所选角色与账号角色不一致');
 
     const accessToken = await this.jwtService.signAsync({ sub: user.id });
     return {

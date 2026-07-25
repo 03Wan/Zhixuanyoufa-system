@@ -37,6 +37,7 @@
             >
               <component :is="menuIcon(item.key)" :size="16" />
               <span v-if="!collapsed">{{ item.label }}</span>
+              <b v-if="item.key === 'applications' && pendingApplicationCount" class="application-notice-count">{{ pendingApplicationCount }}</b>
             </button>
           </div>
         </section>
@@ -51,16 +52,17 @@
       </div>
 
       <div class="side-actions">
-        <button class="btn btn-secondary nav-toggle" :title="collapsed ? '展开侧边栏' : '收起侧边栏'" @click="toggleSidebar">
-          <component :is="collapsed ? PanelLeftOpen : PanelLeftClose" :size="16" />
-          <span v-if="!collapsed">{{ collapsed ? '展开侧边栏' : '收起侧边栏' }}</span>
-        </button>
-        <ThemeToggle :compact="collapsed" />
+        <div class="side-utility-actions">
+          <button class="btn btn-secondary nav-toggle" :title="collapsed ? '展开侧边栏' : '收起侧边栏'" @click="toggleSidebar">
+            <component :is="collapsed ? PanelLeftOpen : PanelLeftClose" :size="16" />
+            <span v-if="!collapsed">{{ collapsed ? '展开侧边栏' : '收起侧边栏' }}</span>
+          </button>
+          <ThemeToggle :compact="collapsed" />
+        </div>
         <button class="btn btn-secondary logout-btn" :title="collapsed ? '退出登录' : ''" @click="logout">
           <LogOut :size="16" />
           <span v-if="!collapsed">退出登录</span>
         </button>
-        <div class="version-badge">v1.0.0</div>
       </div>
     </aside>
 
@@ -133,7 +135,7 @@
 import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { House, BarChart3, ListTodo, ShieldCheck, ClipboardCheck, FileText, BookKey, Users, Logs, SlidersHorizontal, PanelLeftClose, PanelLeftOpen, LogOut, ChevronDown, ChevronRight } from "lucide-vue-next";
+import { House, BarChart3, ListTodo, ShieldCheck, ClipboardCheck, FileText, BookKey, Users, Logs, SlidersHorizontal, PanelLeftClose, PanelLeftOpen, LogOut, ChevronDown, ChevronRight, Bell } from "lucide-vue-next";
 import ThemeToggle from "@/components/ThemeToggle.vue";
 import { api, getUserProfile } from "@/lib/api";
 import { getRoleMenus, normalizeRole, ROLE_LABELS } from "@/lib/permissions";
@@ -155,6 +157,8 @@ const dialog = ref({
 const toasts = ref<Array<{ id: number; message: string; kind: "success" | "error" | "info" }>>([]);
 let toastSeq = 0;
 const toastTimers = new Map<number, ReturnType<typeof setTimeout>>();
+const pendingApplicationCount = ref(0);
+let applicationNotificationTimer: ReturnType<typeof setInterval> | null = null;
 
 const baseTabId = "__base__";
 const activeTabId = ref<string>(baseTabId);
@@ -185,6 +189,7 @@ const descByPath: Record<string, string> = {
   "/results": "查看评分、风险、建议与发布决策",
   "/reviews": "处理高风险与需人工确认任务",
   "/reports": "统一管理检测报告与打印下载",
+  "/applications": "查看企业账号与服务开通申请",
   "/rules": "维护规则策略与敏感触发条件",
   "/users": "管理账号角色、状态与访问权限",
   "/logs": "追踪关键操作与系统审计记录",
@@ -195,6 +200,7 @@ const descByPath: Record<string, string> = {
 
 const currentUser = computed(() => (getUserProfile() || {}) as any);
 const roleLabel = computed(() => ROLE_LABELS[normalizeRole(currentUser.value?.role)]);
+const isSystemAdmin = computed(() => normalizeRole(currentUser.value?.role) === 'SYSTEM_ADMIN');
 const links = computed(() => getRoleMenus(currentUser.value?.role));
 const groupedLinks = computed(() => {
   const groups = [
@@ -202,7 +208,7 @@ const groupedLinks = computed(() => {
     { key: "billing", label: "套餐与商业化", keys: ["plans", "myPlan"] },
     { key: "biz", label: "业务管理", keys: ["batch", "tasks", "results", "reviews", "reports", "customers"] },
     { key: "org", label: "组织与企业", keys: ["companies"] },
-    { key: "sys", label: "系统管理", keys: ["rules", "users", "logs", "modelConfig", "apiOpen", "templates"] },
+    { key: "sys", label: "系统管理", keys: ["applications", "rules", "users", "logs", "modelConfig", "apiOpen", "templates"] },
   ];
   return groups
     .map((g) => ({ ...g, items: links.value.filter((item: any) => g.keys.includes(item.key)) }))
@@ -270,6 +276,15 @@ function handleMenuMove(e: MouseEvent) {
 
 function handleMenuLeave() {
   hoverTip.value.visible = false;
+}
+
+async function refreshApplicationNotifications() {
+  if (!isSystemAdmin.value) return;
+  try {
+    pendingApplicationCount.value = (await api.getNotifications()).length;
+  } catch {
+    // 通知读取失败不影响工作台其他功能。
+  }
 }
 
 function toEmbedHref(href: string) {
@@ -388,6 +403,8 @@ onMounted(() => {
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
   }
   setTimeout(scrollActiveMenuIntoView, 0);
+  void refreshApplicationNotifications();
+  applicationNotificationTimer = setInterval(() => { void refreshApplicationNotifications(); }, 30_000);
 });
 
 watch(activeTabId, () => {
@@ -406,6 +423,7 @@ onBeforeUnmount(() => {
   window.removeEventListener("zyyf-toast", handleToastEvent);
   for (const timer of toastTimers.values()) clearTimeout(timer);
   toastTimers.clear();
+  if (applicationNotificationTimer) clearInterval(applicationNotificationTimer);
   themeObserver?.disconnect();
 });
 
@@ -422,6 +440,7 @@ function menuIcon(key: string) {
     results: ShieldCheck,
     reviews: ClipboardCheck,
     reports: FileText,
+    applications: Bell,
     rules: BookKey,
     users: Users,
     logs: Logs,
@@ -505,6 +524,7 @@ function toggleGroup(key: string) {
   padding: 8px 10px;
   border-radius: 10px;
   text-align: left;
+  position: relative;
 }
 .side-link:hover { background: color-mix(in srgb, var(--card) 85%, #fff 15%); }
 .side-link.active {
@@ -512,6 +532,19 @@ function toggleGroup(key: string) {
   background: color-mix(in srgb, var(--brand-1) 16%, var(--card-strong) 84%);
   color: var(--text);
   box-shadow: none;
+}
+.application-notice-count {
+  min-width: 18px;
+  height: 18px;
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #dc2626;
+  color: #fff;
+  font-size: 11px;
+  line-height: 1;
 }
 
 .menu-cursor-tip {
@@ -530,12 +563,13 @@ function toggleGroup(key: string) {
 }
 
 .side-actions {
-  margin-top: 8px;
+  margin-top: 6px;
   border-top: 1px solid var(--border);
-  padding-top: 10px;
+  padding-top: 12px;
   display: grid;
-  gap: 8px;
+  gap: 12px;
 }
+.side-utility-actions { display: grid; gap: 8px; }
 .dialog-actions {
   width: 100%;
   display: flex;
@@ -558,6 +592,11 @@ function toggleGroup(key: string) {
 }
 .app-dialog-panel p { margin: 0 0 14px; color: var(--muted); line-height: 1.7; }
 .logout-btn { width: 100%; }
+.logout-btn {
+  border-color: color-mix(in srgb, #ef4444 28%, var(--border) 72%);
+  color: color-mix(in srgb, #b91c1c 72%, var(--text) 28%);
+}
+.logout-btn:hover { border-color: color-mix(in srgb, #ef4444 54%, var(--border) 46%); }
 .toast-stack {
   position: fixed;
   top: 14px;
@@ -598,18 +637,6 @@ function toggleGroup(key: string) {
   from { opacity: 0; transform: translateY(-6px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.version-badge {
-  text-align: center;
-  font-size: 12px;
-  font-weight: 700;
-  color: color-mix(in srgb, var(--text) 76%, #35568f 24%);
-  border: 1px solid color-mix(in srgb, var(--border) 70%, #9db9ee 30%);
-  border-radius: 10px;
-  padding: 6px 8px;
-  background: color-mix(in srgb, var(--card-strong) 80%, #ffffff 20%);
-  width: 100%;
-  box-sizing: border-box;
-}
 .app-layout.collapsed { grid-template-columns: 96px minmax(0, 1fr); }
 .side-nav.collapsed .brand-block { gap: 8px; }
 .side-nav.collapsed .brand-top { justify-content: center; }
@@ -636,6 +663,16 @@ function toggleGroup(key: string) {
   padding: 0;
   justify-content: center;
 }
+.side-nav.collapsed .application-notice-count {
+  position: absolute;
+  right: -5px;
+  top: -5px;
+  margin: 0;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 2px;
+  font-size: 9px;
+}
 .side-nav.collapsed .side-actions { justify-items: stretch; }
 .side-nav.collapsed .brand-block h1 { display: none; }
 .side-nav.collapsed .nav-toggle,
@@ -646,11 +683,6 @@ function toggleGroup(key: string) {
   justify-content: center;
 }
 .side-nav.collapsed .logout-btn :deep(svg) { margin: 0; }
-.side-nav.collapsed .version-badge {
-  padding: 6px 4px;
-  font-size: 11px;
-  white-space: nowrap;
-}
 
 .content-body {
   margin-top: 12px;

@@ -35,7 +35,7 @@
         <div v-else-if="pagedRows.length === 0" class="state">暂无符合条件的日志</div>
         <div v-else class="table-wrap">
           <table>
-            <thead><tr><th>日志时间</th><th>操作人</th><th>用户角色</th><th>操作类型</th><th>操作对象</th><th>结果</th><th>IP地址</th><th>备注</th></tr></thead>
+            <thead><tr><th>日志时间</th><th>操作人</th><th>用户角色</th><th>操作类型</th><th>操作对象</th><th>结果</th><th>备注</th></tr></thead>
             <tbody>
               <tr v-for="row in pagedRows" :key="row.logId || row.id">
                 <td>{{ time(row.createdAt || row.actionTime) }}</td>
@@ -44,7 +44,6 @@
                 <td>{{ actionLabel(row.action || row.actionType) }}</td>
                 <td>{{ objectLabel(row) }}</td>
                 <td><span :class="['tag', (row.result || '成功') === '成功' ? 'tag-success' : 'tag-danger']">{{ row.result || '成功' }}</span></td>
-                <td>{{ row.ip || '-' }}</td>
                 <td>{{ row.note || row.remark || '-' }}</td>
               </tr>
             </tbody>
@@ -78,11 +77,11 @@ const syncTimer = ref<number | null>(null);
 let loadPromise: Promise<void> | null = null;
 const filters = reactive({ operator: '', action: '', result: '', startDate: '', endDate: '' });
 const ACTION_MAP: Record<string, string> = {
-  USER_LOGIN: '用户登录', USER_LOGOUT: '用户退出', CREATE_TASK: '创建任务', UPDATE_TASK: '编辑任务', EDIT_TASK: '编辑任务',
+  USER_LOGIN: '用户登录', USER_LOGOUT: '用户退出', CREATE_TASK: '创建任务', DELETE_TASK: '删除任务', UPDATE_TASK: '编辑任务', EDIT_TASK: '编辑任务',
   UPLOAD_MATERIAL: '上传素材', RUN_DETECTION: '启动检测', REQUEST_MANUAL_REVIEW: '提交人工复核', REVIEW_ACTION: '人工复核操作',
   GENERATE_REPORT: '生成审核报告', DOWNLOAD_REPORT: '下载报告', CREATE_RULE: '新增规则', UPDATE_RULE: '编辑规则', RULE_APPROVAL: '规则审批',
   RULE_ROLLBACK: '规则回滚', CUSTOMER_PLAN_UPDATE: '客户套餐调整', SEED_CREATE_TASK: '初始化任务',
-  COMMERCIAL_APPLY: '商业化申请', COMMERCIAL_APPROVE: '商业化审批',
+  COMMERCIAL_APPLY: '企业账号申请', COMMERCIAL_APPROVE: '企业账号审批', REVIEW_START: '开始复核', REVIEW_COMPLETE: '完成复核',
 };
 const TARGET_MAP: Record<string, string> = { MATERIAL_TASK: '检测任务', REPORT: '审核报告', RULE: '规则', USER: '用户', REVIEW_TASK: '复核任务', RESOURCE: '资源', COMMERCIAL: '商业化申请' };
 const actionOptions = Object.entries(ACTION_MAP).map(([value, label]) => ({ value, label }));
@@ -92,7 +91,15 @@ function time(v?: string) { if (!v) return '-'; const d = new Date(v); if (Numbe
 function roleLabel(role?: string) { return role ? ROLE_LABELS[normalizeRole(role)] : '-'; }
 function actionLabel(action?: string) { const key = String(action || '').toUpperCase(); return ACTION_MAP[key] || action || '-'; }
 function shortId(id?: string) { if (!id) return '-'; return id.length > 12 ? id.slice(-12) : id; }
-function objectLabel(row: any) { const targetName = TARGET_MAP[String(row.targetType || '').toUpperCase()] || '对象'; const detail = row.detail || {}; const fromDetail = detail.productName || detail.reportNo || detail.ruleName || detail.taskNo || detail.targetName || ''; const id = row.targetId || row.target || ''; return `${targetName}：${fromDetail || shortId(id)}`; }
+function displayObjectName(value: unknown) {
+  const text = String(value || '').trim();
+  const systemNames: Record<string, string> = { 'QA transient task': '测试临时任务', '?????': '未命名任务' };
+  if (systemNames[text]) return systemNames[text];
+  if (!text || /^\?+$/.test(text)) return '未命名任务';
+  if (/^[A-Za-z0-9_-]{6,}$/.test(text)) return `编号：${text}`;
+  return text;
+}
+function objectLabel(row: any) { const targetName = TARGET_MAP[String(row.targetType || '').toUpperCase()] || '业务对象'; const detail = row.detail || {}; const fromDetail = detail.productName || detail.reportNo || detail.ruleName || detail.taskNo || detail.targetName || ''; const id = row.targetId || row.target || ''; return `${targetName}：${displayObjectName(fromDetail || shortId(id))}`; }
 
 const filteredRows = computed(() => rows.value.filter((row) => {
   const action = String(row.action || row.actionType || '').toUpperCase();

@@ -64,6 +64,29 @@ html.dark {
   --input-border: rgba(123, 151, 195, 0.32);
 }
 
+html.dark .modal-panel,
+html.dark .modal-panel h1,
+html.dark .modal-panel h2,
+html.dark .modal-panel h3,
+html.dark .modal-panel p,
+html.dark .modal-panel label,
+html.dark .modal-panel td,
+html.dark .modal-panel th {
+  color: var(--text);
+}
+html.dark .modal-panel .text-muted,
+html.dark .modal-panel th { color: var(--muted); }
+html.dark .modal-panel .input,
+html.dark .modal-panel input,
+html.dark .modal-panel select,
+html.dark .modal-panel textarea {
+  color: var(--text);
+  background: #16253f;
+  border-color: rgba(137, 174, 231, 0.5);
+}
+html.dark .modal-panel input::placeholder,
+html.dark .modal-panel textarea::placeholder { color: #b8c8e4; opacity: 1; }
+
 * { box-sizing: border-box; }
 
 body {

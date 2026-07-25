@@ -295,6 +295,17 @@ onMounted(() => {
 .modal-panel { width: min(520px, calc(100vw - 32px)); }
 .company-modal { width: min(1120px, calc(100vw - 32px)); max-height: calc(100vh - 40px); overflow: auto; display: grid; gap: 14px; background: linear-gradient(160deg, rgba(245, 249, 255, 0.92), rgba(226, 237, 255, 0.82)), rgba(230, 239, 253, 0.88) !important; border: 1px solid rgba(188, 209, 243, 0.92) !important; box-shadow: 0 28px 60px rgba(10, 22, 44, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.75) !important; backdrop-filter: blur(22px) saturate(125%) !important; -webkit-backdrop-filter: blur(22px) saturate(125%) !important; }
 .edit-modal { background: linear-gradient(160deg, rgba(248, 252, 255, 0.96), rgba(235, 242, 255, 0.9)), rgba(241, 246, 255, 0.94) !important; border: 1px solid rgba(194, 212, 243, 0.96) !important; box-shadow: 0 32px 70px rgba(10, 22, 44, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.78) !important; backdrop-filter: blur(24px) saturate(130%) !important; -webkit-backdrop-filter: blur(24px) saturate(130%) !important; }
+:global(html.dark) .company-modal,
+:global(html.dark) .edit-modal {
+  background: linear-gradient(160deg, rgba(19, 34, 60, .98), rgba(11, 22, 42, .96)) !important;
+  border-color: rgba(127, 167, 229, .5) !important;
+  box-shadow: 0 28px 70px rgba(0, 4, 15, .68), inset 0 1px 0 rgba(255, 255, 255, .08) !important;
+  color: var(--text);
+}
+:global(html.dark) .company-modal :is(h1, h2, h3, p, td, th, label),
+:global(html.dark) .edit-modal :is(h1, h2, h3, p, td, th, label) { color: var(--text); }
+:global(html.dark) .company-modal th,
+:global(html.dark) .edit-modal th { color: var(--muted); }
 .company-modal-head { align-items: start; }
 .modal-actions { justify-content: flex-end; }
 @media (max-width: 760px) { .actions .btn { width: 100%; } }

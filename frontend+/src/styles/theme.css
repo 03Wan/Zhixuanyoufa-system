@@ -130,6 +130,33 @@ a { color: inherit; text-decoration: none; }
 /* Public navigation pages share one neutral canvas; the glass workspace keeps its own background. */
 .page, .info-page { background: #fff; }
 
+/* Public pages use a wider desktop reading area and denser vertical rhythm. */
+@media (min-width: 781px) {
+  .landing-page .topbar,
+  .page header { padding-left: clamp(24px, 4vw, 84px) !important; padding-right: clamp(24px, 4vw, 84px) !important; }
+  .landing-page .hero { max-width: none !important; width: 100% !important; padding: 68px clamp(36px, 5vw, 96px) 42px !important; gap: clamp(44px, 6vw, 116px) !important; grid-template-columns: 1.08fr .92fr !important; }
+  .landing-page .hero h1 { font-size: clamp(44px, 4.6vw, 68px) !important; margin-bottom: 18px !important; }
+  .landing-page .lead { max-width: 680px !important; line-height: 1.75 !important; }
+  .landing-page .section { max-width: none !important; width: 100% !important; padding: 62px clamp(36px, 5vw, 96px) !important; }
+  .landing-page .section-title { max-width: 860px !important; }
+  .landing-page .three { margin-top: 28px !important; }
+  .landing-page .workflow,
+  .landing-page .credibility { padding-left: clamp(36px, 5vw, 96px) !important; padding-right: clamp(36px, 5vw, 96px) !important; }
+  .landing-page .co-create { max-width: none !important; width: auto !important; margin: 0 clamp(36px, 5vw, 96px) 60px !important; padding: 38px !important; }
+  .landing-page footer { padding-left: clamp(36px, 5vw, 96px) !important; padding-right: clamp(36px, 5vw, 96px) !important; }
+
+  .info-page .hero,
+  .page .hero { max-width: none !important; width: 100% !important; padding: 64px clamp(36px, 5vw, 96px) 40px !important; }
+  .info-page .content-grid { max-width: none !important; width: 100% !important; padding: 0 clamp(36px, 5vw, 96px) 56px !important; }
+  .page .matrix { max-width: none !important; width: 100% !important; padding-left: clamp(36px, 5vw, 96px) !important; padding-right: clamp(36px, 5vw, 96px) !important; padding-bottom: 52px !important; }
+  .page .note { max-width: none !important; margin: 0 clamp(36px, 5vw, 96px) 60px !important; }
+  .page .grid { max-width: none !important; width: 100% !important; padding-left: clamp(36px, 5vw, 96px) !important; padding-right: clamp(36px, 5vw, 96px) !important; padding-bottom: 58px !important; }
+  .page .roadmap,
+  .page .contact { max-width: none !important; margin: 0 clamp(36px, 5vw, 96px) 60px !important; }
+  .page .plans { max-width: none !important; width: 100% !important; padding-left: clamp(36px, 5vw, 96px) !important; padding-right: clamp(36px, 5vw, 96px) !important; padding-bottom: 54px !important; }
+  .page .rules { max-width: none !important; margin: 0 clamp(36px, 5vw, 96px) 60px !important; }
+}
+
 .glass {
   position: relative;
   overflow: hidden;

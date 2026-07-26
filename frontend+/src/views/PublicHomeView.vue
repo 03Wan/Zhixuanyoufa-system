@@ -11,8 +11,8 @@
     <section class="hero">
       <div>
         <p class="eyebrow">面向高频上新的跨境电商团队</p>
-        <h1>上架前，先把违规风险和本地化问题一次查清</h1>
-        <p class="lead">按照目标平台、国家和商品类目，统一审校标题、图片与详情页，给出风险原因、修改方案和发布决策，并保留团队复核记录。</p>
+        <h1>上架前，优先识别违规风险与本地化问题</h1>
+        <p class="lead">按照目标平台、国家和商品类目，统一审校标题、图片与详情页，提示风险原因、修改方案和发布决策，并保留团队复核记录。</p>
         <div class="hero-actions"><button class="primary" @click="applyOpen = true">申请首批共创 <ArrowRight :size="17" /></button><button class="text" @click="scrollTo('sample')">查看审核样例</button></div>
         <p class="note">首批共创价限前30家正式付费企业或公开上线后90天内申请，以先到条件为准。</p>
       </div>

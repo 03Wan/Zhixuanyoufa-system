@@ -17,7 +17,7 @@
           <AppGlassSurface as="article" class="card kpi"><p>今日检测任务</p><h3>{{ dashboard.metrics?.todayTaskCount || 0 }}</h3></AppGlassSurface>
           <AppGlassSurface as="article" class="card kpi"><p>待人工复核</p><h3>{{ dashboard.metrics?.pendingReviewCount || 0 }}</h3></AppGlassSurface>
           <AppGlassSurface as="article" class="card kpi"><p>高风险素材</p><h3>{{ dashboard.metrics?.highRiskCount || 0 }}</h3></AppGlassSurface>
-          <AppGlassSurface as="article" class="card kpi"><p>已生成报告</p><h3>{{ dashboard.metrics?.reportCount || 0 }}</h3></AppGlassSurface>
+          <AppGlassSurface as="article" class="card kpi"><p>首发通过率</p><h3>{{ dashboard.metrics?.firstPassRate || 0 }}%</h3></AppGlassSurface>
         </div>
 
         <div v-if="refreshing" class="state">后台同步中</div>

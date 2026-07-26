@@ -35,7 +35,7 @@
                 <td>{{ decisionLabel(item.systemDecision) }}</td>
                 <td>{{ toDateTime(item.submittedAt) }}</td>
                 <td><span :class="['tag', statusClass(item.status)]">{{ statusLabel(item.status) }}</span></td>
-                <td><button class="btn btn-primary" @click="openDetail(item.reviewId || item.id)">进入复核</button></td>
+                <td><button class="btn btn-primary" :disabled="!reviewId(item)" @click="openDetail(item)">进入复核</button></td>
               </tr>
             </tbody>
           </table>
@@ -115,7 +115,10 @@ async function load() {
   }
 }
 
-function openDetail(id: string) {
+function reviewId(item: any) { return String(item?.reviewId || item?.id || ''); }
+function openDetail(item: any) {
+  const id = reviewId(item);
+  if (!id) { error.value = '该记录缺少复核编号，请刷新后重试。'; return; }
   const query = route.query.embed === '1' ? { embed: '1', theme: String(route.query.theme || '') || undefined } : undefined;
   router.push({ path: `/reviews/${id}`, query });
 }

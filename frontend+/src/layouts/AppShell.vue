@@ -1,5 +1,13 @@
 ﻿<template>
   <div class="app-layout" :class="{ embedded: isEmbedded, collapsed }">
+    <header v-if="!isEmbedded" class="mobile-workspace-bar">
+      <button class="mobile-menu-button" type="button" aria-label="打开工作台菜单" @click="open = true">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="mobile-brand"><span class="mobile-brand-logo">智</span><strong>智选优发</strong></div>
+      <span class="mobile-role">{{ roleLabel }}</span>
+    </header>
+    <button v-if="!isEmbedded && open" class="mobile-nav-mask" aria-label="关闭工作台菜单" @click="open = false"></button>
     <aside v-if="!isEmbedded" class="glass side-nav fade-up" :class="{ open, collapsed }">
       <div class="brand-block">
         <div class="brand-top">
@@ -135,7 +143,7 @@
 import AppGlassSurface from "@/components/AppGlassSurface.vue";
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { House, BarChart3, ListTodo, ShieldCheck, ClipboardCheck, FileText, BookKey, Users, Logs, SlidersHorizontal, PanelLeftClose, PanelLeftOpen, LogOut, ChevronDown, ChevronRight, Bell } from "lucide-vue-next";
+import { House, BarChart3, ListTodo, ShieldCheck, ClipboardCheck, FileText, BookKey, Users, Logs, SlidersHorizontal, PanelLeftClose, PanelLeftOpen, LogOut, ChevronDown, ChevronRight, Bell, Sparkles } from "lucide-vue-next";
 import ThemeToggle from "@/components/ThemeToggle.vue";
 import { api, getUserProfile } from "@/lib/api";
 import { getRoleMenus, normalizeRole, ROLE_LABELS } from "@/lib/permissions";
@@ -182,12 +190,13 @@ const descByPath: Record<string, string> = {
   "/dashboard": "通过图表分析近7天检测趋势与风险结构",
   "/plans": "查看当前套餐能力、额度与升级申请入口",
   "/my-plan": "查看当前套餐、额度使用与升级建议",
-  "/batch": "批量检测：支持表格批量录入与批量创建任务",
+  "/batch": "通过表格导入多个商品，并批量创建发布前审校任务",
+  "/generate": "按平台、国家、语言和品类生成可编辑的 Listing 初稿",
   "/companies": "企业组织管理：企业信息、成员、任务与报告关联",
   "/customers": "客户档案管理：企业客户信息与服务状态跟踪",
-  "/tasks/new": "创建、编辑并跟踪检测任务",
-  "/results": "查看评分、风险、建议与发布决策",
-  "/reviews": "处理高风险与需人工确认任务",
+  "/tasks/new": "选择发布场景并创建一条发布前审校任务",
+  "/results": "查看发布决策、风险问题和修改处理记录",
+  "/reviews": "处理需要人工判断的复核任务与审批结论",
   "/reports": "统一管理检测报告与打印下载",
   "/applications": "查看企业账号与服务开通申请",
   "/rules": "维护规则策略与敏感触发条件",
@@ -205,10 +214,12 @@ const links = computed(() => getRoleMenus(currentUser.value?.role));
 const groupedLinks = computed(() => {
   const groups = [
     { key: "workspace", label: "工作台", keys: ["home", "dashboard"] },
-    { key: "billing", label: "套餐与商业化", keys: ["plans", "myPlan"] },
-    { key: "biz", label: "业务管理", keys: ["batch", "tasks", "results", "reviews", "reports", "customers"] },
-    { key: "org", label: "组织与企业", keys: ["companies"] },
-    { key: "sys", label: "系统管理", keys: ["applications", "rules", "users", "logs", "modelConfig", "apiOpen", "templates"] },
+    { key: "publish", label: "发布任务", keys: ["generate", "tasks", "batch", "results"] },
+    { key: "review", label: "审核与审批", keys: ["reviews", "reports"] },
+    { key: "rules", label: "规则与模板", keys: ["rules", "templates"] },
+    { key: "integrations", label: "集成与 API", keys: ["apiOpen"] },
+    { key: "account", label: "套餐与组织", keys: ["plans", "myPlan", "companies", "customers", "applications"] },
+    { key: "sys", label: "系统设置", keys: ["users", "logs", "modelConfig"] },
   ];
   return groups
     .map((g) => ({ ...g, items: links.value.filter((item: any) => g.keys.includes(item.key)) }))
@@ -251,10 +262,12 @@ function scrollActiveMenuIntoView() {
 function shortGroupLabel(label: string) {
   const map: Record<string, string> = {
     工作台: "工作",
-    套餐与商业化: "套餐",
-    业务管理: "业务",
-    组织与企业: "组织",
-    系统管理: "系统",
+    发布任务: "发布",
+    审核与审批: "审核",
+    规则与模板: "规则",
+    "集成与 API": "集成",
+    套餐与组织: "套餐",
+    系统设置: "系统",
   };
   return map[label] || label.slice(0, 2);
 }
@@ -434,6 +447,7 @@ function menuIcon(key: string) {
     plans: ShieldCheck,
     myPlan: FileText,
     batch: ListTodo,
+    generate: Sparkles,
     companies: Users,
     customers: Users,
     tasks: ListTodo,
@@ -758,7 +772,47 @@ function toggleGroup(key: string) {
   min-width: 0;
 }
 
+.mobile-workspace-bar,
+.mobile-nav-mask { display: none; }
+
 @media (max-width: 1160px) {
+  .app-layout:not(.embedded) { grid-template-columns: 96px minmax(0, 1fr); }
+  .side-nav { position: sticky; height: calc(100vh - 16px); }
+  .side-nav .brand-block h1, .side-nav .side-link span { display: none; }
+  .side-nav .brand-top { justify-content: center; }
+  .side-nav .role-chip { font-size: 10px; padding: 5px 4px; }
+  .side-nav .group-toggle { justify-content: center; padding: 6px 4px; gap: 2px; }
+  .side-nav .group-toggle span { font-size: 10px; }
+  .side-nav .side-links { justify-items: center; }
+  .side-nav .side-link { width: 36px; min-height: 36px; padding: 0; justify-content: center; }
+  .side-nav .side-actions :deep(.btn) { min-height: 34px; padding: 0; justify-content: center; }
+  .side-nav .side-actions :deep(.btn span) { display: none; }
   .content-body { height: calc(100vh - 26px); }
+}
+
+@media (max-width: 900px) {
+  .app-layout:not(.embedded) { display: block; padding: 0; border: 0; background: transparent; box-shadow: none; }
+  .mobile-workspace-bar { display: flex; height: 52px; align-items: center; justify-content: space-between; gap: 10px; padding: 0 4px 8px; }
+  .mobile-menu-button { width: 42px; height: 40px; display: grid; place-content: center; gap: 4px; border: 1px solid var(--border); border-radius: 11px; background: var(--card-strong); color: var(--text); }
+  .mobile-menu-button span { width: 17px; height: 2px; border-radius: 3px; background: currentColor; }
+  .mobile-brand { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; }
+  .mobile-brand-logo { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 8px; color: #fff; background: linear-gradient(135deg, var(--brand-0), var(--brand-1)); }
+  .mobile-role { max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: 12px; }
+  .mobile-nav-mask { display: block; position: fixed; z-index: 79; inset: 0; border: 0; background: rgba(9, 18, 38, .44); }
+  .side-nav { position: fixed; z-index: 80; top: 8px; bottom: 8px; left: 8px; width: min(292px, calc(100vw - 52px)); height: auto; transform: translateX(calc(-100% - 20px)); transition: transform .22s ease; overflow: hidden; }
+  .side-nav.open { transform: translateX(0); }
+  .side-nav.collapsed { width: min(292px, calc(100vw - 52px)); }
+  .side-nav.collapsed .brand-block h1, .side-nav.collapsed .side-link span { display: initial; }
+  .side-nav.collapsed .side-link { width: 100%; padding: 10px 12px; justify-content: flex-start; }
+  .side-nav.collapsed .group-toggle { justify-content: space-between; padding: 8px 10px; }
+  .side-nav.collapsed .group-toggle span { font-size: 13px; }
+  .content-body { margin-top: 0; height: calc(100vh - 66px); }
+}
+
+@media (max-width: 520px) {
+  .mobile-role { display: none; }
+  .content-body { height: calc(100vh - 62px); }
+  .workspace-tabs { padding: 6px; }
+  .workspace-tab { padding: 6px 8px; }
 }
 </style>

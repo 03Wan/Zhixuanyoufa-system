@@ -1,9 +1,9 @@
 ﻿<template>
-  <AppShell title="规则管理">
+  <AppShell title="规则与模板">
     <section class="page-stack fade-up">
       <AppGlassSurface as="section" class="card block">
         <div class="row-between">
-          <h2 class="section-title">规则列表</h2>
+          <h2 class="section-title">规则与模板</h2>
           <div class="actions">
             <button class="btn btn-secondary" @click="openCreateModal">新增规则</button>
             <button class="btn btn-secondary" @click="triggerImport">一键导入规则</button>
@@ -11,6 +11,7 @@
           </div>
         </div>
 
+        <p class="text-muted">审校结果保留规则来源、适用范围、版本和更新时间，便于复核发布依据。</p>
         <input ref="importInput" class="hidden-input" type="file" accept="application/json,.json" @change="importRules" />
         <div v-if="rules.length" class="rule-filters">
           <button :class="['filter-chip', { active: filters.type === '' }]" @click="filters.type = ''">全部 {{ rules.length }}</button>
@@ -24,7 +25,7 @@
 
         <div class="table-wrap" v-else-if="filteredRules.length">
           <table class="table rules-table">
-            <thead><tr><th>名称</th><th>类型</th><th>平台</th><th>市场</th><th>风险</th><th>规则内容</th><th>版本</th><th>状态</th><th class="actions-col">操作</th></tr></thead>
+            <thead><tr><th>名称</th><th>类型</th><th>平台</th><th>市场</th><th>风险</th><th>来源</th><th>版本/更新时间</th><th>状态</th><th class="actions-col">操作</th></tr></thead>
             <tbody>
               <tr v-for="r in filteredRules" :key="r.id">
                 <td>{{ r.name }}</td>
@@ -32,8 +33,8 @@
                 <td>{{ r.platform || '-' }}</td>
                 <td>{{ r.market || '-' }}</td>
                 <td>{{ riskText(r.riskLevel) }}</td>
-                <td class="content-cell">{{ summarizeRule(r) }}</td>
-                <td>{{ r.version || '-' }}</td>
+                <td class="content-cell">{{ r.source || 'SYSTEM' }}</td>
+                <td>{{ r.version || '-' }}<br /><small class="text-muted">{{ time(r.updatedAt) }}</small></td>
                 <td>{{ statusText(r.status, r.enabled) }}</td>
                 <td class="actions actions-cell">
                   <button class="btn btn-secondary" @click="openEditModal(r)">编辑</button>
@@ -75,6 +76,9 @@
           <p><strong>类型：</strong>{{ typeText(selectedRule.type) }}</p>
           <p><strong>平台/市场：</strong>{{ selectedRule.platform || '-' }} / {{ selectedRule.market || '-' }}</p>
           <p><strong>风险等级：</strong>{{ riskText(selectedRule.riskLevel) }}</p>
+          <p><strong>规则来源：</strong>{{ selectedRule.source || '待补充来源' }}</p>
+          <p><strong>适用类目：</strong>{{ selectedRule.category || '通用' }}</p>
+          <p><strong>版本与校验：</strong>v{{ selectedRule.version || 1 }} · 最近更新 {{ time(selectedRule.updatedAt) }}</p>
           <p><strong>关键词：</strong>{{ asText(selectedRule.keywords) }}</p>
           <p><strong>修正建议：</strong>{{ asText(selectedRule.suggestion || selectedRule.description) }}</p>
         </div>

@@ -2,18 +2,19 @@
   <AppShell title="批量检测">
     <section class="page-stack fade-up">
       <AppGlassSurface as="section" class="card">
-        <h2 class="section-title">批量检测</h2>
-        <p class="text-muted">当前支持表格批量录入并批量创建检测子任务。</p>
+        <h2 class="section-title">批量发布前审校</h2>
+        <p class="text-muted">先导入并校验素材，再按风险分流处理；单条失败不会阻塞其余任务。</p>
         <div class="actions">
           <label class="btn btn-secondary import-btn">
             导入CSV
             <input type="file" accept=".csv,text/csv" @change="importCsv" />
           </label>
           <button class="btn btn-secondary" @click="addRow">新增行</button>
+          <button class="btn btn-secondary" @click="downloadTemplate">下载模板</button>
           <button class="btn btn-secondary" :disabled="rows.length <= 1" @click="clearRows">清空</button>
           <button class="btn btn-primary" :disabled="saving" @click="submitBatch">{{ saving ? '创建中' : '创建批量任务' }}</button>
         </div>
-        <p class="text-muted import-tip">CSV表头：商品名称, 品类, 平台, 市场, 标题, 卖点, 详情, 广告语</p>
+        <p class="text-muted import-tip">CSV表头：商品名称, 品类, 平台, 市场, 标题, 卖点, 详情, 广告语。导入后会保留错误行供修正。</p>
         <div class="table-wrap" style="margin-top:8px;">
           <table class="table">
             <thead><tr><th>商品名称</th><th>品类</th><th>平台</th><th>市场</th><th>标题</th><th>卖点</th><th>详情</th><th>广告语</th><th>操作</th></tr></thead>
@@ -55,8 +56,8 @@
         <table class="table">
           <thead><tr><th>行号</th><th>状态</th><th>任务ID</th><th>操作</th></tr></thead>
           <tbody>
-            <tr v-for="it in activeBatch.items || []" :key="it.id">
-              <td>{{ it.rowNo }}</td><td>{{ it.status }}</td><td>{{ it.taskId || '-' }}</td>
+              <tr v-for="it in activeBatch.items || []" :key="it.id">
+              <td>{{ it.rowNo }}</td><td>{{ statusLabel(it.status) }}<small v-if="it.errorMsg" class="error-text">{{ it.errorMsg }}</small></td><td>{{ it.taskId || '-' }}</td>
               <td class="actions">
                 <button class="btn btn-secondary" :disabled="!it.taskId" @click="goResult(it.taskId)">查看检测结果</button>
                 <button class="btn btn-secondary" :disabled="!it.taskId" @click="genReport(it.taskId)">生成报告</button>
@@ -96,6 +97,11 @@ function clearRows() {
   rows.value = [];
   addRow();
 }
+function downloadTemplate() {
+  const blob = new Blob(['商品名称,品类,平台,市场,标题,卖点,详情,广告语\n示例商品,家居家纺,TikTok Shop,马来西亚,示例标题,卖点1;卖点2,详情文案,广告语'], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = '发布前审校导入模板.csv'; a.click(); URL.revokeObjectURL(url);
+}
+function statusLabel(status: string) { return ({ PENDING: '待处理', RUNNING: '审校中', DONE: '已完成', FAILED: '失败', PARTIAL_FAILED: '部分失败' } as Record<string, string>)[status] || status; }
 function parseCsvLine(line: string) {
   const cells: string[] = [];
   let current = '';

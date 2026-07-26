@@ -30,7 +30,8 @@ export class SubscriptionService {
 
     if (sub) return sub;
 
-    const defaultPlan = await this.prisma.plan.findFirst({ where: { name: '专业版' } });
+    // Use the current launch default instead of a retired legacy package name.
+    const defaultPlan = await this.prisma.plan.findFirst({ where: { name: 'Growth', isActive: true } });
     if (!defaultPlan) throw new NotFoundException('默认套餐不存在');
 
     sub = await this.prisma.subscription.create({
@@ -189,11 +190,11 @@ export class SubscriptionService {
   }
 
   private getUpgradeSuggestion(planName: string) {
-    if (planName.includes('体验包') || planName.includes('基础版')) {
-      return '升级专业版可获得批量检测、完整报告导出和增强数据看板。';
+    if (planName.includes('免费体验') || planName.includes('Starter')) {
+      return '升级 Growth 可获得批量检测、人工复核和完整报告导出。';
     }
-    if (planName.includes('专业版')) {
-      return '升级企业版可获得多账号团队、人工复核流转和客户报告归档。';
+    if (planName.includes('Growth')) {
+      return '升级 Pro 可获得多店铺协作、审批流和自定义规则。';
     }
     return '如需API接口或私有化部署，可申请API接口版或定制版服务。';
   }

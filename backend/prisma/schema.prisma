@@ -96,6 +96,7 @@ model MaterialTask {
   category    String
   platform    String
   market      String
+  language    String?
   purpose     String
   status      TaskStatus @default(DRAFT)
   createdAt   DateTime   @default(now())
@@ -112,6 +113,7 @@ model MaterialTask {
   company          Company?          @relation(fields: [companyId], references: [id], onDelete: SetNull)
   materialVersions MaterialVersion[]
   batchItems       BatchTaskItem[]
+  publicationOutcome PublicationOutcome?
   customerId       String?
   customer         Customer?         @relation(fields: [customerId], references: [id], onDelete: SetNull)
 
@@ -390,6 +392,22 @@ model MaterialVersion {
   task MaterialTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
   @@unique([taskId, versionNo])
+}
+
+model PublicationOutcome {
+  id               String   @id @default(cuid())
+  taskId           String   @unique
+  status           String   @default("PUBLISHED")
+  publishedAt      DateTime?
+  listingId        String?
+  firstPass        Boolean?
+  rejectionReason String?  @db.Text
+  note             String?  @db.Text
+  recordedById     String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  task MaterialTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
 
 model ReportTemplate {

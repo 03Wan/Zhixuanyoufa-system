@@ -32,7 +32,7 @@ export class ReviewsService {
     const [items, total] = await this.prisma.$transaction([
       this.prisma.reviewTask.findMany({
         where,
-        include: { task: true, reviewer: { select: { id: true, username: true } } },
+        include: { task: { include: { detectionResult: true } }, reviewer: { select: { id: true, username: true } } },
         orderBy: { createdAt: 'desc' },
         skip: (page - 1) * pageSize,
         take: pageSize,

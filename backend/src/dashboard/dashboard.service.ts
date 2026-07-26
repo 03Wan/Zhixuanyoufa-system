@@ -34,6 +34,11 @@ export class DashboardService {
     const pendingReviewCount = await this.safeCount(this.prisma.reviewTask.count({ where: { task: { is: taskScope }, status: 'PENDING' } }));
     const highRiskCount = await this.safeCount(this.prisma.detectionResult.count({ where: { task: { is: taskScope }, riskLevel: { in: ['HIGH', 'CRITICAL'] } } }));
     const reportCount = await this.safeCount(this.prisma.report.count({ where: { task: { is: taskScope } } }));
+    // Keep the dashboard available while a deployment is still applying the
+    // publication-outcome migration or when an older test double is in use.
+    const outcomes = (this.prisma as any).publicationOutcome;
+    const publishedCount = outcomes ? await this.safeCount(outcomes.count({ where: { task: { is: taskScope } } })) : 0;
+    const firstPassCount = outcomes ? await this.safeCount(outcomes.count({ where: { task: { is: taskScope }, firstPass: true } })) : 0;
     const highRiskTasks = await this.prisma.materialTask
       .findMany({
         where: { ...taskScope, detectionResult: { is: { riskLevel: { in: ['HIGH', 'CRITICAL'] } } } },
@@ -50,7 +55,7 @@ export class DashboardService {
       .catch(() => []);
 
     return {
-      metrics: { todayTaskCount, pendingReviewCount, highRiskCount, reportCount },
+      metrics: { todayTaskCount, pendingReviewCount, highRiskCount, reportCount, publishedCount, firstPassRate: publishedCount ? Math.round((firstPassCount / publishedCount) * 100) : 0 },
       highRiskTasks: highRiskTasks.map((task) => ({
         id: task.id,
         productName: task.productName,

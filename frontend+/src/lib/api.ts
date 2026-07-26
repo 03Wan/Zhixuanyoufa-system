@@ -1,5 +1,5 @@
 ﻿export type ApiEnvelope<T> = { code: number; message: string; data: T };
-type RequestMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
+type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 export type RegisterPayload = { username: string; email: string; password: string; companyName?: string };
 export type LoginPayload = { email: string; password: string; role: string };
@@ -23,6 +23,7 @@ export type CreateTaskPayload = {
   category: string;
   platform: string;
   market: string;
+  language?: string;
   purpose: string;
   title: string;
   sellingPoints: string;
@@ -150,6 +151,7 @@ let mockFiles: any[] = [];
 let mockCompanies: any[] = [];
 let mockBatchTasks: any[] = [];
 let mockMaterialVersions: any[] = [];
+let mockPublicationOutcomes: any[] = [];
 let mockReportTemplates: any[] = [];
 
 type LocalDataRiskLevel = '低风险' | '中风险' | '高风险' | '严重风险';
@@ -2082,6 +2084,26 @@ export const api = {
     );
   },
 
+  getPublicationOutcome(taskId: string) {
+    return run(
+      () => request(`/tasks/${taskId}/publication-outcome`, 'GET'),
+      () => mockPublicationOutcomes.find((item) => item.taskId === taskId) || null,
+    );
+  },
+
+  savePublicationOutcome(taskId: string, payload: any) {
+    return run(
+      () => request(`/tasks/${taskId}/publication-outcome`, 'PUT', payload),
+      () => {
+        const existing = mockPublicationOutcomes.find((item) => item.taskId === taskId);
+        const record = { id: existing?.id || makeId('outcome'), taskId, ...existing, ...payload, updatedAt: nowIso(), createdAt: existing?.createdAt || nowIso() };
+        mockPublicationOutcomes = [record, ...mockPublicationOutcomes.filter((item) => item.taskId !== taskId)];
+        appendLog('回填发布结果', taskId, record.status || 'PUBLISHED');
+        return record;
+      },
+    );
+  },
+
   getModelConfig() {
     return run(
       () => request('/model-config/me', 'GET'),
@@ -2089,7 +2111,7 @@ export const api = {
         enabled: false,
         provider: 'OPENAI_COMPATIBLE',
         apiUrl: '',
-        modelName: 'gpt-4.1-mini',
+        modelName: '',
         hasApiKey: false,
         maskedApiKey: '',
       }),
@@ -2103,7 +2125,7 @@ export const api = {
         enabled: !!payload.enabled,
         provider: payload.provider || 'OPENAI_COMPATIBLE',
         apiUrl: payload.apiUrl || '',
-        modelName: payload.modelName || 'gpt-4.1-mini',
+        modelName: payload.modelName || '',
         hasApiKey: !!payload.apiKey,
         maskedApiKey: payload.apiKey ? '已保存' : '',
       }),
@@ -2117,7 +2139,7 @@ export const api = {
         success: true,
         provider: payload.provider || 'OPENAI_COMPATIBLE',
         apiUrl: payload.apiUrl || '',
-        modelName: payload.modelName || 'gpt-4.1-mini',
+        modelName: payload.modelName || '',
         statusCode: 200,
         latencyMs: 120,
         message: '连接成功',

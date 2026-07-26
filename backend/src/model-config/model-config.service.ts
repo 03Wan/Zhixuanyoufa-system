@@ -9,6 +9,11 @@ type ModelProvider =
   | 'MINIMAX'
   | 'ANTHROPIC'
   | 'GOOGLE_GEMINI'
+  | 'QWEN'
+  | 'ZHIPU'
+  | 'GROQ'
+  | 'MISTRAL'
+  | 'OPENROUTER'
   | 'CUSTOM';
 
 type ModelMessage = { role: 'system' | 'user' | 'assistant'; content: string };
@@ -77,6 +82,11 @@ export class ModelConfigService {
       value === 'MINIMAX' ||
       value === 'ANTHROPIC' ||
       value === 'GOOGLE_GEMINI' ||
+      value === 'QWEN' ||
+      value === 'ZHIPU' ||
+      value === 'GROQ' ||
+      value === 'MISTRAL' ||
+      value === 'OPENROUTER' ||
       value === 'CUSTOM'
     ) {
       return value;
@@ -209,7 +219,7 @@ export class ModelConfigService {
   async invokeModel(input: InvokeModelInput): Promise<InvokeModelResult> {
     const apiUrl = input.apiUrl.trim();
     const apiKey = input.apiKey.trim();
-    const modelName = input.modelName.trim() || 'gpt-4.1-mini';
+    const modelName = input.modelName.trim() || 'gpt-5.6';
     const provider = this.normalizeProvider(input.provider);
 
     if (!apiUrl) throw new BadRequestException('请先填写 API URL');
@@ -260,7 +270,7 @@ export class ModelConfigService {
       enabled: !!item?.enabled,
       provider: item?.provider || 'OPENAI_COMPATIBLE',
       apiUrl: item?.apiUrl || '',
-      modelName: item?.modelName || 'gpt-4.1-mini',
+      modelName: item?.modelName || '',
       hasApiKey: !!item?.apiKeyCiphertext,
       maskedApiKey: item?.apiKeyCiphertext ? '已保存' : '',
     };
@@ -295,7 +305,7 @@ export class ModelConfigService {
         provider,
         apiUrl: body.apiUrl?.trim() || null,
         apiKeyCiphertext,
-        modelName: body.modelName?.trim() || 'gpt-4.1-mini',
+        modelName: body.modelName?.trim() || 'gpt-5.6',
       },
     });
 
@@ -312,7 +322,7 @@ export class ModelConfigService {
     const provider = this.normalizeProvider(body.provider);
     const apiUrl = body.apiUrl?.trim() || existing?.apiUrl || '';
     const apiKey = body.apiKey?.trim() || this.decrypt(existing?.apiKeyCiphertext) || '';
-    const modelName = body.modelName?.trim() || existing?.modelName || 'gpt-4.1-mini';
+    const modelName = body.modelName?.trim() || existing?.modelName || 'gpt-5.6';
 
     try {
       const result = await this.invokeModel({
@@ -367,7 +377,7 @@ export class ModelConfigService {
       provider: this.normalizeProvider(item.provider),
       apiUrl: item.apiUrl,
       apiKey: this.decrypt(item.apiKeyCiphertext),
-      modelName: item.modelName || 'gpt-4.1-mini',
+      modelName: item.modelName || 'gpt-5.6',
     };
   }
 

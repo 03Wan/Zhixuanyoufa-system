@@ -18,33 +18,34 @@ export const ROLE_LABELS: Record<UserRole, string> = {
 };
 
 export const ROLE_MENU: Record<UserRole, string[]> = {
-  ENTERPRISE_ADMIN: ["home", "plans", "myPlan", "batch", "companies", "customers", "tasks", "results", "reports", "applications", "rules", "users", "logs", "modelConfig", "apiOpen", "templates"],
-  OPERATOR: ["home", "plans", "myPlan", "batch", "customers", "tasks", "results", "reports", "modelConfig"],
-  DESIGNER: ["home", "plans", "myPlan", "tasks", "results", "modelConfig"],
+  ENTERPRISE_ADMIN: ["home", "plans", "myPlan", "generate", "batch", "companies", "customers", "tasks", "results", "reports", "applications", "rules", "users", "logs", "modelConfig", "apiOpen", "templates"],
+  OPERATOR: ["home", "plans", "myPlan", "generate", "batch", "customers", "tasks", "results", "reports", "modelConfig"],
+  DESIGNER: ["home", "plans", "myPlan", "generate", "tasks", "results", "modelConfig"],
   REVIEWER: ["home", "plans", "myPlan", "results", "reviews", "reports", "modelConfig"],
-  MANAGER: ["home", "plans", "myPlan", "dashboard", "companies", "customers", "reports", "applications", "logs", "modelConfig", "apiOpen"],
-  SYSTEM_ADMIN: ["home", "plans", "myPlan", "dashboard", "batch", "companies", "customers", "tasks", "results", "reviews", "reports", "applications", "rules", "users", "logs", "modelConfig", "apiOpen", "templates"],
+  MANAGER: ["home", "plans", "myPlan", "dashboard", "generate", "companies", "customers", "reports", "applications", "logs", "modelConfig", "apiOpen"],
+  SYSTEM_ADMIN: ["home", "plans", "myPlan", "dashboard", "generate", "batch", "companies", "customers", "tasks", "results", "reviews", "reports", "applications", "rules", "users", "logs", "modelConfig", "apiOpen", "templates"],
   CUSTOMER_VIEWER: ["home", "myPlan", "reports", "dashboard"],
 };
 
 export const MENU_REGISTRY = {
-  home: { key: "home", label: "首页", href: "/home" },
-  dashboard: { key: "dashboard", label: "数据看板", href: "/dashboard" },
-  plans: { key: "plans", label: "套餐中心", href: "/plans" },
+  home: { key: "home", label: "今日待办", href: "/home" },
+  dashboard: { key: "dashboard", label: "成效分析", href: "/dashboard" },
+  plans: { key: "plans", label: "套餐与共创", href: "/plans" },
   myPlan: { key: "myPlan", label: "我的套餐", href: "/my-plan" },
-  batch: { key: "batch", label: "批量检测", href: "/batch" },
+  batch: { key: "batch", label: "批量导入任务", href: "/batch" },
+  generate: { key: "generate", label: "生成跨境素材", href: "/generate" },
   companies: { key: "companies", label: "企业组织", href: "/companies" },
   customers: { key: "customers", label: "客户档案", href: "/customers" },
-  tasks: { key: "tasks", label: "任务中心", href: "/tasks/new" },
-  results: { key: "results", label: "检测结果", href: "/results" },
-  reviews: { key: "reviews", label: "人工复核台", href: "/reviews" },
+  tasks: { key: "tasks", label: "创建审校任务", href: "/tasks/new" },
+  results: { key: "results", label: "审校结论", href: "/results" },
+  reviews: { key: "reviews", label: "人工复核", href: "/reviews" },
   reports: { key: "reports", label: "报告中心", href: "/reports" },
   applications: { key: "applications", label: "企业申请", href: "/applications" },
-  rules: { key: "rules", label: "规则库", href: "/rules" },
+  rules: { key: "rules", label: "规则与模板", href: "/rules" },
   users: { key: "users", label: "用户管理", href: "/users" },
   logs: { key: "logs", label: "操作日志", href: "/logs" },
   modelConfig: { key: "modelConfig", label: "模型配置", href: "/model-config" },
-  apiOpen: { key: "apiOpen", label: "API接口版", href: "/api-open" },
+  apiOpen: { key: "apiOpen", label: "集成与 API", href: "/api-open" },
   templates: { key: "templates", label: "报告模板", href: "/report-templates" },
 } as const;
 

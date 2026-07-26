@@ -38,7 +38,8 @@ const navItems = [
   { path: "/home-public", label: "首页" },
   { path: "/product-capabilities", label: "产品能力" },
   { path: "/platforms", label: "适用平台" },
-  { path: "/solutions", label: "解决方案" },
+    { path: "/solutions", label: "解决方案" },
+    { path: "/pricing", label: "套餐价格" },
   { path: "/about-project", label: "关于智选优发" },
 ];
 
@@ -72,7 +73,7 @@ const page = computed(() => {
 </script>
 
 <style scoped>
-.info-page { min-height: 100vh; background: #fbfaf8; color: #081837; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
+.info-page { min-height: 100vh; background: #fff; color: #081837; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
 .topbar { height: 76px; padding: 0 clamp(24px, 6vw, 88px); display: flex; align-items: center; border-bottom: 1px solid #e5e7ed; gap: 42px; background: #fff; }
 .brand { color: #081837; text-decoration: none; font-size: 21px; font-weight: 800; display: flex; align-items: center; gap: 9px; }
 .brand span { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 8px; background: #1455db; color: #fff; }

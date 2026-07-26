@@ -3,7 +3,7 @@
     <section class="page-stack fade-up">
       <AppGlassSurface as="section" class="card home-card">
         <div class="row-between">
-          <h2 class="section-title">首页工作台</h2>
+          <h2 class="section-title">今日待办</h2>
           <button class="btn btn-secondary" :disabled="isRefreshing" @click="loadAll(true)">
             {{ isRefreshing ? "刷新中" : "刷新首页数据" }}
           </button>
@@ -13,7 +13,7 @@
 
         <div class="kpi-grid">
           <AppGlassSurface as="article" class="card kpi-card">
-            <p>今日检测任务数</p>
+            <p>今日审校任务数</p>
             <div v-if="loading.dashboard" class="metric-skeleton"></div>
             <h3 v-else>{{ dashboard.metrics.todayTaskCount }}</h3>
           </AppGlassSurface>
@@ -28,9 +28,9 @@
             <h3 v-else>{{ dashboard.metrics.highRiskCount }}</h3>
           </AppGlassSurface>
           <AppGlassSurface as="article" class="card kpi-card">
-            <p>已生成报告数</p>
+            <p>首发通过率</p>
             <div v-if="loading.dashboard" class="metric-skeleton"></div>
-            <h3 v-else>{{ dashboard.metrics.reportCount }}</h3>
+            <h3 v-else>{{ dashboard.metrics.firstPassRate || 0 }}%</h3>
           </AppGlassSurface>
         </div>
 

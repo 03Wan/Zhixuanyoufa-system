@@ -24,6 +24,7 @@ import { ReportTemplatesModule } from './report-templates/report-templates.modul
 import { ModelConfigModule } from './model-config/model-config.module';
 import { HealthModule } from './health/health.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { PublicationOutcomesModule } from './publication-outcomes/publication-outcomes.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     ModelConfigModule,
     HealthModule,
     NotificationsModule,
+    PublicationOutcomesModule,
   ],
 })
 export class AppModule {}

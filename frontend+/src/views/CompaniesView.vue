@@ -47,7 +47,7 @@
               <td>{{ c.contactPerson || "-" }}</td>
               <td>{{ (c.targetMarkets || []).join("、") || "-" }}</td>
               <td>{{ c.planType || "-" }}</td>
-              <td>{{ c.serviceStatus || "-" }}</td>
+              <td>{{ serviceStatusText(c.serviceStatus) }}</td>
               <td><button class="btn btn-secondary btn-xs" @click="removeCompany(c)">删除</button></td>
             </tr>
           </tbody>
@@ -75,6 +75,7 @@ const form = reactive({ name: "", industryType: "", contactPerson: "", contactPh
 const loading = ref(true);
 const refreshing = ref(false);
 const saving = ref(false);
+function serviceStatusText(value?: string) { const map: Record<string, string> = { OPENING: '开通中', ACTIVE: '服务中', PENDING: '待开通', SUSPENDED: '已暂停' }; return map[String(value || '').toUpperCase()] || value || '-'; }
 
 async function load() {
   const silent = rows.value.length > 0;

@@ -118,21 +118,19 @@ function formatAsLine(value: unknown) {
 
 async function load() {
   loadError.value = '';
-  if (canReview) {
-    try {
-      await api.startReview(String(route.params.id || ''));
-    } catch (error) {
-      // The detail remains readable if a review was claimed elsewhere; the
-      // subsequent detail request is still authoritative for the screen.
-      loadError.value = getFriendlyError(error);
-    }
-  }
   try {
     detail.value = await api.getReviewDetail(String(route.params.id || ''));
-    loadError.value = '';
   } catch (error) {
     detail.value = null;
     loadError.value = getFriendlyError(error);
+    return;
+  }
+  if (canReview) {
+    try {
+      await api.startReview(String(route.params.id || ''));
+    } catch {
+      // A claim failure must never replace a successfully loaded review with an empty screen.
+    }
   }
 }
 

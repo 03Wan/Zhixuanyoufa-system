@@ -4,7 +4,10 @@
       <AppGlassSurface as="section" class="card result-list-card">
         <div class="row-between">
           <h2 class="section-title">检测结果中心</h2>
-          <button class="btn btn-secondary" :disabled="loading.tasks" @click="loadTasks">刷新任务</button>
+          <div class="result-header-actions">
+            <button v-if="!showTaskList && selectedTaskId" class="btn btn-secondary" @click="showTaskList = true">返回任务列表</button>
+            <button class="btn btn-secondary" :disabled="loading.tasks" @click="loadTasks">刷新任务</button>
+          </div>
         </div>
         <div class="task-picker">
           <input class="input" v-model.trim="searchKeyword" placeholder="搜索任务编号/名称" />
@@ -49,9 +52,6 @@
             </tbody>
           </table>
         </div>
-        <div class="actions-row back-list-btn" v-if="!showTaskList && selectedTaskId">
-          <button class="btn btn-secondary" @click="showTaskList = true">返回任务列表</button>
-        </div>
         <div v-if="showTaskList && !loading.tasks && filteredTasks.length === 0" class="state">暂无可展示任务</div>
         <p v-if="error" class="error-text">{{ error }}</p>
       </AppGlassSurface>
@@ -72,6 +72,7 @@
             <div><span class="k">品类</span><strong>{{ taskMeta.category || '-' }}</strong></div>
             <div><span class="k">平台</span><strong>{{ taskMeta.platform || '-' }}</strong></div>
             <div><span class="k">市场</span><strong>{{ taskMeta.market || '-' }}</strong></div>
+            <div><span class="k">目标语言</span><strong>{{ taskMeta.language || '-' }}</strong></div>
             <div><span class="k">目的</span><strong>{{ taskMeta.purpose || '-' }}</strong></div>
           </div>
         </AppGlassSurface>
@@ -97,27 +98,6 @@
             </div>
           </div>
           <p class="summary-explain" v-if="result.explanation">{{ result.explanation }}</p>
-        </AppGlassSurface>
-
-        <AppGlassSurface as="section" class="card">
-          <div class="summary-grid">
-            <article class="score-card">
-              <p>综合分</p>
-              <h1>{{ result.score }}</h1>
-            </article>
-            <article class="meta-card">
-              <p>风险等级</p>
-              <span :class="['tag', riskClass(result.riskLevel)]">{{ result.riskLevel }}</span>
-            </article>
-            <article class="meta-card">
-              <p>发布决策</p>
-              <span :class="['tag', decisionClass(result.decision)]">{{ result.decision }}</span>
-            </article>
-            <article class="meta-card">
-              <p>检测时间</p>
-              <strong>{{ formatTime(result.detectedAt) }}</strong>
-            </article>
-          </div>
         </AppGlassSurface>
 
         <AppGlassSurface as="section" class="card">
@@ -171,11 +151,14 @@
                 <p><strong>语言：</strong>{{ result.parseResult?.text?.language || '-' }}</p>
               </article>
               <article class="parse-card">
-                <h4>图片识别/OCR（模拟）</h4>
-                <p><strong>主体元素：</strong>{{ (result.parseResult?.image?.objects || []).join('、') || '-' }}</p>
-                <p><strong>主色：</strong>{{ (result.parseResult?.image?.colors || []).join('、') || '-' }}</p>
-                <p><strong>OCR 文本：</strong>{{ (result.parseResult?.image?.ocrText || []).join('、') || '-' }}</p>
-                <p><strong>识别风险：</strong>{{ (result.parseResult?.image?.risks || []).join('、') || '-' }}</p>
+                <h4>图片识别 / OCR</h4>
+                <template v-if="result.parseResult?.image">
+                  <p><strong>主体元素：</strong>{{ (result.parseResult?.image?.objects || []).join('、') || '-' }}</p>
+                  <p><strong>主色：</strong>{{ (result.parseResult?.image?.colors || []).join('、') || '-' }}</p>
+                  <p><strong>OCR 文本：</strong>{{ (result.parseResult?.image?.ocrText || []).join('、') || '-' }}</p>
+                  <p><strong>识别风险：</strong>{{ (result.parseResult?.image?.risks || []).join('、') || '-' }}</p>
+                </template>
+                <p v-else class="tip-text">图片识别能力暂未启用；上传图片后会在此展示真实识别结果。</p>
               </article>
             </div>
           </div>
@@ -229,6 +212,7 @@
 
         <AppGlassSurface as="section" class="card">
           <div class="actions-row">
+            <button class="btn btn-primary" :disabled="loading.apply" @click="applyRecommendedCopy">{{ loading.apply ? '采用中...' : '采用推荐修改' }}</button>
             <button class="btn btn-primary" :disabled="loading.report" @click="generateReport">
               {{ loading.report ? '生成中...' : '生成报告' }}
             </button>
@@ -241,11 +225,13 @@
             <button v-if="taskMeta?.report?.id" class="btn btn-secondary" @click="deleteReport(taskMeta.report.id)">删除报告</button>
             <button class="btn btn-secondary" @click="deleteTask(selectedTaskId)">删除任务</button>
             <button class="btn btn-secondary" @click="downloadSuggestion">下载建议</button>
+            <button class="btn btn-secondary" @click="openOutcome">回填发布结果</button>
           </div>
           <p v-if="tip" class="tip-text">{{ tip }}</p>
         </AppGlassSurface>
       </template>
     </section>
+    <div v-if="outcomeOpen" class="modal-mask" @click.self="outcomeOpen = false"><AppGlassSurface as="section" class="card modal-panel"><h3 class="section-title">回填发布结果</h3><p class="tip-text">用于统计首发通过率；CTR、CVR 等经营指标将在后续接入真实数据源后开放。</p><div class="grid-2"><label>发布状态<select v-model="outcomeForm.status"><option value="PUBLISHED">已发布</option><option value="REJECTED">被驳回</option><option value="PAUSED">暂缓发布</option></select></label><label>首发是否通过<select v-model="outcomeForm.firstPass"><option value="true">通过</option><option value="false">未通过</option></select></label></div><label>平台 Listing ID<input class="input" v-model.trim="outcomeForm.listingId" /></label><label>驳回原因<textarea rows="3" v-model.trim="outcomeForm.rejectionReason" /></label><label>备注<textarea rows="2" v-model.trim="outcomeForm.note" /></label><div class="actions-row"><button class="btn btn-primary" @click="saveOutcome">保存结果</button><button class="btn btn-secondary" @click="outcomeOpen=false">取消</button></div></AppGlassSurface></div>
   </AppShell>
 </template>
 
@@ -261,7 +247,9 @@ import { confirmDialog, toast } from '@/lib/dialog';
 const route = useRoute();
 const router = useRouter();
 
-const loading = reactive({ tasks: false, detail: false, detect: false, report: false, review: false });
+const loading = reactive({ tasks: false, detail: false, detect: false, report: false, review: false, apply: false });
+const outcomeOpen = ref(false);
+const outcomeForm = reactive({ status: 'PUBLISHED', firstPass: 'true', listingId: '', rejectionReason: '', note: '' });
 const detectStep = ref('');
 const error = ref('');
 const tip = ref('');
@@ -517,6 +505,42 @@ async function generateReport() {
   }
 }
 
+async function applyRecommendedCopy() {
+  if (!selectedTaskId.value || !taskMeta.value || !result.value) return;
+  loading.apply = true;
+  error.value = '';
+  try {
+    const title = result.value?.optimization?.titleVariants?.[0] || taskMeta.value?.materialContent?.title;
+    const sellingAfter = result.value?.optimization?.sellingPointRewrite?.after;
+    const sellingPoints = Array.isArray(sellingAfter) ? sellingAfter.join('\n') : sellingAfter || taskMeta.value?.materialContent?.sellingPoints?.join?.('\n') || '';
+    const detailText = taskMeta.value?.materialContent?.detailText || '';
+    const adText = taskMeta.value?.materialContent?.adText || '';
+    await api.snapshotMaterialVersion(selectedTaskId.value, { title: taskMeta.value?.materialContent?.title, sellingPoints: taskMeta.value?.materialContent?.sellingPoints, detailText, adText, imageUrls: taskMeta.value?.materialContent?.imageUrls || [] });
+    await api.updateTask(selectedTaskId.value, { title, sellingPoints, detailText, adText });
+    await api.updateTaskStatus(selectedTaskId.value, 'PENDING_DETECTION');
+    tip.value = '已采用推荐修改并保存原始素材版本，请重新审校或提交复核。';
+    await loadResult(selectedTaskId.value);
+  } catch (e) { error.value = getFriendlyError(e); } finally { loading.apply = false; }
+}
+
+async function openOutcome() {
+  if (!selectedTaskId.value) return;
+  try {
+    const existing: any = await api.getPublicationOutcome(selectedTaskId.value);
+    if (existing) Object.assign(outcomeForm, { status: existing.status || 'PUBLISHED', firstPass: existing.firstPass === false ? 'false' : 'true', listingId: existing.listingId || '', rejectionReason: existing.rejectionReason || '', note: existing.note || '' });
+  } catch { /* empty state is valid before first save */ }
+  outcomeOpen.value = true;
+}
+
+async function saveOutcome() {
+  if (!selectedTaskId.value) return;
+  try {
+    await api.savePublicationOutcome(selectedTaskId.value, { ...outcomeForm, firstPass: outcomeForm.firstPass === 'true', publishedAt: new Date().toISOString() });
+    outcomeOpen.value = false;
+    tip.value = '发布结果已回填，可在成效分析中统计首发通过率。';
+  } catch (e) { error.value = getFriendlyError(e); }
+}
+
 async function submitReview() {
   if (!selectedTaskId.value) return;
   loading.review = true;
@@ -623,6 +647,7 @@ onMounted(async () => {
 <style scoped>
 .task-picker { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; margin-top: 10px; }
 .result-list-card { min-height: 0; }
+.result-header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
 .task-list-wrap { margin-top: 10px; max-height: none; }
 .meta-grid { display: grid; gap: 10px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .meta-grid > div { border: 1px solid var(--border); border-radius: 10px; padding: 10px; background: var(--card-strong); display: grid; gap: 6px; }
@@ -663,7 +688,11 @@ onMounted(async () => {
 .tip-text { margin: 8px 0 0; color: var(--brand-1); }
 .detail-block summary { cursor: pointer; font-weight: 700; color: var(--brand-1); }
 .detail-body { margin-top: 12px; }
-.back-list-btn { margin-top: 8px; }
+@media (max-width: 620px) {
+  .row-between { align-items: flex-start; }
+  .result-header-actions { width: 100%; justify-content: stretch; }
+  .result-header-actions .btn { flex: 1; }
+}
 @media (max-width: 1100px) {
   .task-picker, .meta-grid, .summary-grid, .summary-strip, .dimension-grid { grid-template-columns: 1fr; }
 }

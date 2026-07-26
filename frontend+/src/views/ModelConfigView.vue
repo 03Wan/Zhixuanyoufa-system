@@ -31,7 +31,7 @@
           >
             <div class="preset-top">
               <strong>{{ item.label }}</strong>
-              <span>{{ item.modelName }}</span>
+              <span>{{ item.modelName || '使用供应商当前可用模型' }}</span>
             </div>
             <small>{{ item.note }}</small>
           </button>
@@ -69,8 +69,8 @@
           </div>
 
           <div class="field">
-            <label>模型名称</label>
-            <input class="input" v-model.trim="form.modelName" placeholder="gpt-4.1-mini" />
+            <label>模型名称（可选）</label>
+            <input class="input" v-model.trim="form.modelName" placeholder="留空使用系统推荐模型；需要固定版本时再填写" />
           </div>
         </div>
 
@@ -111,15 +111,15 @@ const providerPresets: ProviderPreset[] = [
     provider: 'OPENAI_COMPATIBLE',
     label: 'ChatGPT / OpenAI',
     apiUrl: 'https://api.openai.com/v1/chat/completions',
-    modelName: 'gpt-4.1-mini',
-    note: 'OpenAI 官方 chat completions 接口',
+    modelName: '',
+    note: '自动使用当前可用的 OpenAI 推荐模型',
   },
   {
     key: 'anthropic',
     provider: 'ANTHROPIC',
     label: 'Claude',
     apiUrl: 'https://api.anthropic.com/v1/messages',
-    modelName: 'claude-sonnet-4-6',
+    modelName: '',
     note: 'Anthropic Messages API',
   },
   {
@@ -127,7 +127,7 @@ const providerPresets: ProviderPreset[] = [
     provider: 'GOOGLE_GEMINI',
     label: 'Gemini',
     apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
-    modelName: 'gemini-2.5-flash',
+    modelName: '',
     note: 'Google Gemini REST 接口',
   },
   {
@@ -135,7 +135,7 @@ const providerPresets: ProviderPreset[] = [
     provider: 'DEEPSEEK',
     label: 'DeepSeek',
     apiUrl: 'https://api.deepseek.com/chat/completions',
-    modelName: 'deepseek-chat',
+    modelName: '',
     note: 'OpenAI 兼容接口',
   },
   {
@@ -143,7 +143,7 @@ const providerPresets: ProviderPreset[] = [
     provider: 'KIMI',
     label: 'Kimi',
     apiUrl: 'https://api.moonshot.cn/v1/chat/completions',
-    modelName: 'kimi-k2.6',
+    modelName: '',
     note: 'Moonshot OpenAI 兼容接口',
   },
   {
@@ -151,28 +151,24 @@ const providerPresets: ProviderPreset[] = [
     provider: 'MINIMAX',
     label: 'MiniMax',
     apiUrl: 'https://api.minimaxi.com/v1/chat/completions',
-    modelName: 'MiniMax-M3',
+    modelName: '',
     note: 'MiniMax OpenAI 兼容接口',
   },
+  { key: 'qwen', provider: 'QWEN', label: '通义千问 / Qwen', apiUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', modelName: '', note: 'OpenAI 兼容接口；可按账户填写模型标识' },
+  { key: 'zhipu', provider: 'ZHIPU', label: '智谱 AI', apiUrl: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', modelName: '', note: 'OpenAI 兼容接口；可按账户填写模型标识' },
+  { key: 'groq', provider: 'GROQ', label: 'Groq', apiUrl: 'https://api.groq.com/openai/v1/chat/completions', modelName: '', note: 'OpenAI 兼容接口；可按账户填写模型标识' },
+  { key: 'mistral', provider: 'MISTRAL', label: 'Mistral AI', apiUrl: 'https://api.mistral.ai/v1/chat/completions', modelName: '', note: 'OpenAI 兼容接口；可按账户填写模型标识' },
+  { key: 'openrouter', provider: 'OPENROUTER', label: 'OpenRouter', apiUrl: 'https://openrouter.ai/api/v1/chat/completions', modelName: '', note: '多模型路由；请按账户填写模型标识' },
+  { key: 'custom', provider: 'CUSTOM', label: '自定义供应商', apiUrl: '', modelName: '', note: '手动填写兼容 API 地址、模型标识和密钥' },
 ];
 
-const providerOptions = [
-  ...providerPresets,
-  {
-    key: 'custom',
-    provider: 'CUSTOM',
-    label: '自定义',
-    apiUrl: '',
-    modelName: 'gpt-4.1-mini',
-    note: '手动填写任意兼容地址',
-  },
-];
+const providerOptions = providerPresets;
 
 const form = reactive({
   enabled: false,
   apiUrl: '',
   apiKey: '',
-  modelName: 'gpt-4.1-mini',
+  modelName: '',
   provider: 'OPENAI_COMPATIBLE',
 });
 
@@ -204,7 +200,8 @@ async function load() {
     form.enabled = !!data.enabled;
     form.apiUrl = String(data.apiUrl || '');
     form.apiKey = '';
-    form.modelName = String(data.modelName || 'gpt-4.1-mini');
+    // Presets intentionally do not expose pinned model IDs in the workspace.
+    form.modelName = '';
     form.provider = String(data.provider || 'OPENAI_COMPATIBLE');
     hasApiKey.value = !!data.hasApiKey;
     testResult.value = null;

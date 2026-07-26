@@ -42,7 +42,9 @@
                 <td class="op-col">
                   <div class="actions">
                     <button class="btn btn-secondary" @click="view(r.id)">查看</button>
-                    <button class="btn btn-primary" @click="download(r.id, exportFormat)">下载</button>
+                    <select class="download-menu" aria-label="选择下载格式" @change="downloadFromMenu(r.id, $event)">
+                      <option value="" selected disabled>下载</option><option value="pdf">PDF</option><option value="docx">Word</option><option value="json">JSON</option>
+                    </select>
                     <button class="btn btn-secondary" @click="print(r.id)">打印</button>
                     <button class="btn btn-secondary" @click="removeReport(r.id)">删除</button>
                   </div>
@@ -58,14 +60,6 @@
           <button class="btn btn-secondary" :disabled="page===totalPages" @click="page++">下一页</button>
         </div>
 
-        <div class="export-bar">
-          <label>导出格式：</label>
-          <select v-model="exportFormat">
-            <option value="pdf">PDF</option>
-            <option value="docx">Word</option>
-            <option value="json">JSON</option>
-          </select>
-        </div>
       </AppGlassSurface>
     </section>
   </AppShell>
@@ -88,7 +82,6 @@ const error = ref('');
 const rows = ref<any[]>([]);
 const page = ref(1);
 const pageSize = 10;
-const exportFormat = ref<'pdf' | 'docx' | 'json'>('pdf');
 const REPORTS_CACHE_KEY = 'view-cache:reports';
 
 const platforms = [
@@ -174,6 +167,13 @@ async function download(id: string, format: 'pdf' | 'docx' | 'json') {
     await notify(error.value);
   }
 }
+async function downloadFromMenu(id: string, event: Event) {
+  const input = event.target as HTMLSelectElement;
+  const format = input.value as 'pdf' | 'docx' | 'json' | '';
+  if (!format) return;
+  await download(id, format);
+  input.value = '';
+}
 function print(id: string) { router.push(`/reports/${id}?print=1`); }
 async function removeReport(id: string) {
   if (!(await confirmDialog('确认删除该报告吗？'))) return;
@@ -207,9 +207,7 @@ onMounted(() => {
 .table td:nth-child(2) { white-space: normal; min-width: 120px; }
 .actions .btn { min-height: 32px; padding: 6px 10px; border-radius: 10px; font-size: 13px; }
 .pager { margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px; align-items: center; }
-.export-bar { margin-top: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
-.export-bar label { white-space: nowrap; word-break: keep-all; flex: 0 0 auto; }
-.export-bar select { min-width: 120px; }
+.download-menu { width: auto; min-width: 72px; min-height: 32px; padding: 5px 9px; border-radius: 10px; color: #fff; background: var(--brand-1); border-color: var(--brand-1); font-weight: 700; }
 @media (max-width: 1200px) { .filter-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 760px) { .filter-grid { grid-template-columns: 1fr; } }
 </style>

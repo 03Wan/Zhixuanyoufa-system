@@ -35,6 +35,7 @@ export class TasksService {
         category: dto.category,
         platform: dto.platform,
         market: dto.market,
+        language: dto.language,
         purpose: dto.purpose,
         materialContent: {
           create: {
@@ -109,6 +110,7 @@ export class TasksService {
         ...(dto.category !== undefined ? { category: dto.category } : {}),
         ...(dto.platform !== undefined ? { platform: dto.platform } : {}),
         ...(dto.market !== undefined ? { market: dto.market } : {}),
+        ...(dto.language !== undefined ? { language: dto.language } : {}),
         ...(dto.purpose !== undefined ? { purpose: dto.purpose } : {}),
         ...(hasMaterialChange
           ? {

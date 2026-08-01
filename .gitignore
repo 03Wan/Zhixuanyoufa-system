@@ -20,6 +20,11 @@ dist/
 .vite/
 **/.vite/
 .playwright-cli/
+frontend+/output/
+frontend+/design-sources/
+frontend+/design-qa*.png
+frontend+/design-qa*.md
+frontend+/qa-*.png
 *.tsbuildinfo
 
 # Generated frontend source artifacts

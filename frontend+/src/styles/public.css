@@ -1,0 +1,115 @@
+:root {
+  --public-navy-950: #031027;
+  --public-navy-900: #07162e;
+  --public-navy-800: #0b2348;
+  --public-blue: #2563eb;
+  --public-cyan: #22d3ee;
+  --public-ink: #0a1d40;
+  --public-muted: #5e6c85;
+  --public-line: #dce5f2;
+  --public-soft: #f4f7fc;
+  --public-success: #0ea979;
+  --public-warning: #e49a18;
+  --public-danger: #ef5b62;
+}
+
+.public-page { min-height: 100vh; color: var(--public-ink); background: #fff; font-family: "PingFang SC", "Microsoft YaHei", Inter, sans-serif; }
+.public-shell { width: min(100% - 48px, 1320px); margin-inline: auto; }
+.public-dark-hero { position: relative; overflow: hidden; color: #fff; background-color: var(--public-navy-950); background-image: url('/assets/future-review/global-rule-network.png'); background-size: cover; background-position: center; }
+.public-dark-hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: rgba(3, 16, 39, .14); }
+.public-dark-hero > * { position: relative; z-index: 1; }
+.public-kicker { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 16px; color: #59ddf5; font-size: 14px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.public-kicker svg { flex: 0 0 auto; }
+.public-title { margin: 0; font-size: clamp(44px, 5vw, 72px); line-height: 1.08; letter-spacing: -.055em; font-weight: 900; }
+.public-lead { max-width: 650px; margin: 22px 0 0; color: #b9c8e0; font-size: clamp(16px, 1.35vw, 19px); line-height: 1.8; }
+.public-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.public-button { min-height: 46px; border: 1px solid rgba(255, 255, 255, .28); border-radius: 9px; padding: 0 20px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: transparent; color: #fff; font: inherit; font-weight: 800; cursor: pointer; transition: transform .2s ease, border-color .2s ease, background-color .2s ease, box-shadow .2s ease; }
+.public-button:hover { transform: translateY(-2px); border-color: rgba(89, 221, 245, .82); }
+.public-button:focus-visible { outline: 3px solid rgba(89, 221, 245, .55); outline-offset: 3px; }
+.public-button.primary { background: var(--public-blue); border-color: #4a86ff; box-shadow: 0 14px 34px rgba(37, 99, 235, .32); }
+.public-button.light { background: #fff; color: var(--public-ink); border-color: var(--public-line); }
+.public-button.blue-outline { color: var(--public-blue); border-color: #9dbcf8; }
+.public-button.full { width: 100%; }
+.public-section { padding: 92px 0; }
+.public-section.soft { background: var(--public-soft); }
+.public-section.dark { background: var(--public-navy-900); color: #fff; }
+.public-section-head { max-width: 820px; margin-bottom: 40px; }
+.public-section-head.center { margin-inline: auto; text-align: center; }
+.public-section-head h2 { margin: 0; font-size: clamp(34px, 4vw, 54px); line-height: 1.14; letter-spacing: -.045em; }
+.public-section-head p:not(.public-kicker) { margin: 16px 0 0; color: var(--public-muted); font-size: 17px; line-height: 1.75; }
+.public-section.dark .public-section-head p:not(.public-kicker) { color: #b9c8e0; }
+.public-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.public-card { padding: 28px; border: 1px solid var(--public-line); border-radius: 16px; background: #fff; transition: transform .24s ease, border-color .24s ease, box-shadow .24s ease; }
+.public-card:hover { transform: translateY(-5px); border-color: #a9c4f6; box-shadow: 0 20px 50px rgba(24, 55, 105, .1); }
+.public-card .icon-box { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 11px; background: #eaf2ff; color: var(--public-blue); }
+.public-card h3 { margin: 20px 0 10px; font-size: 22px; }
+.public-card p { margin: 0; color: var(--public-muted); line-height: 1.75; }
+.public-status { display: inline-flex; align-items: center; gap: 7px; border-radius: 999px; padding: 5px 10px; font-size: 12px; font-weight: 800; }
+.public-status.verified { color: #087956; background: #def7ed; }
+.public-status.testing { color: #9b6100; background: #fff0cd; }
+.public-status.planned { color: #637187; background: #edf1f7; }
+.public-cta { padding: 42px; display: flex; align-items: center; justify-content: space-between; gap: 30px; border: 1px solid #254b80; border-radius: 18px; background: var(--public-navy-900); color: #fff; }
+.public-cta h2 { margin: 6px 0 8px; font-size: clamp(28px, 3vw, 40px); }
+.public-cta p { margin: 0; color: #b9c8e0; line-height: 1.7; }
+.public-legal { padding: 76px 0 90px; background: var(--public-soft); }
+.public-legal article { max-width: 900px; margin: auto; padding: clamp(28px, 4vw, 52px); border: 1px solid var(--public-line); border-radius: 18px; background: #fff; }
+.public-legal h1 { margin: 0 0 24px; font-size: clamp(36px, 4vw, 54px); }
+.public-legal p { color: var(--public-muted); line-height: 1.85; }
+@media (max-width: 920px) { .public-shell { width: min(100% - 36px, 1320px); } .public-card-grid { grid-template-columns: 1fr 1fr; } .public-section { padding: 72px 0; } }
+@media (max-width: 640px) { .public-shell { width: min(100% - 28px, 1320px); } .public-title { font-size: clamp(38px, 12vw, 54px); } .public-lead { font-size: 16px; } .public-card-grid { grid-template-columns: 1fr; } .public-section { padding: 58px 0; } .public-section-head { margin-bottom: 28px; } .public-cta { padding: 28px; align-items: stretch; flex-direction: column; } .public-cta .public-button { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } .public-dark-hero { background-attachment: scroll !important; } }
+
+/* All marketing routes share one continuous future-review environment. */
+.public-page { background-color: var(--public-navy-950); background-image: url('/assets/future-review/global-rule-network.png'); background-size: cover; background-position: center; background-attachment: fixed; background-repeat: no-repeat; color: #fff; animation: publicWorldDrift 20s ease-in-out infinite alternate; }
+.public-page .public-section { border-top: 1px solid rgba(73, 124, 190, .18); background: rgba(3, 16, 39, .95) !important; color: #fff; }
+.public-page .public-section.soft { background: rgba(7, 27, 57, .96) !important; }
+.public-page .public-section-head h2 { color: #fff; }
+.public-page .public-section-head p:not(.public-kicker) { color: #9fb1cc; }
+.public-page .public-card { border-color: #28517e; background: rgba(7, 31, 67, .9); color: #fff; box-shadow: 0 16px 42px rgba(0, 0, 0, .14); }
+.public-page .public-card:hover { border-color: #38a7e8; box-shadow: 0 20px 48px rgba(20, 118, 206, .2); }
+.public-page .public-card .icon-box { background: #0a315f; color: #59ddf5; }
+.public-page .public-card h3 { color: #fff; }
+.public-page .public-card p { color: #aebfd8; }
+.public-page .public-cta { border-color: #3378b9; background: rgba(6, 30, 66, .94); box-shadow: 0 26px 70px rgba(0, 0, 0, .24); }
+.public-page .public-button.light { border-color: #315f94; background: #071f43; color: #fff; }
+.public-page .public-button.blue-outline { border-color: #367edc; background: #071f43; color: #70dcf2; }
+
+.pricing-page .plans article { border-color: #28517e !important; background: rgba(7, 31, 67, .94) !important; color: #fff; box-shadow: 0 16px 44px rgba(0, 0, 0, .16); }
+.pricing-page .plans article.featured { border-color: #38d7ff !important; box-shadow: 0 0 38px rgba(34, 211, 238, .16); }
+.pricing-page .plans h2 { color: #fff; }
+.pricing-page .plans ul { color: #aebfd8 !important; }
+.pricing-page .recommended { background: #0c4778 !important; color: #8ee9f7 !important; }
+.pricing-page .rules-layout li { border-color: #28517e !important; }
+.pricing-page .rules-layout p { color: #aebfd8 !important; }
+
+.platforms-page .matrix-wrap { border-color: #28517e !important; background: rgba(6, 30, 66, .9); }
+.platforms-page .matrix-row { border-color: #28517e !important; color: #aebfd8 !important; }
+.platforms-page .matrix-row.head { background: #0a2349 !important; color: #dcecff !important; }
+.platforms-page .matrix-row strong { color: #fff !important; }
+
+.about-page .roadmap article { border-color: #28517e !important; background: rgba(7, 31, 67, .92) !important; }
+.about-page .roadmap article > span { color: #1d4d83 !important; }
+.about-page .roadmap h3 { color: #fff; }
+.about-page .roadmap p { color: #aebfd8 !important; }
+
+.info-page .proof-layout li { border-color: #28517e !important; }
+.info-page .proof-layout li b { color: #fff; }
+.info-page .public-section-head { max-width: 1050px; }
+.pricing-page .public-section-head.center { max-width: 1100px; }
+
+.public-page .public-legal { border-top: 1px solid rgba(73, 124, 190, .18); background: rgba(3, 16, 39, .96); }
+.public-page .public-legal article { border-color: #28517e; background: rgba(7, 31, 67, .94); color: #fff; box-shadow: 0 26px 70px rgba(0, 0, 0, .22); }
+.public-page .public-legal p { color: #b7c7dd; }
+
+@keyframes publicWorldDrift { from { background-position: 47% 50%; } to { background-position: 53% 50%; } }
+
+.reveal-tech { opacity: 0; transform: translate3d(0, 34px, 0) scale(.985); filter: saturate(.75); transition: opacity .72s ease var(--reveal-delay, 0ms), transform .72s cubic-bezier(.2,.75,.25,1) var(--reveal-delay, 0ms), filter .72s ease var(--reveal-delay, 0ms), box-shadow .72s ease var(--reveal-delay, 0ms), border-color .72s ease var(--reveal-delay, 0ms); will-change: opacity, transform; }
+.reveal-tech.is-visible { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: saturate(1); }
+.public-card.reveal-tech.is-visible,
+.plans article.reveal-tech.is-visible,
+.roadmap article.reveal-tech.is-visible { box-shadow: 0 18px 48px rgba(18, 104, 196, .14); }
+.workflow-pipeline button.reveal-tech.is-visible,
+.matrix-wrap.reveal-tech.is-visible,
+.platform-table.reveal-tech.is-visible,
+.review-console.reveal-tech.is-visible { border-color: #3378b9; }
+@media (prefers-reduced-motion: reduce) { .reveal-tech { opacity: 1 !important; transform: none !important; filter: none !important; will-change: auto; } }

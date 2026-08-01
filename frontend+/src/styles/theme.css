@@ -125,6 +125,7 @@ a { color: inherit; text-decoration: none; }
 /* Marketing routes are full-bleed pages, unlike the signed-in workspace. */
 #app:has(.landing-page),
 #app:has(.info-page),
+#app:has(.public-page),
 #app:has(.page) { padding: 0; }
 
 /* Public navigation pages share one neutral canvas; the glass workspace keeps its own background. */

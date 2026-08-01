@@ -1,32 +1,25 @@
 <template>
   <header class="public-site-header">
-    <RouterLink class="brand" to="/home-public" @click="mobileNavOpen = false"><span>智</span>智选优发</RouterLink>
-    <button
-      class="mobile-nav-toggle"
-      type="button"
-      aria-label="打开网站导航"
-      :aria-expanded="mobileNavOpen"
-      aria-controls="public-site-navigation"
-      @click="mobileNavOpen = !mobileNavOpen"
-    >
-      <span></span><span></span><span></span>
-    </button>
-    <nav id="public-site-navigation" :class="{ open: mobileNavOpen }" aria-label="公共导航">
-      <RouterLink v-for="item in navItems" :key="item.path" :to="item.path" @click="mobileNavOpen = false">
-        {{ item.label }}
-      </RouterLink>
-    </nav>
-    <div class="header-actions">
-      <button class="login" type="button" @click="emit('login')">登录</button>
-      <button v-if="showApply" class="apply" type="button" @click="emit('apply')">申请试点</button>
+    <div class="public-shell header-shell">
+      <RouterLink class="brand" to="/home-public" @click="mobileNavOpen = false"><span>智</span><b>智选优发</b></RouterLink>
+      <button class="mobile-nav-toggle" type="button" :aria-label="mobileNavOpen ? '关闭网站导航' : '打开网站导航'" :aria-expanded="mobileNavOpen" aria-controls="public-site-navigation" @click="mobileNavOpen = !mobileNavOpen">
+        <Menu v-if="!mobileNavOpen" :size="22" /><X v-else :size="22" />
+      </button>
+      <nav id="public-site-navigation" :class="{ open: mobileNavOpen }" aria-label="公共导航">
+        <RouterLink v-for="item in navItems" :key="item.path" :to="item.path" @click="mobileNavOpen = false">{{ item.label }}</RouterLink>
+      </nav>
+      <div class="header-actions">
+        <button class="login" type="button" @click="emit('login')">登录</button>
+        <button v-if="showApply" class="apply" type="button" @click="emit('apply')">申请试点</button>
+      </div>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-
-withDefaults(defineProps<{ showApply?: boolean }>(), { showApply: false });
+import { Menu, X } from 'lucide-vue-next';
+withDefaults(defineProps<{ showApply?: boolean }>(), { showApply: true });
 const emit = defineEmits<{ login: []; apply: [] }>();
 const mobileNavOpen = ref(false);
 const navItems = [
@@ -40,38 +33,5 @@ const navItems = [
 </script>
 
 <style scoped>
-.public-site-header{height:72px;padding:0 clamp(18px,5vw,74px);display:flex;align-items:center;gap:24px;border-bottom:1px solid #e7ecf5;position:sticky;top:0;z-index:10;background:#fffffff2;backdrop-filter:blur(12px);font-family:"PingFang SC","Microsoft YaHei",sans-serif;color:#0a1d40}
-.brand{font-size:20px;font-weight:850;color:#0a1d40;text-decoration:none;display:flex;gap:9px;align-items:center;white-space:nowrap}
-.brand span{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;background:#1358df;color:#fff}
-nav{display:flex;gap:22px;margin-left:auto}
-nav a,.login{border:0;background:none;color:#334155;text-decoration:none;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
-nav a.router-link-active{color:#1358df}
-.header-actions{display:flex;gap:12px;align-items:center}
-.apply{border:1px solid #1358df;border-radius:8px;padding:11px 16px;background:#1358df;color:#fff;font:inherit;font-weight:750;cursor:pointer}
-.mobile-nav-toggle{display:none;border:1px solid #d7e1ef;border-radius:9px;background:#fff;color:#0a1d40;width:40px;height:40px;padding:0;place-content:center;gap:4px;cursor:pointer}
-.mobile-nav-toggle span{display:block;width:18px;height:2px;border-radius:2px;background:currentColor;transition:transform .18s ease,opacity .18s ease}
-@media(max-width:1050px){nav{gap:12px}}
-@media(max-width:780px){
-  .public-site-header{height:auto;min-height:60px;gap:8px;padding:10px 12px;overflow:visible}
-  .brand{font-size:18px}
-  .mobile-nav-toggle{display:grid;order:3;flex:0 0 auto}
-  .mobile-nav-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(6px) rotate(45deg)}
-  .mobile-nav-toggle[aria-expanded="true"] span:nth-child(2){opacity:0}
-  .mobile-nav-toggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
-  .header-actions{order:2;margin-left:auto;gap:7px}
-  .apply{padding:9px 11px}
-  nav{display:none}
-  nav.open{display:grid;position:absolute;top:calc(100% + 1px);left:12px;right:12px;margin:0;padding:8px;gap:2px;border:1px solid #dfe6f1;border-radius:0 0 14px 14px;background:#fff;box-shadow:0 18px 36px rgba(15,35,70,.16)}
-  nav.open a{padding:12px 14px;border-radius:8px;font-size:15px}
-  nav.open a.router-link-active{color:#1358df;background:#edf4ff}
-}
-@media(max-width:390px){
-  .public-site-header{padding:10px;gap:6px}
-  .brand{font-size:16px;gap:6px}
-  .brand span{width:30px;height:30px}
-  .header-actions{gap:4px}
-  .login{font-size:13px;padding:0 4px}
-  .apply{padding:8px;font-size:13px}
-  .mobile-nav-toggle{width:38px;height:38px}
-}
+.public-site-header{height:74px;position:relative;z-index:30;border-bottom:1px solid rgba(139,174,229,.18);background:#031027;color:#fff;font-family:"PingFang SC","Microsoft YaHei",sans-serif}.header-shell{height:100%;display:flex;align-items:center;gap:30px}.brand{display:flex;align-items:center;gap:10px;font-size:21px;color:#fff;white-space:nowrap}.brand span{width:36px;height:36px;display:grid;place-items:center;border-radius:9px;background:#2563eb;color:#fff;font-weight:900;box-shadow:0 0 24px rgba(37,99,235,.42)}.brand b{font-weight:900}.public-site-header nav{display:flex;gap:25px;margin-left:auto}.public-site-header nav a{position:relative;padding:26px 0 23px;color:#c9d5e7;font-size:14px;font-weight:750}.public-site-header nav a:hover,.public-site-header nav a.router-link-active{color:#fff}.public-site-header nav a.router-link-active::after{content:"";position:absolute;left:0;right:0;bottom:16px;height:2px;border-radius:2px;background:#38d7ff}.header-actions{display:flex;align-items:center;gap:10px}.header-actions button{min-height:40px;border-radius:8px;padding:0 14px;font:inherit;font-weight:800;cursor:pointer}.login{border:0;background:transparent;color:#dce7f7}.apply{border:1px solid #4a86ff;background:#2563eb;color:#fff}.mobile-nav-toggle{display:none;margin-left:auto;width:42px;height:42px;border:1px solid rgba(255,255,255,.22);border-radius:9px;background:#0b2348;color:#fff;place-items:center}@media(max-width:960px){.mobile-nav-toggle{display:grid;order:3}.header-actions{margin-left:auto}.public-site-header nav{display:none}.public-site-header nav.open{display:grid;position:absolute;left:18px;right:18px;top:66px;padding:10px;gap:2px;border:1px solid #28466f;border-radius:12px;background:#07162e;box-shadow:0 24px 60px rgba(0,0,0,.4)}.public-site-header nav a{padding:12px 14px;border-radius:8px}.public-site-header nav a.router-link-active{background:#0b2b55}.public-site-header nav a.router-link-active::after{display:none}}@media(max-width:520px){.public-site-header{height:66px}.header-shell{gap:8px}.brand{font-size:17px}.brand span{width:32px;height:32px}.header-actions .login{display:none}.header-actions button{padding:0 10px}.public-site-header nav.open{top:58px;left:10px;right:10px}}
 </style>

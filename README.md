@@ -180,4 +180,6 @@ See the [deployment guide](docs/deployment-vercel-supabase.md) for Vercel, Cloud
 
 ## License
 
-This project is released under the [MIT License](LICENSE).
+This project is released under the [GNU Affero General Public License v3.0 only](LICENSE) (`AGPL-3.0-only`).
+
+AGPLv3 is a strong copyleft license designed for network-interactive software. If you modify and operate this software for users over a network, review the license obligations for providing the corresponding source code.

@@ -1,14 +1,6 @@
 <template>
   <main class="info-page">
-    <header class="topbar">
-      <router-link class="brand" to="/home-public"><span>智</span>智选优发</router-link>
-      <nav aria-label="公共导航">
-        <router-link v-for="item in navItems" :key="item.path" :to="item.path" :class="{ active: item.path === route.path }">
-          {{ item.label }}
-        </router-link>
-      </nav>
-      <button type="button" @click="router.push({ path: '/home-public', query: { auth: 'login' } })">登录</button>
-    </header>
+    <PublicSiteHeader @login="router.push({ path: '/home-public', query: { auth: 'login' } })" />
 
     <section class="hero">
       <p>{{ page.kicker }}</p>
@@ -31,18 +23,10 @@
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { FileSearch, Globe2, ShieldCheck, Sparkles, UsersRound } from "lucide-vue-next";
+import PublicSiteHeader from "@/components/PublicSiteHeader.vue";
 
 const route = useRoute();
 const router = useRouter();
-const navItems = [
-  { path: "/home-public", label: "首页" },
-  { path: "/product-capabilities", label: "产品能力" },
-  { path: "/platforms", label: "适用平台" },
-    { path: "/solutions", label: "解决方案" },
-    { path: "/pricing", label: "套餐价格" },
-  { path: "/about-project", label: "关于智选优发" },
-];
-
 const pages = {
   "/product-capabilities": {
     kicker: "产品能力",

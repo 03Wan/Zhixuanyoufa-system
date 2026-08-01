@@ -1,5 +1,5 @@
 ﻿<template>
-  <div class="app-layout" :class="{ embedded: isEmbedded, collapsed }">
+  <div class="app-layout" :class="{ embedded: isEmbedded, collapsed: sidebarCollapsed }">
     <header v-if="!isEmbedded" class="mobile-workspace-bar">
       <button class="mobile-menu-button" type="button" aria-label="打开工作台菜单" @click="open = true">
         <span></span><span></span><span></span>
@@ -8,15 +8,15 @@
       <span class="mobile-role">{{ roleLabel }}</span>
     </header>
     <button v-if="!isEmbedded && open" class="mobile-nav-mask" aria-label="关闭工作台菜单" @click="open = false"></button>
-    <aside v-if="!isEmbedded" class="glass side-nav fade-up" :class="{ open, collapsed }">
+    <aside v-if="!isEmbedded" class="glass side-nav fade-up" :class="{ open, collapsed: sidebarCollapsed }" aria-label="工作台导航">
       <div class="brand-block">
         <div class="brand-top">
           <div class="brand-logo">智</div>
-          <div v-if="!collapsed">
+          <div v-if="!sidebarCollapsed">
             <h1>智选优发</h1>
           </div>
         </div>
-        <div class="role-chip" :class="{ compact: collapsed }">{{ collapsed ? roleLabel : `当前角色：${roleLabel}` }}</div>
+        <div class="role-chip" :class="{ compact: sidebarCollapsed }">{{ sidebarCollapsed ? roleLabel : `当前角色：${roleLabel}` }}</div>
       </div>
 
       <nav class="side-groups">
@@ -27,7 +27,7 @@
             :title="group.label"
             @click="toggleGroup(group.key)"
           >
-            <span>{{ collapsed ? shortGroupLabel(group.label) : group.label }}</span>
+            <span>{{ sidebarCollapsed ? shortGroupLabel(group.label) : group.label }}</span>
             <component :is="expandedGroups[group.key] ? ChevronDown : ChevronRight" :size="14" />
           </button>
           <div class="side-links" v-show="expandedGroups[group.key]">
@@ -44,7 +44,7 @@
               @mouseleave="handleMenuLeave"
             >
               <component :is="menuIcon(item.key)" :size="16" />
-              <span v-if="!collapsed">{{ item.label }}</span>
+              <span v-if="!sidebarCollapsed">{{ item.label }}</span>
               <b v-if="item.key === 'applications' && pendingApplicationCount" class="application-notice-count">{{ pendingApplicationCount }}</b>
             </button>
           </div>
@@ -61,15 +61,15 @@
 
       <div class="side-actions">
         <div class="side-utility-actions">
-          <button class="btn btn-secondary nav-toggle" :title="collapsed ? '展开侧边栏' : '收起侧边栏'" @click="toggleSidebar">
-            <component :is="collapsed ? PanelLeftOpen : PanelLeftClose" :size="16" />
-            <span v-if="!collapsed">{{ collapsed ? '展开侧边栏' : '收起侧边栏' }}</span>
+          <button class="btn btn-secondary nav-toggle" :title="sidebarCollapsed ? '展开侧边栏' : '收起侧边栏'" @click="toggleSidebar">
+            <component :is="sidebarCollapsed ? PanelLeftOpen : PanelLeftClose" :size="16" />
+            <span v-if="!sidebarCollapsed">收起侧边栏</span>
           </button>
-          <ThemeToggle :compact="collapsed" />
+          <ThemeToggle :compact="sidebarCollapsed" />
         </div>
-        <button class="btn btn-secondary logout-btn" :title="collapsed ? '退出登录' : ''" @click="logout">
+        <button class="btn btn-secondary logout-btn" :title="sidebarCollapsed ? '退出登录' : ''" @click="logout">
           <LogOut :size="16" />
-          <span v-if="!collapsed">退出登录</span>
+          <span v-if="!sidebarCollapsed">退出登录</span>
         </button>
       </div>
     </aside>
@@ -153,6 +153,8 @@ const route = useRoute();
 const router = useRouter();
 const open = ref(false);
 const collapsed = ref(false);
+const isMobileViewport = ref(false);
+const sidebarCollapsed = computed(() => collapsed.value && !isMobileViewport.value);
 const hoverTip = ref({ visible: false, text: "", x: 0, y: 0 });
 const expandedGroups = ref<Record<string, boolean>>({});
 const dialog = ref({
@@ -276,7 +278,7 @@ function handleMenuEnter(e: MouseEvent, href: string) {
   const hit = links.value.find((item: any) => normalizePath(item.href) === normalizePath(href));
   hoverTip.value = {
     visible: true,
-    text: collapsed.value ? (hit?.label || "菜单") : (descByPath[normalizePath(href)] || hit?.label || "业务页面"),
+    text: sidebarCollapsed.value ? (hit?.label || "菜单") : (descByPath[normalizePath(href)] || hit?.label || "业务页面"),
     x: e.clientX + 14,
     y: e.clientY + 14,
   };
@@ -398,11 +400,20 @@ function handleToastEvent(e: Event) {
 }
 
 let themeObserver: MutationObserver | null = null;
+let mobileMediaQuery: MediaQueryList | null = null;
+
+function syncMobileViewport(e: MediaQueryList | MediaQueryListEvent) {
+  isMobileViewport.value = e.matches;
+  if (!e.matches) open.value = false;
+}
 
 onMounted(() => {
   const theme = localStorage.getItem("theme") || "light";
   applyTheme(theme);
   collapsed.value = localStorage.getItem("zyyf_sidebar_collapsed") === "1";
+  mobileMediaQuery = window.matchMedia("(max-width: 900px)");
+  syncMobileViewport(mobileMediaQuery);
+  mobileMediaQuery.addEventListener("change", syncMobileViewport);
   window.addEventListener("storage", handleStorageTheme);
   window.addEventListener("message", handleMessageTheme);
   window.addEventListener("zyyf-dialog", handleDialogEvent);
@@ -434,6 +445,7 @@ onBeforeUnmount(() => {
   window.removeEventListener("message", handleMessageTheme);
   window.removeEventListener("zyyf-dialog", handleDialogEvent);
   window.removeEventListener("zyyf-toast", handleToastEvent);
+  mobileMediaQuery?.removeEventListener("change", syncMobileViewport);
   for (const timer of toastTimers.values()) clearTimeout(timer);
   toastTimers.clear();
   if (applicationNotificationTimer) clearInterval(applicationNotificationTimer);
@@ -799,19 +811,45 @@ function toggleGroup(key: string) {
   .mobile-brand-logo { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 8px; color: #fff; background: linear-gradient(135deg, var(--brand-0), var(--brand-1)); }
   .mobile-role { max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: 12px; }
   .mobile-nav-mask { display: block; position: fixed; z-index: 79; inset: 0; border: 0; background: rgba(9, 18, 38, .44); }
-  .side-nav { position: fixed; z-index: 80; top: 8px; bottom: 8px; left: 8px; width: min(292px, calc(100vw - 52px)); height: auto; transform: translateX(calc(-100% - 20px)); transition: transform .22s ease; overflow: hidden; }
+  .side-nav {
+    position: fixed;
+    z-index: 80;
+    top: max(8px, env(safe-area-inset-top));
+    bottom: max(8px, env(safe-area-inset-bottom));
+    left: max(8px, env(safe-area-inset-left));
+    width: min(320px, calc(100vw - 44px));
+    height: auto;
+    max-height: calc(100dvh - max(16px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 14px;
+    transform: translateX(calc(-100% - 20px));
+    transition: transform .22s ease;
+    overflow: hidden;
+    overscroll-behavior: contain;
+  }
+  .side-nav.fade-up { animation: none; }
   .side-nav.open { transform: translateX(0); }
-  .side-nav.collapsed { width: min(292px, calc(100vw - 52px)); }
-  .side-nav.collapsed .brand-block h1, .side-nav.collapsed .side-link span { display: initial; }
-  .side-nav.collapsed .side-link { width: 100%; padding: 10px 12px; justify-content: flex-start; }
-  .side-nav.collapsed .group-toggle { justify-content: space-between; padding: 8px 10px; }
-  .side-nav.collapsed .group-toggle span { font-size: 13px; }
-  .content-body { margin-top: 0; height: calc(100vh - 66px); }
+  .side-nav.collapsed { width: min(320px, calc(100vw - 44px)); }
+  .side-nav .brand-block h1, .side-nav .side-link span { display: initial; }
+  .side-nav .brand-top { justify-content: flex-start; }
+  .side-nav .role-chip { font-size: 12px; padding: 6px 10px; }
+  .side-nav .menu-group { gap: 8px; }
+  .side-nav .group-toggle { justify-content: space-between; padding: 5px 8px; gap: 8px; }
+  .side-nav .group-toggle span { font-size: 12px; }
+  .side-nav .side-links { justify-items: stretch; }
+  .side-nav .side-link { width: 100%; min-height: 40px; padding: 9px 10px; justify-content: flex-start; }
+  .side-nav .side-groups { gap: 10px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .side-nav .side-actions { margin-top: 0; padding-top: 10px; gap: 8px; background: var(--card-strong); }
+  .side-nav .side-actions :deep(.btn) { min-height: 40px; padding: 8px 12px; justify-content: center; }
+  .side-nav .side-actions :deep(.btn span) { display: initial; }
+  .side-nav .nav-toggle { display: none; }
+  .content-body { margin-top: 0; height: calc(100dvh - 66px); }
 }
 
 @media (max-width: 520px) {
   .mobile-role { display: none; }
-  .content-body { height: calc(100vh - 62px); }
+  .content-body { height: calc(100dvh - 62px); }
   .workspace-tabs { padding: 6px; }
   .workspace-tab { padding: 6px 8px; }
 }

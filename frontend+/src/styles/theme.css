@@ -130,6 +130,9 @@ a { color: inherit; text-decoration: none; }
 /* Public navigation pages share one neutral canvas; the glass workspace keeps its own background. */
 .page, .info-page { background: #fff; }
 
+/* Legacy public subpages use the shared responsive site header rendered by App.vue. */
+.public-subpage-header + .page > header { display: none; }
+
 /* Public pages use a wider desktop reading area and denser vertical rhythm. */
 @media (min-width: 781px) {
   .landing-page .topbar,

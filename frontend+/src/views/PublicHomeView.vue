@@ -1,12 +1,6 @@
 <template>
   <main class="landing-page">
-    <header class="topbar">
-      <RouterLink class="brand" to="/home-public"><span>智</span>智选优发</RouterLink>
-      <nav aria-label="公共导航">
-        <RouterLink v-for="item in navItems" :key="item.path" :to="item.path">{{ item.label }}</RouterLink>
-      </nav>
-      <div class="header-actions"><button class="login" @click="openAuth('login')">登录</button><button class="primary" @click="applyOpen = true">申请试点</button></div>
-    </header>
+    <PublicSiteHeader show-apply @login="openAuth('login')" @apply="applyOpen = true" />
 
     <section class="hero">
       <div>
@@ -48,8 +42,8 @@ import { useRoute, useRouter } from 'vue-router';
 import { AlertTriangle, ArrowRight, CheckCircle2, FilePenLine, ShieldCheck, Store, Users } from 'lucide-vue-next';
 import { api, getFriendlyError } from '@/lib/api';
 import { useAuthStore } from '@/stores/auth';
+import PublicSiteHeader from '@/components/PublicSiteHeader.vue';
 const router = useRouter(); const route = useRoute(); const authStore = useAuthStore();
-const navItems = [{ label: '首页', path: '/home-public' }, { label: '产品能力', path: '/product-capabilities' }, { label: '适用平台', path: '/platforms' }, { label: '解决方案', path: '/solutions' }, { label: '套餐价格', path: '/pricing' }, { label: '关于项目', path: '/about-project' }];
 const workflow = ['选择发布场景', '导入商品素材', '风险审校与解释', '采用修改 / 人工复核', '导出或回填结果'];
 const plans = [{ name: '免费体验', price: '0元 / 7天', features: ['5条 Listing', '单账号', '在线查看结果'] }, { name: 'Starter', price: '399元 / 月', launch: '首批共创价 199元 / 月', features: ['基础审校额度', '基础规则模板', '结果导出'] }, { name: 'Growth', price: '999元 / 月', launch: '首批共创价 599元 / 月', features: ['3–10人团队', '批量审校', '人工复核与审计'] }, { name: 'Pro', price: '2499元 / 月', launch: '首批共创价 1499元 / 月', features: ['多店铺与审批流', '自定义规则', '批量导出与 API'] }, { name: 'Enterprise', price: '6万–12万元 / 年', launch: '首年3.98万元起', features: ['专有规则与培训', 'SLA与定制报表', '可选私有化'] }];
 const applyOpen = ref(false); const authOpen = ref(false); const loading = ref(false); const message = ref(''); const login = reactive({ email: '', password: '', role: '' }); const loginRoles = [{ value: 'ENTERPRISE_ADMIN', label: '企业管理员' }, { value: 'OPERATOR', label: '运营人员' }, { value: 'DESIGNER', label: '设计人员' }, { value: 'REVIEWER', label: '复核人员' }, { value: 'MANAGER', label: '管理人员' }, { value: 'SYSTEM_ADMIN', label: '系统管理员' }, { value: 'CUSTOMER_VIEWER', label: '客户查看员' }]; const application = reactive({ companyName: '', contactName: '', email: '', note: '' });

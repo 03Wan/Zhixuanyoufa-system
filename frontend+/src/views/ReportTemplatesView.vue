@@ -5,7 +5,7 @@
         <div class="row-between">
           <div>
             <h2 class="section-title">正式报告模板</h2>
-            <p class="text-muted">支持模板结构管理与导出；定制版可扩展专属模板。</p>
+            <p class="text-muted">支持模板结构管理与导出；Enterprise 可扩展专属模板。</p>
           </div>
           <div class="actions">
             <button class="btn btn-secondary" :disabled="loading" @click="load">{{ loading ? '刷新中' : '刷新' }}</button>

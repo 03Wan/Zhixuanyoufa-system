@@ -57,7 +57,7 @@
 
       <AppGlassSurface as="section" class="card report-section">
         <h2>商业化阶段说明</h2>
-        <p>报告内容来自当前真实检测记录；企业版与定制版可继续扩展客户归档、专属模板和接口返回能力。</p>
+        <p>报告内容来自当前真实检测记录；Pro 与 Enterprise 可继续扩展客户归档、专属模板和接口返回能力。</p>
       </AppGlassSurface>
 
       <AppGlassSurface as="section" class="card report-section">
@@ -208,7 +208,7 @@
       </AppGlassSurface>
 
       <AppGlassSurface as="section" class="card report-actions no-print">
-        <p class="download-tip">导出权限按当前套餐与数据库授权控制：体验包仅在线查看，基础版及以上支持导出。</p>
+        <p class="download-tip">导出权限按当前套餐与数据库授权控制：免费版仅在线查看，Starter 及以上支持导出。</p>
         <select v-model="downloadFormat" class="download-select">
           <option value="pdf">PDF</option>
           <option value="docx">Word</option>

@@ -3,6 +3,7 @@
     <section class="page-stack fade-up">
       <AppGlassSurface as="section" class="card">
         <h2 class="section-title">套餐中心 / 版本选择</h2>
+        <p v-if="notice" class="notice">{{ notice }}</p>
       </AppGlassSurface>
 
       <AppGlassSurface as="section" v-if="loading" class="card state loading center-loading">套餐加载中</AppGlassSurface>
@@ -11,18 +12,19 @@
         <AppGlassSurface as="article" class="card plan-card" v-for="plan in plans" :key="plan.id">
           <div :class="['plan-head', { 'is-current': selectedPlan === plan.name }]">
             <div><h3>{{ plan.name }}</h3><span v-if="selectedPlan === plan.name" class="selected-plan">当前套餐</span></div>
-            <strong>{{ plan.priceText }}</strong>
+            <strong>{{ displayPrice(plan) }}</strong>
           </div>
           <p class="plan-desc">{{ plan.customerType }}</p>
           <div class="plan-meta">
             <span>计费：{{ plan.billingCycle }}</span>
-            <span>额度：{{ plan.quota ?? '按合同配置' }}</span>
-            <span>市场：{{ plan.supportedMarkets ?? '定制' }}</span>
+            <span>月额度：{{ plan.quota ?? '按合同配置' }}</span>
+            <span>市场：{{ plan.supportedMarkets ?? '不限/定制' }}</span>
+            <span>账号：{{ plan.includedSeats ?? '按需配置' }}</span>
           </div>
           <div class="rights-grid">
             <span :class="{ ok: plan.canExportReport }">报告导出</span>
             <span :class="{ ok: plan.canBatchDetect }">批量检测</span>
-            <span :class="{ ok: plan.name.includes('企业版') || plan.name.includes('定制版') }">团队账号</span>
+            <span :class="{ ok: plan.includedSeats == null || plan.includedSeats > 1 }">团队账号</span>
             <span :class="{ ok: plan.canUseCustomRules }">规则库</span>
             <span :class="{ ok: plan.canUseApi }">API</span>
             <span :class="{ ok: plan.canPrivateDeploy }">私有化</span>
@@ -40,6 +42,17 @@
           </div>
         </AppGlassSurface>
       </section>
+
+      <AppGlassSurface v-if="!loading && addOns.length" as="section" class="card">
+        <h2 class="section-title">按需增购</h2>
+        <p class="plan-desc">客户自带模型 Key 不收费；平台模型、48小时人工风险抽检和 API 验证独立计费。</p>
+        <div class="addon-grid">
+          <article v-for="item in addOns" :key="item.id">
+            <span>{{ item.category }}</span><h3>{{ item.name }}</h3><strong>{{ item.price }}元 / {{ item.unit }}</strong><p>{{ item.description }}</p>
+            <button class="btn btn-secondary" @click="openAddOn(item)">申请开通</button>
+          </article>
+        </div>
+      </AppGlassSurface>
 
       <div v-if="modal.open" class="modal-mask" @click.self="modal.open=false">
         <AppGlassSurface as="section" class="card modal-panel">
@@ -72,6 +85,8 @@ import AppShell from '@/layouts/AppShell.vue';
 import { api, getFriendlyError, getUserProfile } from '@/lib/api';
 
 const plans = ref<any[]>([]);
+const addOns = ref<any[]>([]);
+const notice = ref('');
 const modal = ref({ open: false, message: '', planName: '', type: 'subscription' as 'subscription' | 'application', submitted: false });
 const loading = ref(true);
 const error = ref('');
@@ -81,18 +96,22 @@ const router = useRouter();
 const applicationForm = ref({ companyName: '', contactName: '', email: '' });
 const applicationType = ref('');
 
-function yesNo(v: boolean) { return v ? '支持' : '不支持/受限'; }
 function primaryAction(name: string) {
-  if (name.includes('定制版')) return '联系定制';
-  if (name.includes('API接口版')) return '申请API服务';
-  if (name.includes('体验包') || name.includes('基础版')) return '立即选择';
+  if (name === 'Enterprise') return '联系企业方案';
+  if (name === '免费版' || name === 'Starter') return '立即选择';
   return '升级套餐';
+}
+
+function displayPrice(plan: any) {
+  if (plan.name === '免费版') return '0元，永久免费';
+  if (plan.isContactSales) return `共创价${plan.launchAnnualPrice}元/年起`;
+  return `共创价${plan.launchMonthlyPrice}元/月 · ${plan.launchAnnualPrice}元/年`;
 }
 
 async function choose(plan: any) {
   submitting.value = true;
   try {
-    if (plan.name.includes('定制版') || plan.name.includes('API接口版')) return await openCommercial(plan, primaryAction(plan.name));
+    if (plan.isContactSales) return await openCommercial(plan, primaryAction(plan.name));
     const result: any = await api.selectSubscription(plan.name);
     selectedPlan.value = plan.name;
     modal.value = { open: true, planName: plan.name, type: 'subscription', submitted: true, message: result?.notice || `已选择 ${plan.name}，当前套餐权益已刷新。` };
@@ -107,6 +126,9 @@ function openCommercial(plan: any, type: string) {
 }
 async function submitCommercial(plan: any, type: string) {
   openCommercial(plan, type);
+}
+function openAddOn(item: any) {
+  openCommercial({ name: item.name }, item.category);
 }
 async function submitApplication() {
   const { companyName, contactName, email } = applicationForm.value;
@@ -126,6 +148,8 @@ onMounted(async () => {
   try {
     const res: any = await api.getPlans();
     plans.value = res.plans || [];
+    addOns.value = res.addOns || [];
+    notice.value = res.notice || '';
     const usage: any = await api.getSubscriptionUsage();
     selectedPlan.value = usage?.subscription?.plan?.name || '';
   } catch (e) {
@@ -163,6 +187,13 @@ onMounted(async () => {
 .rights-grid span.ok { color: #047857; border-color: rgba(16, 185, 129, .35); background: rgba(16, 185, 129, .1); }
 .center-loading { min-height: 360px; }
 .notice { color: #b45309; margin: 6px 0 0; }
+.addon-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
+.addon-grid article { display: flex; flex-direction: column; gap: 8px; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--card-strong); }
+.addon-grid article>span { color: var(--brand-1); font-size: 12px; font-weight: 700; }
+.addon-grid h3, .addon-grid p { margin: 0; }
+.addon-grid h3 { font-size: 15px; }
+.addon-grid p { flex: 1; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.addon-grid strong { font-size: 14px; }
 .actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .plan-actions { display: grid; gap: 8px; margin-top: 4px; }
 .plan-primary-action { width: 100%; min-height: 44px; }
@@ -173,6 +204,7 @@ onMounted(async () => {
 .plan-secondary-actions span { width: 1px; height: 13px; background: var(--border); }
 .modal-mask { position: fixed; inset: 0; background: rgba(15,23,42,.36); display: grid; place-items: center; z-index: 100; }
 .modal-panel { width: fit-content; min-width: min(360px, calc(100vw - 32px)); max-width: min(680px, calc(100vw - 32px)); }
-@media (max-width: 1200px) { .plan-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 900px) { .plan-grid { grid-template-columns: 1fr; } }
+@media (max-width: 1200px) { .plan-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .addon-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .plan-grid { grid-template-columns: 1fr; } .addon-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .addon-grid { grid-template-columns: 1fr; } }
 </style>

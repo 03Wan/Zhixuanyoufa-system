@@ -67,7 +67,7 @@
                 <td>{{ c.status }}</td>
                 <td class="actions">
                   <button class="btn btn-secondary" @click="addQuota(c)">+100额度</button>
-                  <button class="btn btn-secondary" @click="upgrade(c)">升级企业版</button>
+                  <button class="btn btn-secondary" @click="upgrade(c)">升级 Pro</button>
                 </td>
               </tr>
             </tbody>
@@ -263,7 +263,7 @@ async function addQuota(c: any) {
 
 async function upgrade(c: any) {
   try {
-    await api.updateCustomerPlan(c.id, { plan: "企业版", status: "正常" });
+    await api.updateCustomerPlan(c.id, { plan: "Pro", status: "正常" });
     await loadAll();
     toast("客户套餐已升级", "success");
   } catch (e) {

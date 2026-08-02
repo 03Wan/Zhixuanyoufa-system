@@ -149,7 +149,7 @@ const platformScenarios: Record<string, { markets: string[]; languages: string[]
   Lazada: { markets: ['马来西亚', '泰国', '越南', '菲律宾', '新加坡'], languages: ['英语', '马来语', '泰语', '越南语'], guidance: '将按东南亚站点检查商品信息完整性和本地化表述。' },
   'Mercado Libre': { markets: ['墨西哥', '巴西', '阿根廷', '智利'], languages: ['西班牙语', '葡萄牙语'], guidance: '将检查拉美站点的语言适配与受限宣称。' },
   Noon: { markets: ['沙特阿拉伯', '阿联酋', '埃及'], languages: ['阿拉伯语', '英语'], guidance: '将核验阿拉伯语市场的本地化表述和品类限制。' },
-  默认: { markets: ['美国', '英国', '马来西亚', '泰国', '越南', '菲律宾', '新加坡', '沙特阿拉伯', '阿联酋', '其他试点站点'], languages: ['英语', '中文', '马来语', '泰语', '越南语', '阿拉伯语'], guidance: '将使用当前已启用的通用规则模板；其他平台可通过规则库补充。' },
+  默认: { markets: ['美国', '英国', '马来西亚', '泰国', '越南', '菲律宾', '新加坡', '沙特阿拉伯', '阿联酋', '其他共创站点'], languages: ['英语', '中文', '马来语', '泰语', '越南语', '阿拉伯语'], guidance: '将使用当前已启用的通用规则模板；其他平台可通过规则库补充。' },
 };
 const availableScenario = computed(() => platformScenarios[form.platform] || platformScenarios.默认);
 const availableMarkets = computed(() => availableScenario.value.markets);
@@ -211,11 +211,6 @@ function parseMultilineUrls(value: string) {
     .split('\n')
     .map((v) => v.trim())
     .filter(Boolean);
-}
-
-function filesToObjectUrls(files: FileList | null) {
-  if (!files) return [];
-  return Array.from(files).map((file) => URL.createObjectURL(file));
 }
 
 async function onMainImagesChange(event: Event) {

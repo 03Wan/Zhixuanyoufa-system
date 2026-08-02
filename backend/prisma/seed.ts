@@ -25,6 +25,16 @@ async function seedPlansAndSubscription(adminId: string, companyName: string) {
       customerType: item.customerType,
       priceText: item.priceText,
       billingCycle: item.billingCycle,
+      monthlyPrice: item.monthlyPrice,
+      annualPrice: item.annualPrice,
+      launchMonthlyPrice: item.launchMonthlyPrice,
+      launchAnnualPrice: item.launchAnnualPrice,
+      includedSeats: item.includedSeats,
+      modelCredits: item.modelCredits,
+      apiQuota: item.apiQuota,
+      launchLockMonths: item.launchLockMonths,
+      launchEligibilityText: item.launchEligibilityText,
+      isContactSales: item.isContactSales,
       quota: item.quota,
       supportedMarkets: item.supportedMarkets,
       canExportReport: item.canExportReport,
@@ -39,7 +49,7 @@ async function seedPlansAndSubscription(adminId: string, companyName: string) {
     })),
   });
 
-  const plan = await prisma.plan.findFirst({ where: { name: '专业版' } });
+  const plan = await prisma.plan.findFirst({ where: { name: 'Growth' } });
   if (plan) {
     await prisma.subscription.create({
       data: {

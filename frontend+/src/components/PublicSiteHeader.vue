@@ -10,7 +10,7 @@
       </nav>
       <div class="header-actions">
         <button class="login" type="button" @click="emit('login')">登录</button>
-        <button v-if="showApply" class="apply" type="button" @click="emit('apply')">申请试点</button>
+        <button v-if="showApply" class="apply" type="button" @click="emit('apply')">申请共创</button>
       </div>
     </div>
   </header>

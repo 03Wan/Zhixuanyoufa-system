@@ -302,11 +302,6 @@ async function refreshApplicationNotifications() {
   }
 }
 
-function toEmbedHref(href: string) {
-  const theme = localStorage.getItem("theme") || "light";
-  return href.includes("?") ? `${href}&embed=1&theme=${theme}` : `${href}?embed=1&theme=${theme}`;
-}
-
 function openEmbeddedTab(item: { href: string; label: string }) {
   const target = normalizePath(item.href);
   const query = isEmbedded.value

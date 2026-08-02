@@ -134,7 +134,6 @@ function typeText(v?: string) { const map: Record<string, string> = { PLATFORM: 
 function riskText(v?: string) { const map: Record<string, string> = { LOW: '低风险', MEDIUM: '中风险', HIGH: '高风险' }; const raw = String(v || '').toUpperCase(); return map[raw] || v || '-'; }
 function statusText(status?: string, enabled?: boolean) { if (status === '启用' || status === '停用') return status; if (enabled === false) return '停用'; return '启用'; }
 function asText(value: unknown) { if (Array.isArray(value)) return value.length ? value.join('、') : '-'; if (typeof value === 'string') return value || '-'; if (value && typeof value === 'object') return JSON.stringify(value); return '-'; }
-function summarizeRule(rule: any) { const keyword = Array.isArray(rule.keywords) && rule.keywords.length ? `关键词：${rule.keywords.join('、')}` : ''; return keyword || asText(rule.suggestion || rule.description); }
 function triggerImport() { importInput.value?.click(); }
 async function importRules(event: Event) {
   const input = event.target as HTMLInputElement;

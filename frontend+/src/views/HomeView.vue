@@ -49,7 +49,7 @@
           </div>
           <div v-if="loading.usage" class="inline-state">套餐数据同步中</div>
           <p class="text-muted" style="margin-top: 8px;">
-            企业版/定制版能力（批量检测、API接口、私有化部署）按企业审核结果开通。
+            Pro / Enterprise 能力（批量检测、API接口、私有化部署）按企业审核结果开通。
           </p>
         </AppGlassSurface>
 

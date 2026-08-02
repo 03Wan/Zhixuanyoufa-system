@@ -21,8 +21,8 @@
       </div>
     </section>
 
-    <section class="public-section soft"><div class="public-shell status-guide"><div class="public-section-head"><p class="public-kicker">状态说明</p><h2>同一种视觉语言，不混淆不同能力阶段</h2></div><div class="public-card-grid"><article class="public-card"><span class="public-status verified">已验证</span><h3>可用于正式审校</h3><p>已在规则库中配置，并进入当前正式支持范围。</p></article><article class="public-card"><span class="public-status testing">测试中</span><h3>适合试点验证</h3><p>用于限定场景的共创测试，不作为全面支持承诺。</p></article><article class="public-card"><span class="public-status planned">规划中</span><h3>尚未正式开放</h3><p>不会在任务创建页作为可用发布范围展示。</p></article></div></div></section>
-    <section class="public-section"><div class="public-shell public-cta"><div><p class="public-kicker">从一个场景开始</p><h2>确认平台、市场与类目，再验证审校流程</h2><p>团队会根据目标发布范围确认当前可用能力。</p></div><button class="public-button primary" @click="openApply">申请试点 <ArrowRight :size="17" /></button></div></section>
+    <section class="public-section soft"><div class="public-shell status-guide"><div class="public-section-head"><p class="public-kicker">状态说明</p><h2>同一种视觉语言，不混淆不同能力阶段</h2></div><div class="public-card-grid"><article class="public-card"><span class="public-status verified">已验证</span><h3>可用于正式审校</h3><p>已在规则库中配置，并进入当前正式支持范围。</p></article><article class="public-card"><span class="public-status testing">验证中</span><h3>适合共创验证</h3><p>用于限定场景的共创验证，不作为全面支持承诺。</p></article><article class="public-card"><span class="public-status planned">规划中</span><h3>尚未正式开放</h3><p>不会在任务创建页作为可用发布范围展示。</p></article></div></div></section>
+    <section class="public-section"><div class="public-shell public-cta"><div><p class="public-kicker">从一个场景开始</p><h2>确认平台、市场与类目，再验证审校流程</h2><p>团队会根据目标发布范围确认当前可用能力。</p></div><button class="public-button primary" @click="openApply">申请共创 <ArrowRight :size="17" /></button></div></section>
     <PublicFooter />
   </main>
 </template>
@@ -36,8 +36,8 @@ import { usePublicScrollReveal } from '@/composables/usePublicScrollReveal';
 const router = useRouter();
 usePublicScrollReveal();
 const rows = [
-  { platform: 'TikTok Shop', market: '东南亚试点站点', language: '英语 / 马来语', category: '家居、3C、个护', status: '已验证', className: 'verified', updated: '随规则库版本更新' },
-  { platform: 'Shopee', market: '东南亚试点站点', language: '英语 / 泰语 / 越南语', category: '家居、3C、生活用品', status: '测试中', className: 'testing', updated: '随规则库版本更新' },
+  { platform: 'TikTok Shop', market: '东南亚共创站点', language: '英语 / 马来语', category: '家居、3C、个护', status: '已验证', className: 'verified', updated: '随规则库版本更新' },
+  { platform: 'Shopee', market: '东南亚共创站点', language: '英语 / 泰语 / 越南语', category: '家居、3C、生活用品', status: '验证中', className: 'testing', updated: '随规则库版本更新' },
   { platform: 'Lazada', market: '东南亚', language: '英语 / 本地语种', category: '待按类目扩展', status: '规划中', className: 'planned', updated: '尚未开放' },
   { platform: '中东站点', market: '沙特 / 阿联酋', language: '阿拉伯语 / 英语', category: '待按国家扩展', status: '规划中', className: 'planned', updated: '尚未开放' },
 ];

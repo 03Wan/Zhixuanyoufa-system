@@ -28,10 +28,26 @@ export class SubscriptionService {
       orderBy: { updatedAt: 'desc' },
     });
 
-    if (sub) return sub;
+    if (sub) {
+      const monthStart = new Date();
+      monthStart.setDate(1);
+      monthStart.setHours(0, 0, 0, 0);
+      if (sub.billingPeriodStart < monthStart) {
+        sub = await this.prisma.subscription.update({
+          where: { id: sub.id },
+          data: {
+            quotaTotal: sub.plan.quota ?? 0,
+            quotaUsed: 0,
+            quotaRemaining: sub.plan.quota ?? 0,
+            billingPeriodStart: new Date(),
+          },
+          include: { plan: true },
+        });
+      }
+      return sub;
+    }
 
-    // Use the current launch default instead of a retired legacy package name.
-    const defaultPlan = await this.prisma.plan.findFirst({ where: { name: 'Growth', isActive: true } });
+    const defaultPlan = await this.prisma.plan.findFirst({ where: { name: '免费版', isActive: true } });
     if (!defaultPlan) throw new NotFoundException('默认套餐不存在');
 
     sub = await this.prisma.subscription.create({
@@ -190,12 +206,12 @@ export class SubscriptionService {
   }
 
   private getUpgradeSuggestion(planName: string) {
-    if (planName.includes('免费体验') || planName.includes('Starter')) {
-      return '升级 Growth 可获得批量检测、人工复核和完整报告导出。';
+    if (planName.includes('免费版') || planName.includes('Starter')) {
+      return '升级 Growth 可获得批量检测、客户团队内部复核流程和完整报告导出。';
     }
     if (planName.includes('Growth')) {
       return '升级 Pro 可获得多店铺协作、审批流和自定义规则。';
     }
-    return '如需API接口或私有化部署，可申请API接口版或定制版服务。';
+    return '如需更多API额度、人工风险抽检或私有化部署，可提交增值服务或企业方案申请。';
   }
 }

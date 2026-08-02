@@ -21,7 +21,7 @@
         <AppGlassSurface as="section" class="card" style="margin-top:10px;">
           <h3>升级建议</h3>
           <p>{{ data.suggestion }}</p>
-          <p>可申请API接口版或定制版服务。</p>
+          <p>可申请平台模型包、人工风险抽检、API验证包或企业定制服务。</p>
           <div class="actions">
             <button class="btn btn-primary" @click="goPlans">升级套餐</button>
             <button class="btn btn-secondary" @click="apply">联系定制</button>
@@ -55,8 +55,8 @@ function statusText(status?: string) {
 function goPlans() { router.push('/plans'); }
 
 async function apply() {
-  await api.applyCommercial({ type: '定制版咨询', note: '我的套餐页发起' });
-  await notify('已提交定制需求，团队会线下联系。');
+  await api.applyCommercial({ type: '企业方案咨询', note: '我的套餐页发起' });
+  await notify('已提交企业方案需求，团队会线下联系。');
 }
 
 onMounted(async () => {

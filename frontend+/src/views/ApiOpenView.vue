@@ -1,8 +1,8 @@
 ﻿<template>
-  <AppShell title="API接口版">
+  <AppShell title="API 与集成">
     <section class="page-stack fade-up">
       <AppGlassSurface as="section" class="card">
-        <h2 class="section-title">API接口版</h2>
+        <h2 class="section-title">API 与集成服务</h2>
         <div v-if="loading" class="state loading center-loading">接口清单加载中</div>
         <template v-else>
         <p class="notice">{{ data.notice }}</p>

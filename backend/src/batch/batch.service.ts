@@ -15,7 +15,7 @@ export class BatchService {
   async create(userId: string, dto: CreateBatchTaskDto) {
     const usage = await this.subscriptionService.getUsage(userId);
     if (!usage.privileges?.canBatchDetect) {
-      throw new ForbiddenException('当前套餐不支持批量检测，请升级至专业版及以上');
+      throw new ForbiddenException('当前套餐不支持批量检测，请升级至 Growth 及以上');
     }
 
     const batch = await this.prisma.batchTask.create({

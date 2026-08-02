@@ -1,6 +1,6 @@
 ﻿import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { SERVICE_NOTICE, PLAN_SEEDS } from './plan.constants';
+import { PLAN_ADD_ONS, SERVICE_NOTICE, PLAN_SEEDS } from './plan.constants';
 
 @Injectable()
 export class PlansService {
@@ -16,6 +16,16 @@ export class PlansService {
         customerType: item.customerType,
         priceText: item.priceText,
         billingCycle: item.billingCycle,
+        monthlyPrice: item.monthlyPrice,
+        annualPrice: item.annualPrice,
+        launchMonthlyPrice: item.launchMonthlyPrice,
+        launchAnnualPrice: item.launchAnnualPrice,
+        includedSeats: item.includedSeats,
+        modelCredits: item.modelCredits,
+        apiQuota: item.apiQuota,
+        launchLockMonths: item.launchLockMonths,
+        launchEligibilityText: item.launchEligibilityText,
+        isContactSales: item.isContactSales,
         quota: item.quota,
         supportedMarkets: item.supportedMarkets,
         canExportReport: item.canExportReport,
@@ -37,6 +47,7 @@ export class PlansService {
     return {
       notice: SERVICE_NOTICE,
       plans,
+      addOns: PLAN_ADD_ONS,
     };
   }
 }

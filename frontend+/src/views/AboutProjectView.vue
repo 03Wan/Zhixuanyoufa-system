@@ -5,9 +5,9 @@
 
     <section class="public-section"><div class="public-shell"><div class="public-section-head"><p class="public-kicker">项目判断</p><h2>不只生成内容，而是连接素材、规则和团队决策</h2></div><div class="public-card-grid"><article class="public-card"><div class="icon-box"><FileQuestion :size="23" /></div><h3>解决什么问题</h3><p>同一件商品进入不同平台、国家和类目时，团队不再只依赖经验、聊天记录和人工反复核对。</p></article><article class="public-card"><div class="icon-box"><Sparkles :size="23" /></div><h3>与普通 AI 工具的区别</h3><p>将素材、规则、风险原因、推荐修改和人工决策放入同一个发布前工作流。</p></article><article class="public-card"><div class="icon-box"><ShieldCheck :size="23" /></div><h3>如何形成可信结论</h3><p>每项结果关联平台、市场、类目和规则版本；高风险任务可进入人工复核。</p></article></div></div></section>
 
-    <section class="public-section soft"><div class="public-shell"><div class="public-section-head"><p class="public-kicker">能力演进</p><h2>先把流程做深，再逐步扩大平台与结果回流</h2><p>时间线区分已上线、测试中和规划中，避免将路线图表达成现有能力。</p></div><div class="roadmap"><article v-for="(stage, index) in stages" :key="stage.title"><span>0{{ index + 1 }}</span><div><i class="public-status" :class="stage.className">{{ stage.status }}</i><h3>{{ stage.title }}</h3><p>{{ stage.copy }}</p></div></article></div></div></section>
+    <section class="public-section soft"><div class="public-shell"><div class="public-section-head"><p class="public-kicker">能力演进</p><h2>先把流程做深，再逐步扩大平台与结果回流</h2><p>时间线区分已上线、验证中和规划中，避免将路线图表达成现有能力。</p></div><div class="roadmap"><article v-for="(stage, index) in stages" :key="stage.title"><span>0{{ index + 1 }}</span><div><i class="public-status" :class="stage.className">{{ stage.status }}</i><h3>{{ stage.title }}</h3><p>{{ stage.copy }}</p></div></article></div></div></section>
 
-    <section class="public-section"><div class="public-shell public-cta"><div><p class="public-kicker">首批共创</p><h2>欢迎用真实发布任务共同验证流程</h2><p>共创客户参与定期反馈；案例、名称和 Logo 仅在单独授权后使用。</p></div><button class="public-button primary" @click="openApply">申请试点 <ArrowRight :size="17" /></button></div></section>
+    <section class="public-section"><div class="public-shell public-cta"><div><p class="public-kicker">首批共创</p><h2>欢迎用真实发布任务共同验证流程</h2><p>共创客户参与定期反馈；案例、名称和 Logo 仅在单独授权后使用。</p></div><button class="public-button primary" @click="openApply">申请共创 <ArrowRight :size="17" /></button></div></section>
     <PublicFooter />
   </main>
 </template>
@@ -22,7 +22,7 @@ const router = useRouter();
 usePublicScrollReveal();
 const stages = [
   { status: '已上线', className: 'verified', title: '核心审校流程', copy: '素材导入、规则审校、风险解释、报告与人工复核。' },
-  { status: '测试中', className: 'testing', title: '团队批量协作', copy: '批量处理、修改采用与规则版本展示。' },
+  { status: '验证中', className: 'testing', title: '团队批量协作', copy: '批量处理、修改采用与规则版本展示。' },
   { status: '规划中', className: 'planned', title: '结果回流与集成', copy: '发布结果回填、ERP / API 集成和经营归因。' },
 ];
 function openLogin() { router.push({ path: '/home-public', query: { auth: 'login' } }); }

@@ -7,7 +7,7 @@
           <p class="public-kicker"><component :is="page.heroIcon" :size="18" />{{ page.kicker }}</p>
           <h1 class="public-title">{{ page.title }}</h1>
           <p class="public-lead">{{ page.summary }}</p>
-          <div class="public-actions"><RouterLink class="public-button primary" :to="applyTarget">申请试点 <ArrowRight :size="17" /></RouterLink><RouterLink class="public-button" to="/platforms">查看适用平台</RouterLink></div>
+          <div class="public-actions"><RouterLink class="public-button primary" :to="applyTarget">申请共创 <ArrowRight :size="17" /></RouterLink><RouterLink class="public-button" to="/platforms">查看适用平台</RouterLink></div>
         </div>
         <div class="hero-system" aria-hidden="true">
           <div v-for="(node, index) in page.nodes" :key="node" :class="`system-node node-${index}`"><CheckCircle2 :size="18" />{{ node }}</div>

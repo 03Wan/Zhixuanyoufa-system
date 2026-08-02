@@ -93,7 +93,7 @@ function actionLabel(action?: string) { const key = String(action || '').toUpper
 function shortId(id?: string) { if (!id) return '-'; return id.length > 12 ? id.slice(-12) : id; }
 function displayObjectName(value: unknown) {
   const text = String(value || '').trim();
-  const systemNames: Record<string, string> = { 'QA transient task': '测试临时任务', '?????': '未命名任务' };
+  const systemNames: Record<string, string> = { 'QA transient task': '临时任务', '?????': '未命名任务' };
   if (systemNames[text]) return systemNames[text];
   if (!text || /^\?+$/.test(text)) return '未命名任务';
   if (/^[A-Za-z0-9_-]{6,}$/.test(text)) return `编号：${text}`;

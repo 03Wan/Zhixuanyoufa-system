@@ -18,7 +18,7 @@
             </div>
           </div>
 
-          <div class="network-stage" aria-label="便携电热水壶发布前审校演示">
+          <div class="network-stage" aria-label="便携电热水壶发布前审校示意">
             <div class="rule-node node-platform"><ShieldCheck :size="20" /><span>平台规则</span></div>
             <div class="rule-node node-market"><Globe2 :size="20" /><span>国家与站点</span></div>
             <div class="rule-node node-language"><Languages :size="20" /><span>语言本地化</span></div>
@@ -27,7 +27,7 @@
             <article class="product-scan-card">
               <div class="scan-badge"><ScanLine :size="14" />素材扫描中</div>
               <img src="/assets/kettle-product.png" alt="便携电热水壶商品素材" />
-              <div><b>便携电热水壶</b><span>TikTok Shop · 东南亚试点站点</span></div>
+              <div><b>便携电热水壶</b><span>TikTok Shop · 东南亚共创站点</span></div>
               <div class="scan-progress" aria-label="审校进度 82%"><i></i></div>
             </article>
 
@@ -46,7 +46,7 @@
         <div class="public-section-head center">
           <p class="public-kicker">适用平台</p>
           <h2>支持范围透明，能力状态不含糊</h2>
-          <p>规则按平台、站点、语言和类目配置；正式支持、试点测试与规划能力分别标注。</p>
+          <p>规则按平台、站点、语言和类目配置；正式支持、共创验证与规划能力分别标注。</p>
         </div>
         <div class="platform-table" role="table" aria-label="平台支持状态">
           <div class="platform-row table-head" role="row"><b>平台</b><b>适用市场</b><b>语言</b><b>当前状态</b></div>
@@ -125,10 +125,10 @@
 
     <Transition name="fade">
       <div v-if="applyOpen || authOpen" class="modal-mask" @click.self="closeModal">
-        <section class="task-modal" role="dialog" aria-modal="true" :aria-label="authOpen ? '企业账号登录' : '申请试点合作'">
+        <section class="task-modal" role="dialog" aria-modal="true" :aria-label="authOpen ? '企业账号登录' : '申请共创合作'">
           <button class="close" aria-label="关闭" @click="closeModal"><X :size="22" /></button>
           <p class="public-kicker">{{ authOpen ? '企业账号' : '首批共创' }}</p>
-          <h2>{{ authOpen ? '登录工作台' : '申请试点合作' }}</h2>
+          <h2>{{ authOpen ? '登录工作台' : '申请共创合作' }}</h2>
           <template v-if="authOpen">
             <label>邮箱<input v-model="login.email" type="email" placeholder="name@company.com" /></label>
             <label>密码<input v-model="login.password" type="password" placeholder="请输入密码" /></label>
@@ -172,8 +172,8 @@ const message = ref('');
 usePublicScrollReveal();
 
 const platformRows = [
-  { platform: 'TikTok Shop', market: '东南亚试点站点', language: '英语 / 马来语', status: '已验证', className: 'verified' },
-  { platform: 'Shopee', market: '东南亚试点站点', language: '英语 / 泰语 / 越南语', status: '测试中', className: 'testing' },
+  { platform: 'TikTok Shop', market: '东南亚共创站点', language: '英语 / 马来语', status: '已验证', className: 'verified' },
+  { platform: 'Shopee', market: '东南亚共创站点', language: '英语 / 泰语 / 越南语', status: '验证中', className: 'testing' },
   { platform: 'Lazada', market: '东南亚', language: '英语 / 本地语种', status: '规划中', className: 'planned' },
 ];
 

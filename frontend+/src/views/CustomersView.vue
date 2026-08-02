@@ -83,7 +83,7 @@ const customerTypeOptions = ["企业客户", "中小卖家", "代运营机构", 
 const industryOptions = ["跨境电商", "品牌出海", "代运营服务", "外贸服务", "教育实训", "产业带服务"];
 const platformOptions = ["Amazon", "Shopee", "TikTok Shop", "Lazada", "eBay", "Walmart", "独立站", "多平台"];
 const marketOptions = ["欧美", "中东", "东南亚", "日本", "全球通用", "多市场"];
-const planOptions = ["体验包/按次检测", "基础版", "专业版", "企业版", "定制版", "API接口版"];
+const planOptions = ["免费版", "Starter", "Growth", "Pro", "Enterprise"];
 const statusOptions = ["开通中", "服务中", "待开通", "已暂停"];
 
 async function load() {

@@ -319,28 +319,6 @@ const actionHint = computed(() => {
 function shortNo(id: string) {
   return `TSK-${String(id || '').slice(-6).toUpperCase()}`;
 }
-function formatTime(v?: string) {
-  if (!v) return '-';
-  const d = new Date(v);
-  if (Number.isNaN(d.getTime())) return '-';
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  const hh = String(d.getHours()).padStart(2, '0');
-  const mi = String(d.getMinutes()).padStart(2, '0');
-  return `${d.getFullYear()}-${mm}-${dd} ${hh}:${mi}`;
-}
-function riskClass(level?: string) {
-  const v = String(level || '');
-  if (v.includes('高')) return 'tag-danger';
-  if (v.includes('中')) return 'tag-warning';
-  return 'tag-success';
-}
-function decisionClass(decision?: string) {
-  const v = String(decision || '');
-  if (v.includes('暂缓')) return 'tag-danger';
-  if (v.includes('复核') || v.includes('优化')) return 'tag-warning';
-  return 'tag-success';
-}
 function decisionTextClass(v?: string) {
   const t = String(v || '');
   if (t.includes('暂缓')) return 'text-danger';

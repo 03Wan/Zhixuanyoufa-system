@@ -413,12 +413,6 @@ html.dark .landing-page .task-modal.contact-modal .contact-email {
   50% { opacity: 1; transform: translateY(-1px); }
 }
 
-.risk-badge { border-radius: 999px; padding: 5px 11px; font-size: 12px; border: 1px solid; font-weight: 700; }
-.risk-low { background: rgba(16, 185, 129, .14); color: var(--success); border-color: rgba(16, 185, 129, .34); }
-.risk-medium { background: rgba(245, 158, 11, .14); color: var(--warning); border-color: rgba(245, 158, 11, .34); }
-.risk-high, .risk-critical { background: rgba(239, 68, 68, .14); color: var(--danger); border-color: rgba(239, 68, 68, .34); }
-.risk-default { background: color-mix(in srgb, var(--glass-highlight) 22%, transparent); color: var(--muted); border-color: var(--border); }
-
 .modal-mask,
 .auth-modal-mask,
 .detect-modal-mask {
@@ -442,17 +436,6 @@ html.dark .landing-page .task-modal.contact-modal .contact-email {
   max-width: min(680px, calc(100vw - 36px)) !important;
 }
 
-.score-wrap { display: grid; gap: 8px; margin: 10px 0; }
-.score-bar { height: 10px; background: rgba(148, 163, 184, 0.25); border-radius: 999px; overflow: hidden; }
-.score-fill { height: 100%; background: linear-gradient(135deg, var(--brand-0), var(--brand-1)); }
-
-.skeleton {
-  width: 100%;
-  border-radius: 10px;
-  background: linear-gradient(110deg, rgba(148, 163, 184, 0.18) 8%, rgba(148, 163, 184, 0.34) 18%, rgba(148, 163, 184, 0.18) 33%);
-  background-size: 200% 100%;
-  animation: shimmer 1.2s linear infinite;
-}
 @keyframes shimmer { to { background-position-x: -200%; } }
 
 @media (max-width: 1160px) {

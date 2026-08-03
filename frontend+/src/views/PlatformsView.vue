@@ -13,7 +13,7 @@
 
     <section class="public-section">
       <div class="public-shell">
-        <div class="public-section-head"><p class="public-kicker">支持矩阵</p><h2>按真实开放范围选择发布场景</h2><p>表格用于说明当前规则库覆盖状态，不代表平台官方合作或经营效果。</p></div>
+        <div class="public-section-head center"><p class="public-kicker">支持矩阵</p><h2>按真实开放范围选择发布场景</h2><p>表格用于说明当前规则库覆盖状态，不代表平台官方合作或经营效果。</p></div>
         <div class="matrix-wrap"><div class="matrix" role="table" aria-label="平台支持范围">
           <div class="matrix-row head" role="row"><b>平台</b><b>国家 / 站点</b><b>语言</b><b>适用类目</b><b>状态</b><b>规则更新时间</b></div>
           <div v-for="item in rows" :key="item.platform" class="matrix-row" role="row"><strong>{{ item.platform }}</strong><span>{{ item.market }}</span><span>{{ item.language }}</span><span>{{ item.category }}</span><i class="public-status" :class="item.className">{{ item.status }}</i><time>{{ item.updated }}</time></div>

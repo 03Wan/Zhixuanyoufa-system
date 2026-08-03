@@ -18,7 +18,7 @@
 
     <section class="public-section">
       <div class="public-shell">
-        <div class="public-section-head"><p class="public-kicker">{{ page.sectionKicker }}</p><h2>{{ page.sectionTitle }}</h2><p>{{ page.sectionCopy }}</p></div>
+        <div class="public-section-head center"><p class="public-kicker">{{ page.sectionKicker }}</p><h2>{{ page.sectionTitle }}</h2><p>{{ page.sectionCopy }}</p></div>
         <div class="public-card-grid">
           <article v-for="item in page.items" :key="item.title" class="public-card"><div class="icon-box"><component :is="item.icon" :size="23" /></div><h3>{{ item.title }}</h3><p>{{ item.copy }}</p></article>
         </div>

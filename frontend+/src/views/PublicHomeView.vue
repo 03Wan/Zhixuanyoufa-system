@@ -60,7 +60,7 @@
 
     <section class="public-section soft workflow-section">
       <div class="public-shell">
-        <div class="public-section-head">
+        <div class="public-section-head center">
           <p class="public-kicker">发布决策管线</p>
           <h2>从商品素材，到可追溯的发布决策</h2>
           <p>点击任一步骤，查看系统在发布前如何组织素材、规则、风险和团队结论。</p>

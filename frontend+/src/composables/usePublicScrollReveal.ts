@@ -13,6 +13,8 @@ const revealSelector = [
   '.coverage-console',
   '.matrix-wrap',
   '.plans article',
+  '.add-on-grid article',
+  '.service-boundary',
   '.rules-layout li',
   '.roadmap article',
   '.proof-layout li',

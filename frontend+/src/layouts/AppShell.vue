@@ -4,14 +4,14 @@
       <button class="mobile-menu-button" type="button" aria-label="打开工作台菜单" @click="open = true">
         <span></span><span></span><span></span>
       </button>
-      <div class="mobile-brand"><span class="mobile-brand-logo">智</span><strong>智选优发</strong></div>
+      <div class="mobile-brand"><span class="mobile-brand-logo"><img src="/assets/brand/logo-mark-tech.png" alt="" /></span><strong>智选优发</strong></div>
       <span class="mobile-role">{{ roleLabel }}</span>
     </header>
     <button v-if="!isEmbedded && open" class="mobile-nav-mask" aria-label="关闭工作台菜单" @click="open = false"></button>
     <aside v-if="!isEmbedded" class="glass side-nav fade-up" :class="{ open, collapsed: sidebarCollapsed }" aria-label="工作台导航">
       <div class="brand-block">
         <div class="brand-top">
-          <div class="brand-logo">智</div>
+          <div class="brand-logo"><img src="/assets/brand/logo-mark-tech.png" alt="" /></div>
           <div v-if="!sidebarCollapsed">
             <h1>智选优发</h1>
           </div>
@@ -495,13 +495,9 @@ function toggleGroup(key: string) {
 .brand-logo {
   width: 34px;
   height: 34px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--brand-0), var(--brand-1));
-  color: #fff;
-  font-weight: 800;
-  display: grid;
-  place-items: center;
+  display: block;
 }
+.brand-logo img { width: 100%; height: 100%; display: block; }
 .brand-block h1 { margin: 0; font-size: 24px; line-height: 1.1; }
 .role-chip {
   border: 1px solid var(--border);
@@ -803,7 +799,8 @@ function toggleGroup(key: string) {
   .mobile-menu-button { width: 42px; height: 40px; display: grid; place-content: center; gap: 4px; border: 1px solid var(--border); border-radius: 11px; background: var(--card-strong); color: var(--text); }
   .mobile-menu-button span { width: 17px; height: 2px; border-radius: 3px; background: currentColor; }
   .mobile-brand { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; }
-  .mobile-brand-logo { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 8px; color: #fff; background: linear-gradient(135deg, var(--brand-0), var(--brand-1)); }
+  .mobile-brand-logo { width: 28px; height: 28px; display: block; }
+  .mobile-brand-logo img { width: 100%; height: 100%; display: block; }
   .mobile-role { max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: 12px; }
   .mobile-nav-mask { display: block; position: fixed; z-index: 79; inset: 0; border: 0; background: rgba(9, 18, 38, .44); }
   .side-nav {

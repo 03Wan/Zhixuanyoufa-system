@@ -4,6 +4,7 @@ import PublicHomeView from "@/views/PublicHomeView.vue";
 import PublicInfoView from "@/views/PublicInfoView.vue";
 import PlatformsView from "@/views/PlatformsView.vue";
 import AboutProjectView from "@/views/AboutProjectView.vue";
+import TeamView from "@/views/TeamView.vue";
 import PublicPricingView from "@/views/PublicPricingView.vue";
 import TaskNewView from "@/views/TaskNewView.vue";
 import MaterialGenerateView from "@/views/MaterialGenerateView.vue";
@@ -36,12 +37,16 @@ const DashboardView = () => import("@/views/DashboardView.vue");
 
 const router = createRouter({
   history: createWebHistory(),
+  scrollBehavior(_to, _from, savedPosition) {
+    return savedPosition || { left: 0, top: 0 };
+  },
   routes: [
     { path: "/", redirect: "/home-public" },
     { path: "/home-public", component: PublicHomeView },
     { path: "/product-capabilities", component: PublicInfoView },
     { path: "/platforms", component: PlatformsView },
     { path: "/about-project", component: AboutProjectView },
+    { path: "/team", component: TeamView },
     { path: "/pricing", component: PublicPricingView },
     { path: "/solutions", component: PublicInfoView },
     { path: "/rule-library", component: PublicInfoView },

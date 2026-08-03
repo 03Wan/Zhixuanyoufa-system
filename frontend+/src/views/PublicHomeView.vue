@@ -6,7 +6,7 @@
         <div class="public-shell hero-layout">
           <div class="hero-copy">
             <p class="public-kicker"><Network :size="17" />发布前智能审校网络</p>
-            <h1 class="public-title">跨平台发布<wbr />之前，<br />先经过规则网络</h1>
+            <h1 class="public-title"><span class="public-title-line">跨平台发布之前，</span><span class="public-title-line">先经过规则网络</span></h1>
             <p class="public-lead">统一审校平台规则、国家与站点要求、语言本地化与类目限制，提前发现风险，给出可采用的修改方案与发布决策。</p>
             <div class="public-actions">
               <button class="public-button primary" @click="applyOpen = true">申请首批共创 <ArrowRight :size="17" /></button>
@@ -276,4 +276,6 @@ async function submitApplication() {
 .landing-page .public-status{box-shadow:0 0 18px rgba(34,211,238,.08)}
 @keyframes worldDrift{from{background-position:47% 50%}to{background-position:53% 50%}}
 @keyframes iconPulse{50%{filter:drop-shadow(0 0 7px #38d7ff);transform:scale(1.08)}}
+@media(max-width:1100px){.hero-copy .public-title{font-size:clamp(40px,5.5vw,52px)}}
+@media(max-width:640px){.hero-copy .public-title{font-size:clamp(32px,9vw,38px);line-height:1.12;letter-spacing:-.035em}}
 </style>

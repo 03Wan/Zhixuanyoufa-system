@@ -3,7 +3,7 @@
     <PublicSiteHeader @login="openLogin" @apply="openApply" />
     <section class="public-dark-hero platforms-hero">
       <div class="public-shell platforms-hero-layout">
-        <div><p class="public-kicker"><Globe2 :size="18" />适用平台</p><h1 class="public-title">规则网络有边界，<br />支持状态要透明</h1><p class="public-lead">每条规则按平台、国家或站点、语言和类目配置，并保留版本与更新时间。规划能力不会被包装成正式支持。</p></div>
+        <div><p class="public-kicker"><Globe2 :size="18" />适用平台</p><h1 class="public-title"><span class="public-title-line">规则网络有边界，</span><span class="public-title-line">支持状态要透明</span></h1><p class="public-lead">每条规则按平台、国家或站点、语言和类目配置，并保留版本与更新时间。规划能力不会被包装成正式支持。</p></div>
         <div class="coverage-console">
           <header><span>规则覆盖状态</span><i>随规则库版本更新</i></header>
           <div v-for="row in rows" :key="row.platform" class="coverage-row"><div><b>{{ row.platform }}</b><span>{{ row.market }}</span></div><i class="public-status" :class="row.className">{{ row.status }}</i></div>
@@ -47,4 +47,5 @@ function openApply() { router.push({ path: '/home-public', query: { apply: 'pilo
 
 <style scoped>
 .platforms-hero{min-height:530px}.platforms-hero-layout{min-height:530px;display:grid;grid-template-columns:1fr .9fr;gap:70px;align-items:center}.coverage-console{border:1px solid #3674b4;border-radius:16px;background:rgba(5,27,60,.94);box-shadow:0 25px 70px rgba(0,0,0,.3)}.coverage-console header,.coverage-row{padding:17px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid #244b76}.coverage-console header{color:#fff;font-weight:900}.coverage-console header i{font-style:normal;color:#94a8c6;font-size:12px}.coverage-row:last-child{border-bottom:0}.coverage-row>div{display:grid;gap:4px}.coverage-row b{color:#fff}.coverage-row span{color:#9fb1cd;font-size:12px}.coverage-row i{font-style:normal}.matrix-wrap{overflow:auto;border:1px solid var(--public-line);border-radius:16px}.matrix{min-width:960px}.matrix-row{min-height:70px;padding:0 20px;display:grid;grid-template-columns:1fr 1.2fr 1.05fr 1.15fr .8fr 1.2fr;gap:15px;align-items:center;border-top:1px solid var(--public-line);color:var(--public-muted);font-size:14px}.matrix-row:first-child{border-top:0}.matrix-row.head{min-height:54px;background:#f3f7fc;color:var(--public-ink);font-size:13px}.matrix-row strong{color:var(--public-ink)}.matrix-row i{width:max-content;font-style:normal}.status-guide .public-card h3{margin-top:18px}@media(max-width:900px){.platforms-hero-layout{grid-template-columns:1fr;padding:62px 0;gap:36px}}@media(max-width:560px){.coverage-console header{display:grid}.coverage-row{align-items:flex-start}}
+@media(max-width:1100px){.platforms-hero-layout{grid-template-columns:1fr;padding:62px 0;gap:36px}}
 </style>

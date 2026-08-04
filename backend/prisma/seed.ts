@@ -129,7 +129,7 @@ async function main() {
       sellingPoints: ['轻量便携', '合规材质', '售后保障'] as unknown as object,
       detailText: '适用于中东市场，强调品质、细节与售后。',
       adText: '高品质体验，欢迎了解更多产品参数。',
-      imageUrls: ['https://assets.paperhelper.fun/img/main-01.jpg', 'https://assets.paperhelper.fun/img/detail-02.jpg'] as unknown as object,
+      imageUrls: ['https://example.com/main-01.jpg', 'https://example.com/detail-02.jpg'] as unknown as object,
     },
   });
 

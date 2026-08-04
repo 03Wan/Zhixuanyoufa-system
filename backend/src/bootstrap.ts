@@ -6,8 +6,8 @@ import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter'
 import helmet from 'helmet';
 
 const allowedOrigins = new Set([
-  'https://www.paperhelper.fun',
-  'https://paperhelper.fun',
+  'https://www.myboverse.com',
+  'https://myboverse.com',
   'http://localhost:5073',
   'http://127.0.0.1:5073',
 ]);

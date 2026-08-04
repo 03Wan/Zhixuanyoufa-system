@@ -85,7 +85,7 @@ npm test
 
 ### 部署与交付
 
-前端采用 Vercel 托管，生产站点为 [paperhelper.fun](https://www.paperhelper.fun)。项目按前后端分离交付：
+前端采用 Vercel 托管，生产站点为 [myboverse.com](https://www.myboverse.com)。项目按前后端分离交付：
 
 - 前端部署目录：`frontend+`
 - 后端服务目录：`backend`
@@ -166,7 +166,7 @@ npm test
 
 ### Deployment and delivery
 
-The frontend is hosted on Vercel and available at [paperhelper.fun](https://www.paperhelper.fun). The repository follows a separated frontend/backend delivery model:
+The frontend is hosted on Vercel and available at [myboverse.com](https://www.myboverse.com). The repository follows a separated frontend/backend delivery model:
 
 - Frontend deployment root: `frontend+`
 - Backend service root: `backend`

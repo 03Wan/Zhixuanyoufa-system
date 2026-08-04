@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.paperhelper.fun/sitemap.xml
+Sitemap: https://www.myboverse.com/sitemap.xml

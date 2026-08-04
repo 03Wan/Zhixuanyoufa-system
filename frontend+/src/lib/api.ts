@@ -39,7 +39,7 @@ export type CreateTaskPayload = {
 
 export type UpdateTaskPayload = Partial<CreateTaskPayload>;
 
-const DEFAULT_API_BASE_URL = 'https://api.paperhelper.fun/api';
+const DEFAULT_API_BASE_URL = 'https://api.myboverse.com/api';
 const rawApiBaseUrl = String(import.meta.env.VITE_API_BASE_URL || '').trim();
 const API_BASE_URL =
   !rawApiBaseUrl || rawApiBaseUrl === '[SENSITIVE]' ? DEFAULT_API_BASE_URL : rawApiBaseUrl;

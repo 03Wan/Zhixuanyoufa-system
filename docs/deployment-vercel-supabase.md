@@ -1,9 +1,9 @@
-# Vercel + Cloudflare + Supabase Deployment
+# Vercel + Cloudflare DNS + Supabase Deployment
 
 This project deploys as two Vercel projects:
 
-- Frontend: `frontend+` -> `https://www.paperhelper.fun`
-- Backend: `backend` -> `https://api.paperhelper.fun`
+- Frontend: `frontend+` -> `https://www.myboverse.com`
+- Backend: `backend` -> `https://api.myboverse.com`
 
 ## Supabase
 
@@ -40,13 +40,13 @@ npm run vercel-build
 Production domain:
 
 ```text
-api.paperhelper.fun
+api.myboverse.com
 ```
 
 After deployment, verify:
 
 ```bash
-curl https://api.paperhelper.fun/api/auth/login
+curl https://api.myboverse.com/api/auth/login
 ```
 
 The login endpoint should return a method/validation error instead of a DNS, TLS, or CORS error when called with GET.
@@ -70,36 +70,37 @@ dist
 Production environment variables:
 
 ```env
-VITE_API_BASE_URL=https://api.paperhelper.fun/api
+VITE_API_BASE_URL=https://api.myboverse.com/api
 VITE_USE_MOCK=false
 ```
 
 Production domain:
 
 ```text
-www.paperhelper.fun
+www.myboverse.com
 ```
 
 ## Cloudflare DNS
 
-The zone is already delegated to Cloudflare.
+The domain is registered at Spaceship and delegates authoritative DNS to Cloudflare.
 
 Expected records:
 
 ```text
-www  CNAME  cname.vercel-dns.com
-api  CNAME  cname.vercel-dns.com
 @    A      216.198.79.1
+@    A      64.29.17.1
+www  CNAME  2345281f0f0668cc.vercel-dns-017.com
+api  CNAME  41d8569592051bf5.vercel-dns-017.com
 ```
 
 Use the exact Vercel-provided DNS target if Vercel shows a different verification record.
 
-Recommended SSL/TLS mode: `Full` or `Full (strict)`.
+Keep all four records in DNS-only mode until Vercel reports a valid configuration and issues certificates. Configure `myboverse.com` in Vercel as a permanent redirect to `www.myboverse.com`.
 
 ## Final Verification
 
-1. Visit `https://www.paperhelper.fun`.
+1. Visit `https://www.myboverse.com` and confirm `https://myboverse.com` redirects to it.
 2. Refresh `/login`, `/dashboard`, and `/reports`; Vercel should serve the SPA fallback.
-3. Log in or register; browser network calls should target `https://api.paperhelper.fun/api`.
+3. Log in or register; browser network calls should target `https://api.myboverse.com/api`.
 4. Create a task, run detection, generate a report.
 5. Confirm rows appear in Supabase tables.

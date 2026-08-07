@@ -41,7 +41,7 @@ export const MENU_REGISTRY = {
   reviews: { key: "reviews", label: "人工复核", href: "/reviews" },
   reports: { key: "reports", label: "报告中心", href: "/reports" },
   applications: { key: "applications", label: "企业申请", href: "/applications" },
-  rules: { key: "rules", label: "规则与模板", href: "/rules" },
+  rules: { key: "rules", label: "规则库", href: "/rules" },
   users: { key: "users", label: "用户管理", href: "/users" },
   logs: { key: "logs", label: "操作日志", href: "/logs" },
   modelConfig: { key: "modelConfig", label: "模型配置", href: "/model-config" },
